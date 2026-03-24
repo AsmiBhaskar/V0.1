@@ -1,0 +1,25 @@
+2026-03-24 19:50:11,616 | INFO | Game started
+2026-03-24 19:50:32,815 | ERROR | Unhandled game error
+Traceback (most recent call last):
+  File "D:\Game dev\V0.1\game.py", line 268, in main
+    running = not play_route(screen, clock, ROUTES[selected_index], 0)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Game dev\V0.1\game.py", line 212, in play_route
+    wrapped = wrap_text(scenes[scene_index], scene_font, 1040)
+                        ~~~~~~^^^^^^^^^^^^^
+IndexError: list index out of range
+2026-03-24 19:50:32,899 | INFO | Game closed
+2026-03-24 20:10:38,039 | INFO | Game started
+2026-03-24 20:12:42,794 | ERROR | Unhandled game error
+Traceback (most recent call last):
+  File "D:\Game dev\V0.1\game.py", line 53, in main
+    running = not play_route(screen, clock, selected_route, state)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Game dev\V0.1\game_core\routes.py", line 209, in play_route
+    return play_placeholder_route(screen, clock, route, state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Game dev\V0.1\game_core\routes.py", line 184, in play_placeholder_route
+    wrapped = wrap_text(scenes[scene_index], scene_font, 1040)
+                        ~~~~~~^^^^^^^^^^^^^
+IndexError: list index out of range
+2026-03-24 20:12:42,863 | INFO | Game closed
