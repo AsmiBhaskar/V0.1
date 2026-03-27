@@ -1,6 +1,7 @@
 import pygame
 
 from game_core.archer_route import play_archer_route
+from game_core.caster_route import play_caster_route
 from game_core.constants import BLACK, FPS
 from game_core.lancer_route import play_lancer_route
 from game_core.storage import delete_save, save_progress
@@ -72,4 +73,6 @@ def play_route(screen, clock, route, state):
         return play_lancer_route(screen, clock, state)
     if route == "Archer":
         return play_archer_route(screen, clock, state)
+    if route == "Caster":
+        return play_caster_route(screen, clock, state)
     return play_placeholder_route(screen, clock, route, state)

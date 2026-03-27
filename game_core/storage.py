@@ -3,6 +3,7 @@ import logging
 
 from game_core.constants import LOG_FILE, SAVE_DIR
 from game_core.archer_data import ARCHER_STATS_TEMPLATE
+from game_core.caster_data import CASTER_STATS_TEMPLATE
 from game_core.lancer_data import LANCER_STATS_TEMPLATE
 
 
@@ -25,6 +26,8 @@ def default_route_state(route):
         state.update({key: value[:] if isinstance(value, list) else value for key, value in LANCER_STATS_TEMPLATE.items()})
     if route == "Archer":
         state.update({key: value[:] if isinstance(value, list) else value for key, value in ARCHER_STATS_TEMPLATE.items()})
+    if route == "Caster":
+        state.update({key: value[:] if isinstance(value, list) else value for key, value in CASTER_STATS_TEMPLATE.items()})
     return state
 
 

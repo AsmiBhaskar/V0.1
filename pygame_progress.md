@@ -11,21 +11,24 @@
 
 ### Modular Structure (Current)
 - Main entry and app loop:
-	- game.py
+   - game.py
 - Core configuration:
-	- game_core/constants.py
+   - game_core/constants.py
 - Save/load and logging:
-	- game_core/storage.py
+   - game_core/storage.py
 - Shared UI rendering/menu helpers:
-	- game_core/ui.py
+   - game_core/ui.py
 - Route dispatcher and placeholder routes:
-	- game_core/routes.py
+   - game_core/routes.py
 - Lancer route modules:
-	- game_core/lancer_data.py
-	- game_core/lancer_route.py
+   - game_core/lancer_data.py
+   - game_core/lancer_route.py
 - Archer route modules:
-	- game_core/archer_data.py
-	- game_core/archer_route.py
+   - game_core/archer_data.py
+   - game_core/archer_route.py
+- Caster route modules:
+   - game_core/caster_data.py
+   - game_core/caster_route.py
 
 ### Current Game Flow
 1. On launch, save files are checked.
@@ -53,7 +56,8 @@
 ### Route Scene Behavior
 - Lancer route is fully modular and choice-driven with tracked variables and ending branches.
 - Archer route is fully modular and choice-driven with tracked variables and ending branches.
-- Remaining routes currently use placeholder 3-scene flow.
+- Caster route is fully modular and choice-driven with tracked variables and ending branches.
+- Remaining routes currently use placeholder 3-scene flow: Berserker, Rider, Assassin.
 - Enter advances to the next scene.
 - Escape saves progress and returns to menu.
 
