@@ -1,6 +1,6 @@
 from pathlib import Path
 
-ROUTES = ["Lancer", "Berserker", "rider", "caster", "assassin", "archer"]
+ROUTES = ["Lancer", "Berserker", "Rider", "Caster", "Assassin", "Archer"]
 
 SAVE_DIR = Path("saves")
 LOG_FILE = Path("game.log")
