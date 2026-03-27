@@ -136,5 +136,5 @@ def play_lancer_route(screen, clock, state):
     if should_quit:
         return True
 
-    delete_save("Lancer")
+    delete_save("Lancer", state=state)
     return False

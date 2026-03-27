@@ -1,0 +1,51 @@
+<svg width="680" height="420" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<mask id="text-gaps" maskUnits="userSpaceOnUse">
+  <rect x="0" y="0" width="680" height="420" fill="white"/>
+  <rect x="190" y="164" width="299" height="104" fill="black" rx="2"/>
+  <rect x="187" y="267" width="305" height="55" fill="black" rx="2"/>
+  <rect x="159" y="332" width="361" height="17" fill="black" rx="2"/>
+</mask>
+</defs>
+
+<!-- Crown body -->
+<polygon points="340,72 390,125 420,110 375,200 340,182 305,200 260,110 290,125"
+  fill="#1a1a1a" stroke="#555555" stroke-width="1"/>
+
+<!-- Crown gems -->
+<polygon points="340,80 355,100 340,120 325,100" fill="#c8a96e" opacity="0.9"/>
+<polygon points="390,125 400,115 408,130 395,138" fill="#c8a96e" opacity="0.7"/>
+<polygon points="290,125 280,115 272,130 285,138" fill="#c8a96e" opacity="0.7"/>
+
+<!-- Crown lines -->
+<line x1="340" y1="120" x2="340" y2="182" stroke="#c8a96e" stroke-width="1" opacity="0.5" mask="url(#text-gaps)"/>
+<line x1="325" y1="100" x2="260" y2="115" stroke="#c8a96e" stroke-width="0.8" opacity="0.4"/>
+<line x1="355" y1="100" x2="420" y2="115" stroke="#c8a96e" stroke-width="0.8" opacity="0.4"/>
+
+<!-- NEW text -->
+<text x="340" y="247"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="88" font-weight="700" letter-spacing="18"
+  text-anchor="middle" fill="#e8e8e8">NEW</text>
+
+<!-- Divider line + diamond -->
+<line x1="120" y1="262" x2="220" y2="262" stroke="#c8a96e" stroke-width="0.8" opacity="0.5" mask="url(#text-gaps)"/>
+<polygon points="340,256 348,264 340,272 332,264" fill="#c8a96e"/>
+<line x1="460" y1="262" x2="560" y2="262" stroke="#c8a96e" stroke-width="0.8" opacity="0.5" mask="url(#text-gaps)"/>
+
+<!-- ORDER text -->
+<text x="340" y="310"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="44" font-weight="400" letter-spacing="28"
+  text-anchor="middle" fill="#c8a96e">ORDER</text>
+
+<!-- Subtitle -->
+<text x="340" y="344"
+  font-family="'Courier New', monospace"
+  font-size="11" letter-spacing="6"
+  text-anchor="middle" fill="#555555">THE GRAIL WAR HAS A NEW RULE</text>
+
+<!-- Corner diamonds -->
+<polygon points="108,344 113,349 108,354 103,349" fill="#c8a96e" opacity="0.6"/>
+<polygon points="572,344 577,349 572,354 567,349" fill="#c8a96e" opacity="0.6"/>
+</svg>

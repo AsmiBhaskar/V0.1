@@ -135,5 +135,5 @@ def play_caster_route(screen, clock, state):
     if should_quit:
         return True
 
-    delete_save("Caster")
+    delete_save("Caster", state=state)
     return False

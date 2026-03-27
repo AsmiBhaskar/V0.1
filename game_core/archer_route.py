@@ -136,5 +136,5 @@ def play_archer_route(screen, clock, state):
     if should_quit:
         return True
 
-    delete_save("Archer")
+    delete_save("Archer", state=state)
     return False

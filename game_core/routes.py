@@ -43,6 +43,11 @@ def play_placeholder_route(screen, clock, route, state):
                     save_progress(route, state)
                     return False
 
+        # If Enter advanced past the last scene this frame, exit loop cleanly
+        # instead of rendering with an out-of-range scene index.
+        if scene_index >= len(scenes):
+            break
+
         screen.fill(BLACK)
         draw_centered_text(screen, title_font, f"Route: {route}", 120)
 
@@ -58,7 +63,7 @@ def play_placeholder_route(screen, clock, route, state):
         pygame.display.flip()
         clock.tick(FPS)
 
-    delete_save(route)
+    delete_save(route, state=state)
     return run_message_screen(
         screen,
         clock,

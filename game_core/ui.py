@@ -1,6 +1,67 @@
+import io
+import importlib
+import logging
+from pathlib import Path
+
 import pygame
 
 from game_core.constants import BAR_COLOR, BLACK, FPS, WHITE, WINDOW_HEIGHT, WINDOW_WIDTH
+
+
+LOGGER = logging.getLogger(__name__)
+_LOGO_SURFACE = None
+
+
+def _load_logo_surface():
+    global _LOGO_SURFACE
+    if _LOGO_SURFACE is not None:
+        return _LOGO_SURFACE
+
+    logo_svg_path = Path(__file__).resolve().parent.parent / "assets" / "new_order_logo3.svg"
+    if not logo_svg_path.exists():
+        LOGGER.warning("Main menu logo not found at %s", logo_svg_path)
+        _LOGO_SURFACE = False
+        return None
+    print(f"[DEBUG] SVG path resolved to: {logo_svg_path}")
+    logo_surface = None
+
+    # Primary: render SVG via cairosvg with an explicit output width so the
+    # rasteriser never produces a 1-pixel-wide surface when the SVG has no
+    # intrinsic width/height attributes.
+    try:
+        cairosvg = importlib.import_module("cairosvg")
+        png_bytes = cairosvg.svg2png(url=str(logo_svg_path), output_width=520)
+        logo_surface = pygame.image.load(io.BytesIO(png_bytes), "logo.png")
+        if pygame.display.get_surface():
+            logo_surface = logo_surface.convert_alpha()
+    except Exception:
+        LOGGER.exception("cairosvg SVG render failed")
+        logo_surface = None
+
+    # Fallback: try native pygame SVG support (only available on some builds).
+    if logo_surface is None:
+        try:
+            logo_surface = pygame.image.load(str(logo_svg_path))
+            if pygame.display.get_surface():
+                logo_surface = logo_surface.convert_alpha()
+        except pygame.error as e:
+            LOGGER.error("Native pygame SVG load failed: %s", e)
+            logo_surface = None
+
+    _LOGO_SURFACE = logo_surface if logo_surface is not None else False
+    return logo_surface if logo_surface is not None else None
+
+
+def _draw_main_menu_logo_background(screen):
+    logo_surface = _load_logo_surface()
+    # print(f"[DEBUG] surface={logo_surface}, size={logo_surface.get_size() if logo_surface else 'N/A'}")
+    if not logo_surface:
+        return
+
+    logo_rect = logo_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+    logo_copy = logo_surface.copy()
+    logo_copy.set_alpha(255)  # very subtle watermark
+    screen.blit(logo_copy, logo_rect)
 
 
 def draw_centered_text(screen, font, text, y, color=WHITE):
@@ -48,9 +109,9 @@ def run_menu(screen, clock, title, options, subtitle="", start_index=0):
     if not options:
         return None, False
 
-    title_font = pygame.font.SysFont("consolas", 56)
-    menu_font = pygame.font.SysFont("consolas", 42)
-    subtitle_font = pygame.font.SysFont("consolas", 28)
+    title_font = pygame.font.SysFont("georgia", 62, bold=True, italic=True)
+    menu_font = pygame.font.SysFont("georgia", 44, bold=True, italic=True)
+    subtitle_font = pygame.font.SysFont("georgia", 30, bold=True, italic=True)
     selected = max(0, min(start_index, len(options) - 1))
 
     while True:
@@ -69,11 +130,13 @@ def run_menu(screen, clock, title, options, subtitle="", start_index=0):
                     return None, False
 
         screen.fill(BLACK)
-        draw_centered_text(screen, title_font, title, 110)
-        if subtitle:
-            draw_centered_text(screen, subtitle_font, subtitle, 170)
+        _draw_main_menu_logo_background(screen)
 
-        start_y = 270
+        draw_centered_text(screen, title_font, title, 88)
+        if subtitle:
+            draw_centered_text(screen, subtitle_font, subtitle, 132)
+
+        start_y = 318
         spacing = 62
         bar_width = 560
         bar_height = 52

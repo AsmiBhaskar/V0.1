@@ -3,11 +3,14 @@
 ### Current Build Overview
 - The game now runs in a Pygame windowed interface instead of terminal input.
 - Visual style is black background with white text.
+- Main menu presentation is finalized with the repo SVG logo as the menu background centerpiece.
+- SVG and alpha tuning pass completed for stable, readable menu visuals.
 - Menu navigation uses keyboard controls only:
   - Up/Down arrows move selection.
   - Enter confirms selection.
   - Escape returns/backs out where applicable.
 - Active option is shown with a hover-style highlight bar.
+- Menu typography uses bold italic styling for stronger visual emphasis.
 
 ### Modular Structure (Current)
 - Main entry and app loop:
@@ -40,18 +43,21 @@
    - Caster
    - Assassin
    - Archer
-4. If saves exist, Main Menu shows:
+4. Main Menu always shows:
    - Continue
    - Load
+   - New Game
    - Exit
-5. Continue loads the most recently updated route save.
-6. Load opens a route list for specific saved routes.
+5. Continue loads the most recently updated save slot.
+6. Load opens a list of save slots across routes.
+7. New Game can always create another save slot, even when saves already exist.
 
 ### Save System Status
-- Save files are stored per route in the saves folder.
+- Save files are stored in the saves folder as multiple save slots.
+- Save filenames use route + save id format for multi-slot support.
 - Full route state is written as routes advance (scene index plus route-specific variables).
 - Exiting a route mid-progress preserves save data.
-- Completing a route removes that route save.
+- Completing a route removes only the active save slot for that run.
 
 ### Route Scene Behavior
 - Lancer route is fully modular and choice-driven with tracked variables and ending branches.
@@ -64,4 +70,5 @@
 ### Technical Notes
 - Window resolution is set to 1280x720.
 - Frame timing uses a fixed clock tick at 60 FPS.
-- Text rendering uses a monospaced system font for readability and consistent menu alignment.
+- Menu screens use SVG-backed branding and bold italic text styling.
+- Optional SVG conversion fallback is supported when direct SVG loading is unavailable.

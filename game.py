@@ -5,9 +5,9 @@ import pygame
 from game_core.constants import FPS, ROUTES, WINDOW_HEIGHT, WINDOW_WIDTH
 from game_core.routes import play_route
 from game_core.storage import (
-    default_route_state,
-    get_latest_saved_route,
-    get_saved_routes,
+    create_new_save_state,
+    get_latest_save,
+    list_save_entries,
     load_progress,
     setup_logging,
 )
@@ -23,9 +23,9 @@ def main():
     try:
         running = True
         while running:
-            saved_routes = get_saved_routes(ROUTES)
+            saved_entries = list_save_entries(ROUTES)
 
-            if not saved_routes:
+            if not saved_entries:
                 should_quit = run_message_screen(
                     screen,
                     clock,
@@ -49,7 +49,7 @@ def main():
                     continue
 
                 selected_route = ROUTES[selected_index]
-                state = default_route_state(selected_route)
+                state = create_new_save_state(selected_route)
                 running = not play_route(screen, clock, selected_route, state)
                 continue
 
@@ -57,7 +57,7 @@ def main():
                 screen,
                 clock,
                 "Main Menu",
-                ["Continue", "Load", "Exit"],
+                ["Continue", "Load", "New Game", "Exit"],
                 "Arrow Keys: move   Enter: select",
             )
             if should_quit or selected_index is None:
@@ -66,31 +66,49 @@ def main():
             main_choice = selected_index
 
             if main_choice == 0:
-                route = get_latest_saved_route(ROUTES)
-                if route is None:
+                latest = get_latest_save(ROUTES)
+                if latest is None:
                     continue
-                state = load_progress(route)
+                route = latest["route"]
+                state = load_progress(route, latest["save_id"])
                 running = not play_route(screen, clock, route, state)
             elif main_choice == 1:
-                saved_routes = get_saved_routes(ROUTES)
-                if not saved_routes:
+                saved_entries = list_save_entries(ROUTES)
+                if not saved_entries:
                     continue
                 route_index, should_quit = run_menu(
                     screen,
                     clock,
-                    "Load Route",
-                    saved_routes,
-                    "Choose a saved route",
+                    "Load Save",
+                    [entry["label"] for entry in saved_entries],
+                    "Choose a save slot",
                 )
                 if should_quit:
                     break
                 if route_index is None:
                     continue
 
-                route = saved_routes[route_index]
-                state = load_progress(route)
+                selected_save = saved_entries[route_index]
+                route = selected_save["route"]
+                state = load_progress(route, selected_save["save_id"])
                 running = not play_route(screen, clock, route, state)
             elif main_choice == 2:
+                selected_index, should_quit = run_menu(
+                    screen,
+                    clock,
+                    "New Game",
+                    ROUTES,
+                    "Choose a route",
+                )
+                if should_quit:
+                    break
+                if selected_index is None:
+                    continue
+
+                selected_route = ROUTES[selected_index]
+                state = create_new_save_state(selected_route)
+                running = not play_route(screen, clock, selected_route, state)
+            elif main_choice == 3:
                 break
     except Exception:
         logging.exception("Unhandled game error")
