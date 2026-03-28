@@ -663,3 +663,5 @@ cannot load library 'libcairo.so.2': error 0x7e.  Additionally, ctypes.util.find
 cannot load library 'libcairo.2.dylib': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
 cannot load library 'libcairo-2.dll': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
 2026-03-29 02:27:11,854 | INFO | Game closed
+2026-03-29 02:39:37,501 | INFO | Game started
+2026-03-29 02:39:50,842 | INFO | Game closed

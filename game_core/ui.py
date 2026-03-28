@@ -1,5 +1,3 @@
-import io
-import importlib
 import logging
 from pathlib import Path
 
@@ -22,34 +20,17 @@ def _load_logo_surface():
         LOGGER.warning("Main menu logo not found at %s", logo_svg_path)
         _LOGO_SURFACE = False
         return None
-    print(f"[DEBUG] SVG path resolved to: {logo_svg_path}")
-    logo_surface = None
 
-    # Primary: render SVG via cairosvg with an explicit output width so the
-    # rasteriser never produces a 1-pixel-wide surface when the SVG has no
-    # intrinsic width/height attributes.
     try:
-        cairosvg = importlib.import_module("cairosvg")
-        png_bytes = cairosvg.svg2png(url=str(logo_svg_path), output_width=520)
-        logo_surface = pygame.image.load(io.BytesIO(png_bytes), "logo.png")
+        logo_surface = pygame.image.load(str(logo_svg_path))
         if pygame.display.get_surface():
             logo_surface = logo_surface.convert_alpha()
-    except Exception:
-        LOGGER.exception("cairosvg SVG render failed")
-        logo_surface = None
-
-    # Fallback: try native pygame SVG support (only available on some builds).
-    if logo_surface is None:
-        try:
-            logo_surface = pygame.image.load(str(logo_svg_path))
-            if pygame.display.get_surface():
-                logo_surface = logo_surface.convert_alpha()
-        except pygame.error as e:
-            LOGGER.error("Native pygame SVG load failed: %s", e)
-            logo_surface = None
-
-    _LOGO_SURFACE = logo_surface if logo_surface is not None else False
-    return logo_surface if logo_surface is not None else None
+        _LOGO_SURFACE = logo_surface
+        return logo_surface
+    except pygame.error as e:
+        LOGGER.warning("Native pygame SVG load failed: %s", e)
+        _LOGO_SURFACE = False
+        return None
 
 
 def _draw_main_menu_logo_background(screen):
