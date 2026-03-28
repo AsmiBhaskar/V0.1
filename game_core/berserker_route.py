@@ -6,6 +6,17 @@ from game_core.storage import delete_save, save_progress
 from game_core.ui import draw_centered_text, draw_left_text, draw_wrapped_block, run_info_screen
 
 
+SALVATION_FLAG_LABELS = {
+    "s1_salvation": "Scene 1 salvation choice",
+    "s3_salvation": "Scene 3 salvation choice",
+    "s5_salvation": "Scene 5 salvation choice",
+    "s6_salvation": "Scene 6 salvation choice",
+    "s7_salvation": "Scene 7 salvation choice",
+    "s8_salvation": "Scene 8 salvation choice",
+    "s9_salvation": "Scene 9 salvation choice",
+}
+
+
 def _clamp(value, minimum, maximum):
     return max(minimum, min(maximum, value))
 
@@ -65,19 +76,40 @@ def _has_true_ending_flags(state):
     return BERSERKER_TRUE_ENDING_FLAGS.issubset(flags)
 
 
+def _count_salvation_flag_hits(state):
+    flags = set(state.get("berserker_route_flags", []))
+    return len(flags.intersection(BERSERKER_TRUE_ENDING_FLAGS))
+
+
 def resolve_berserker_ending(state):
+    flags = set(state.get("berserker_route_flags", []))
     has_flags = _has_true_ending_flags(state)
-    rage_ok = state.get("rage_meter", 0) <= 8
-    memory_ok = state.get("memory_retention", 0) >= 4
+    salvation_hits = _count_salvation_flag_hits(state)
+
+    rage_ok = state.get("rage_meter", 0) <= 10
+    memory_ok = state.get("memory_retention", 0) >= 3
     bond_ok = state.get("bond_atrox", 0) >= 4
     saber_ok = state.get("saber_presence", 0) >= 4
+    final_salvation_choice = "s9_salvation" in flags
 
-    if has_flags and rage_ok and memory_ok and bond_ok and saber_ok:
+    destruction_lock = (
+        "s9_destruction" in flags
+        or state.get("rage_meter", 0) >= 14
+        or state.get("memory_retention", 0) <= 1
+    )
+
+    near_perfect_salvation = salvation_hits >= 6 and final_salvation_choice
+
+    if destruction_lock:
+        return "BAD ENDING - CONSUMPTION"
+
+    if (has_flags or near_perfect_salvation) and rage_ok and memory_ok and bond_ok and saber_ok:
         return "TRUE ENDING - SALVATION"
     return "BAD ENDING - CONSUMPTION"
 
 
 def summarize_berserker_stats(state):
+    salvation_hits = _count_salvation_flag_hits(state)
     required_flags_hit = "Yes" if _has_true_ending_flags(state) else "No"
     return [
         f"Ending: {state.get('ending', 'Unknown')}",
@@ -87,7 +119,52 @@ def summarize_berserker_stats(state):
         f"bond_atrox: {state.get('bond_atrox', 0)}",
         f"reverence_army: {state.get('reverence_army', 0)}",
         f"saber_presence: {state.get('saber_presence', 0)}",
+        f"salvation flag hits: {salvation_hits}/7",
         f"required salvation flags met: {required_flags_hit}",
+    ]
+
+
+def build_berserker_requirements_lines(state):
+    flags = set(state.get("berserker_route_flags", []))
+    rage = int(state.get("rage_meter", 0))
+    ache = int(state.get("burning_ache", 0))
+    memory = int(state.get("memory_retention", 0))
+    bond = int(state.get("bond_atrox", 0))
+    saber = int(state.get("saber_presence", 0))
+
+    rage_ok = rage <= 10
+    memory_ok = memory >= 3
+    bond_ok = bond >= 4
+    saber_ok = saber >= 4
+
+    salvation_hits = _count_salvation_flag_hits(state)
+    strict_flags = _has_true_ending_flags(state)
+    near_perfect = salvation_hits >= 6 and "s9_salvation" in flags
+
+    destruction_lock = (
+        "s9_destruction" in flags
+        or rage >= 14
+        or memory <= 1
+    )
+
+    missing_flags = [
+        label for key, label in SALVATION_FLAG_LABELS.items() if key not in flags
+    ]
+
+    predicted_ending = resolve_berserker_ending(state)
+
+    return [
+        "Final requirement check before ending resolution:",
+        f"- Rage <= 10: {'PASS' if rage_ok else 'FAIL'} (current {rage})",
+        f"- Memory >= 3: {'PASS' if memory_ok else 'FAIL'} (current {memory})",
+        f"- Bond Atrox >= 4: {'PASS' if bond_ok else 'FAIL'} (current {bond})",
+        f"- Saber Presence >= 4: {'PASS' if saber_ok else 'FAIL'} (current {saber})",
+        f"- Salvation flags: {salvation_hits}/7 ({'PASS' if strict_flags else 'Not full set'})",
+        f"- Near-perfect path (6/7 + Scene 9 salvation): {'PASS' if near_perfect else 'FAIL'}",
+        f"- Destruction lock: {'TRIGGERED' if destruction_lock else 'CLEAR'}",
+        f"- Burning Ache: {ache}%",
+        "- Missing salvation flags: " + (", ".join(missing_flags) if missing_flags else "none"),
+        f"Predicted ending now: {predicted_ending}",
     ]
 
 
@@ -176,6 +253,15 @@ def play_berserker_route(screen, clock, state):
         should_quit = run_info_screen(screen, clock, "Choice Result", [selected_choice["result"]])
         if should_quit:
             return True
+
+    should_quit = run_info_screen(
+        screen,
+        clock,
+        "Ending Requirements Check",
+        build_berserker_requirements_lines(state),
+    )
+    if should_quit:
+        return True
 
     state["ending"] = resolve_berserker_ending(state)
 

@@ -5,6 +5,16 @@
 - All six core routes are now implemented as dedicated modular route systems.
 - Placeholder flow is no longer used for primary route content.
 
+### Recent Fixes (Post Phase 1)
+- Berserker ending branch bug addressed:
+   - True ending is no longer hard-locked behind a single exact path.
+   - Near-perfect salvation path support added (6 of 7 salvation flags with Scene 9 salvation), alongside stat checks.
+   - Destruction lock conditions remain in place for explicit collapse outcomes.
+- Added a new Berserker pre-ending Requirements Check screen:
+   - Shows pass/fail for each true-ending threshold.
+   - Shows salvation flag hit count and any missing salvation flags.
+   - Shows destruction lock status and predicted ending before final resolution.
+
 ### Current Build Overview
 - The game runs in a Pygame windowed interface with keyboard-only navigation.
 - Visual direction is black background with white text and SVG-branded menu background.
@@ -59,8 +69,10 @@
    - Combat or active hunt choices reduce ache.
    - High ache levels increase rage and reduce memory retention.
 - Ending branch logic:
-   - True Ending (Salvation) requires both stat thresholds and required salvation route flags.
-   - Bad Ending (Consumption) is used when salvation requirements are not met.
+   - True Ending (Salvation) can be reached via full required salvation flags, or a near-perfect salvation path, plus stat thresholds.
+   - Bad Ending (Consumption) is used when salvation requirements are not met, or destruction lock conditions are triggered.
+- Ending requirements transparency:
+   - A dedicated pre-ending screen now displays requirement status and predicted branch before Scene 10 resolves.
 - Distinct unlock/reward output is shown based on ending branch.
 
 ### Current Game Flow
