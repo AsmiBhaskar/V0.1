@@ -32,6 +32,9 @@
 - Caster route modules:
    - game_core/caster_data.py
    - game_core/caster_route.py
+- Assassin route modules:
+   - game_core/assassin_data.py
+   - game_core/assassin_route.py
 
 ### Current Game Flow
 1. On launch, save files are checked.
@@ -63,7 +66,8 @@
 - Lancer route is fully modular and choice-driven with tracked variables and ending branches.
 - Archer route is fully modular and choice-driven with tracked variables and ending branches.
 - Caster route is fully modular and choice-driven with tracked variables and ending branches.
-- Remaining routes currently use placeholder 3-scene flow: Berserker, Rider, Assassin.
+- Assassin route is fully modular and choice-driven with tracked variables and ending branches.
+- Remaining routes currently use placeholder 3-scene flow: Berserker, Rider.
 - Enter advances to the next scene.
 - Escape saves progress and returns to menu.
 

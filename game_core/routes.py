@@ -1,5 +1,6 @@
 import pygame
 
+from game_core.assassin_route import play_assassin_route
 from game_core.archer_route import play_archer_route
 from game_core.caster_route import play_caster_route
 from game_core.constants import BLACK, FPS
@@ -80,4 +81,6 @@ def play_route(screen, clock, route, state):
         return play_archer_route(screen, clock, state)
     if route == "Caster":
         return play_caster_route(screen, clock, state)
+    if route == "Assassin":
+        return play_assassin_route(screen, clock, state)
     return play_placeholder_route(screen, clock, route, state)
