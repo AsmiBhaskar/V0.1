@@ -4,10 +4,12 @@ import uuid
 from pathlib import Path
 
 from game_core.constants import LOG_FILE, SAVE_DIR
+from game_core.berserker_data import BERSERKER_STATS_TEMPLATE
 from game_core.archer_data import ARCHER_STATS_TEMPLATE
 from game_core.caster_data import CASTER_STATS_TEMPLATE
 from game_core.lancer_data import LANCER_STATS_TEMPLATE
 from game_core.assassin_data import ASSASSIN_STATS_TEMPLATE
+from game_core.rider_data import RIDER_STATS_TEMPLATE
 
 
 def setup_logging():
@@ -34,6 +36,10 @@ def default_route_state(route):
         state.update({key: value[:] if isinstance(value, list) else value for key, value in CASTER_STATS_TEMPLATE.items()})
     if route == "Assassin":
         state.update({key: value[:] if isinstance(value, list) else value for key, value in ASSASSIN_STATS_TEMPLATE.items()})
+    if route == "Rider":
+        state.update({key: value[:] if isinstance(value, list) else value for key, value in RIDER_STATS_TEMPLATE.items()})
+    if route == "Berserker":
+        state.update({key: value[:] if isinstance(value, list) else value for key, value in BERSERKER_STATS_TEMPLATE.items()})
     return state
 
 

@@ -1,78 +1,96 @@
 ## Pygame Project Progress Log
 
+### Phase Status
+- Phase 1 Narrative: COMPLETE
+- All six core routes are now implemented as dedicated modular route systems.
+- Placeholder flow is no longer used for primary route content.
+
 ### Current Build Overview
-- The game now runs in a Pygame windowed interface instead of terminal input.
-- Visual style is black background with white text.
-- Main menu presentation is finalized with the repo SVG logo as the menu background centerpiece.
-- SVG and alpha tuning pass completed for stable, readable menu visuals.
-- Menu navigation uses keyboard controls only:
-  - Up/Down arrows move selection.
-  - Enter confirms selection.
-  - Escape returns/backs out where applicable.
-- Active option is shown with a hover-style highlight bar.
-- Menu typography uses bold italic styling for stronger visual emphasis.
+- The game runs in a Pygame windowed interface with keyboard-only navigation.
+- Visual direction is black background with white text and SVG-branded menu background.
+- Main menu interactions are stable:
+   - Up and Down arrows move selection.
+   - Enter confirms a selection.
+   - Escape backs out or saves and returns where applicable.
+- Active options render with a hover-style highlight bar.
+- Menu typography remains bold and italic for emphasis and readability.
 
 ### Modular Structure (Current)
 - Main entry and app loop:
    - game.py
-- Core configuration:
+- Core constants/config:
    - game_core/constants.py
-- Save/load and logging:
+- Save system and logging:
    - game_core/storage.py
-- Shared UI rendering/menu helpers:
+- Shared UI and menu rendering helpers:
    - game_core/ui.py
-- Route dispatcher and placeholder routes:
+- Route dispatch:
    - game_core/routes.py
-- Lancer route modules:
+- Lancer route:
    - game_core/lancer_data.py
    - game_core/lancer_route.py
-- Archer route modules:
+- Archer route:
    - game_core/archer_data.py
    - game_core/archer_route.py
-- Caster route modules:
+- Caster route:
    - game_core/caster_data.py
    - game_core/caster_route.py
-- Assassin route modules:
+- Assassin route:
    - game_core/assassin_data.py
    - game_core/assassin_route.py
+- Rider route:
+   - game_core/rider_data.py
+   - game_core/rider_route.py
+- Berserker route:
+   - game_core/berserker_data.py
+   - game_core/berserker_route.py
+
+### Route Completion Status
+- Lancer: complete modular route with choice-driven progression and tracked variables.
+- Archer: complete modular route with choice-driven progression and tracked variables.
+- Caster: complete modular route with choice-driven progression and tracked variables.
+- Assassin: complete modular route with choice-driven progression and tracked variables.
+- Rider: complete modular route with choice-driven progression and tracked variables.
+- Berserker: complete special-case modular route with custom mechanics and dual ending logic.
+
+### Berserker Special Logic (Implemented)
+- Burning Ache mechanic:
+   - Passive ache increases per decision turn.
+   - Combat or active hunt choices reduce ache.
+   - High ache levels increase rage and reduce memory retention.
+- Ending branch logic:
+   - True Ending (Salvation) requires both stat thresholds and required salvation route flags.
+   - Bad Ending (Consumption) is used when salvation requirements are not met.
+- Distinct unlock/reward output is shown based on ending branch.
 
 ### Current Game Flow
-1. On launch, save files are checked.
-2. If no save exists, player is prompted into New Game.
-3. New Game shows six route choices:
-   - Lancer
-   - Berserker
-   - Rider
-   - Caster
-   - Assassin
-   - Archer
+1. Game launches and checks for save slots.
+2. If no saves exist, player is prompted into New Game route selection.
+3. New Game offers all six routes:
+    - Lancer
+    - Berserker
+    - Rider
+    - Caster
+    - Assassin
+    - Archer
 4. Main Menu always shows:
-   - Continue
-   - Load
-   - New Game
-   - Exit
+    - Continue
+    - Load
+    - New Game
+    - Exit
 5. Continue loads the most recently updated save slot.
-6. Load opens a list of save slots across routes.
-7. New Game can always create another save slot, even when saves already exist.
+6. Load opens slot list across all routes.
+7. New Game can always create additional save slots.
 
 ### Save System Status
-- Save files are stored in the saves folder as multiple save slots.
-- Save filenames use route + save id format for multi-slot support.
-- Full route state is written as routes advance (scene index plus route-specific variables).
-- Exiting a route mid-progress preserves save data.
-- Completing a route removes only the active save slot for that run.
-
-### Route Scene Behavior
-- Lancer route is fully modular and choice-driven with tracked variables and ending branches.
-- Archer route is fully modular and choice-driven with tracked variables and ending branches.
-- Caster route is fully modular and choice-driven with tracked variables and ending branches.
-- Assassin route is fully modular and choice-driven with tracked variables and ending branches.
-- Remaining routes currently use placeholder 3-scene flow: Berserker, Rider.
-- Enter advances to the next scene.
-- Escape saves progress and returns to menu.
+- Multi-slot saves are active in the saves folder.
+- Save filename pattern uses route plus save id.
+- Route state includes scene index and route-specific tracked variables.
+- Escape from active route saves state and returns to menu.
+- Route completion deletes only the active slot for that run.
 
 ### Technical Notes
-- Window resolution is set to 1280x720.
-- Frame timing uses a fixed clock tick at 60 FPS.
-- Menu screens use SVG-backed branding and bold italic text styling.
-- Optional SVG conversion fallback is supported when direct SVG loading is unavailable.
+- Resolution: 1280x720.
+- Frame timing: fixed 60 FPS.
+- Menu screens support SVG-backed branding with robust rendering fallback behavior.
+- Logging to game.log remains active for runtime and save/load error tracing.

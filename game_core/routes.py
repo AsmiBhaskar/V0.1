@@ -2,9 +2,11 @@ import pygame
 
 from game_core.assassin_route import play_assassin_route
 from game_core.archer_route import play_archer_route
+from game_core.berserker_route import play_berserker_route
 from game_core.caster_route import play_caster_route
 from game_core.constants import BLACK, FPS
 from game_core.lancer_route import play_lancer_route
+from game_core.rider_route import play_rider_route
 from game_core.storage import delete_save, save_progress
 from game_core.ui import (
     draw_centered_text,
@@ -77,10 +79,14 @@ def play_placeholder_route(screen, clock, route, state):
 def play_route(screen, clock, route, state):
     if route == "Lancer":
         return play_lancer_route(screen, clock, state)
+    if route == "Berserker":
+        return play_berserker_route(screen, clock, state)
     if route == "Archer":
         return play_archer_route(screen, clock, state)
     if route == "Caster":
         return play_caster_route(screen, clock, state)
     if route == "Assassin":
         return play_assassin_route(screen, clock, state)
+    if route == "Rider":
+        return play_rider_route(screen, clock, state)
     return play_placeholder_route(screen, clock, route, state)

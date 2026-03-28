@@ -1,0 +1,7 @@
+dodge_success_rate = (base_dodge × (sp_current / sp_max) × dodge_modifier) / 100
+
+dodge_modifier = (agi × 0.3) + (lck × 0.2) + ((sp_current / sp_max) × 100 × 0.5)
+
+sp_cost = 15 (reduced by Perfected Form to 10; increased by Fatigue to 20)
+
+mana_regen = 15 (base); 25 if no skills used this turn
