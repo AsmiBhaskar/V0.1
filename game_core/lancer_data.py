@@ -6,6 +6,10 @@ LANCER_STATS_TEMPLATE = {
     "zuxi_readiness": 0,
     "team_synergy": 0,
     "ending": "",
+    "lancer_combat_won": False,
+    "lancer_archer_combat_won": False,
+    "lancer_berserker_combat_won": False,
+    "lancer_combat_attempts": 0,
 }
 
 LANCER_SCENES = [

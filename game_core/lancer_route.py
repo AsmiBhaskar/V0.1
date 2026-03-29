@@ -1,9 +1,15 @@
 import pygame
+from combat.combat_engine import run_combat
+from combat.encounter_table import ENCOUNTERS
 
 from game_core.constants import BAR_COLOR, BLACK, FPS, WHITE, WINDOW_WIDTH
 from game_core.lancer_data import LANCER_SCENES
 from game_core.storage import delete_save, save_progress
 from game_core.ui import draw_centered_text, draw_left_text, draw_wrapped_block, run_info_screen
+
+
+LANCER_ARCHER_COMBAT_GATE_INDEX = 6
+LANCER_BERSERKER_COMBAT_GATE_INDEX = 8
 
 
 def apply_lancer_choice_effects(state, choice):
@@ -32,8 +38,94 @@ def summarize_lancer_stats(state):
         f"understanding_bhaskar: {state.get('understanding_bhaskar', 0)}",
         f"zuxi_readiness: {state.get('zuxi_readiness', 0)}",
         f"team_synergy: {state.get('team_synergy', 0)}",
+        f"archer_combat_won: {state.get('lancer_archer_combat_won', state.get('lancer_combat_won', False))}",
+        f"berserker_combat_won: {state.get('lancer_berserker_combat_won', False)}",
+        f"combat_attempts: {state.get('lancer_combat_attempts', 0)}",
         f"flags set: {len(state.get('lancer_route_flags', []))}",
     ]
+
+
+def _append_lancer_flag(state, flag):
+    flags = state.setdefault("lancer_route_flags", [])
+    if flag not in flags:
+        flags.append(flag)
+
+
+def _store_lancer_combat_result(state, encounter_key, result):
+    state["lancer_combat_attempts"] = int(state.get("lancer_combat_attempts", 0)) + 1
+    latest = {
+        "encounter": encounter_key,
+        "winner": result.winner,
+        "turns_taken": result.turns_taken,
+        "hp_remaining": result.hp_remaining,
+        "sp_remaining": result.sp_remaining,
+        "mana_remaining": result.mana_remaining,
+        "flags": list(result.flags),
+    }
+    state["lancer_last_combat"] = latest
+
+    history = state.setdefault("lancer_combat_history", [])
+    history.append(latest)
+    if len(history) > 10:
+        history.pop(0)
+
+
+def _run_lancer_gate_combat(screen, clock, state, encounter_key, state_key, victory_flag, victory_text):
+    result = run_combat(screen, clock, ENCOUNTERS[encounter_key])
+    _store_lancer_combat_result(state, encounter_key, result)
+
+    if result.winner == "player":
+        state[state_key] = True
+        if encounter_key == "lancer_vs_archer":
+            state["lancer_combat_won"] = True
+
+        _append_lancer_flag(state, victory_flag)
+        for flag in result.flags:
+            _append_lancer_flag(state, f"{encounter_key}_{flag}")
+
+        lines = [
+            victory_text,
+            f"Turns: {result.turns_taken}  HP/SP/Mana: {result.hp_remaining}/{result.sp_remaining}/{result.mana_remaining}",
+            "You may continue the route.",
+        ]
+        return run_info_screen(screen, clock, "Combat Victory", lines)
+
+    if result.winner == "draw":
+        lines = [
+            "The duel ends without a decisive outcome.",
+            "Return from menu to retry this encounter.",
+        ]
+        return run_info_screen(screen, clock, "Combat Draw", lines)
+
+    lines = [
+        "The battle is lost.",
+        "Return from menu to retry the encounter.",
+    ]
+    return run_info_screen(screen, clock, "Defeat", lines)
+
+
+def run_lancer_archer_combat(screen, clock, state):
+    return _run_lancer_gate_combat(
+        screen,
+        clock,
+        state,
+        encounter_key="lancer_vs_archer",
+        state_key="lancer_archer_combat_won",
+        victory_flag="defeated_archer",
+        victory_text="Kitik yields and the duel is settled.",
+    )
+
+
+def run_lancer_berserker_combat(screen, clock, state):
+    return _run_lancer_gate_combat(
+        screen,
+        clock,
+        state,
+        encounter_key="lancer_vs_berserker",
+        state_key="lancer_berserker_combat_won",
+        victory_flag="defeated_bhaskar",
+        victory_text="Bhaskar is forced back and the front stabilizes.",
+    )
 
 
 def run_lancer_choice_scene(screen, clock, scene, state):
@@ -104,6 +196,30 @@ def run_lancer_choice_scene(screen, clock, scene, state):
 
 def play_lancer_route(screen, clock, state):
     while state["scene_index"] < len(LANCER_SCENES):
+        archer_won = state.get("lancer_archer_combat_won", state.get("lancer_combat_won", False))
+        if state["scene_index"] >= LANCER_ARCHER_COMBAT_GATE_INDEX and not archer_won:
+            should_quit = run_lancer_archer_combat(screen, clock, state)
+            if should_quit:
+                return True
+
+            archer_won = state.get("lancer_archer_combat_won", state.get("lancer_combat_won", False))
+            if not archer_won:
+                save_progress("Lancer", state)
+                return False
+
+            save_progress("Lancer", state)
+
+        if state["scene_index"] >= LANCER_BERSERKER_COMBAT_GATE_INDEX and not state.get("lancer_berserker_combat_won", False):
+            should_quit = run_lancer_berserker_combat(screen, clock, state)
+            if should_quit:
+                return True
+
+            if not state.get("lancer_berserker_combat_won", False):
+                save_progress("Lancer", state)
+                return False
+
+            save_progress("Lancer", state)
+
         scene = LANCER_SCENES[state["scene_index"]]
         selected_index, should_quit = run_lancer_choice_scene(screen, clock, scene, state)
 
