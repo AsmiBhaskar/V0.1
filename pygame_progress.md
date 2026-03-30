@@ -2,8 +2,10 @@
 
 ### Phase Status
 - Phase 1 Narrative: COMPLETE
+- Phase 2 Combat: IN PROGRESS
 - All six core routes are now implemented as dedicated modular route systems.
 - Placeholder flow is no longer used for primary route content.
+- First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
 - Berserker ending branch bug addressed:
@@ -14,6 +16,17 @@
    - Shows pass/fail for each true-ending threshold.
    - Shows salvation flag hit count and any missing salvation flags.
    - Shows destruction lock status and predicted ending before final resolution.
+- Added a standalone modular combat package under combat/:
+   - Includes engine loop, turn manager, renderer, servant factories, encounter table, damage/dodge math, passives, status effects, and item data.
+   - Dependency flow is route -> combat only (combat does not import route modules).
+- Lancer route combat integration expanded:
+   - Gate 1: Nasir vs Kitik (Archer) from scene 7 onward.
+   - Gate 2: Nasir vs Bhaskar (Berserker) from scene 9 onward.
+   - Defeat/draw now safely returns to menu and preserves retry state through save data.
+- Combat UI bounds fixes applied:
+   - Enemy panel HP/turn text now stays within visible frame.
+   - ACT/ITEM/NP submenu now supports in-panel scrolling for long lists.
+   - Option labels are width-fitted to prevent text clipping/overflow.
 
 ### Current Build Overview
 - The game runs in a Pygame windowed interface with keyboard-only navigation.
@@ -54,14 +67,41 @@
 - Berserker route:
    - game_core/berserker_data.py
    - game_core/berserker_route.py
+- Combat system:
+   - combat/combat_engine.py
+   - combat/turn_manager.py
+   - combat/combat_renderer.py
+   - combat/combat_ui.py
+   - combat/combat_log.py
+   - combat/enemy_panel.py
+   - combat/combat_state.py
+   - combat/combat_result.py
+   - combat/damage_calc.py
+   - combat/dodge_calc.py
+   - combat/passive_triggers.py
+   - combat/status_effects.py
+   - combat/encounter_table.py
+   - combat/item_data.py
+   - combat/servants/*.py
 
 ### Route Completion Status
-- Lancer: complete modular route with choice-driven progression and tracked variables.
+- Lancer: modular route with choice-driven progression, tracked variables, and two integrated combat gates (Archer and Berserker).
 - Archer: complete modular route with choice-driven progression and tracked variables.
 - Caster: complete modular route with choice-driven progression and tracked variables.
 - Assassin: complete modular route with choice-driven progression and tracked variables.
 - Rider: complete modular route with choice-driven progression and tracked variables.
 - Berserker: complete special-case modular route with custom mechanics and dual ending logic.
+
+### Combat System Status (Current)
+- Implemented:
+   - Core turn loop with player action, enemy attack, dodge phase, regen/cooldown ticks, and result return.
+   - Hook-driven passive system with servant-specific behavior registration.
+   - Skill, item, and NP action handling with mana/SP/NP resource updates.
+   - Encounter-driven servant factory initialization and context flags.
+   - Route-side result persistence (winner, turns, resources, and combat flags).
+- In active testing:
+   - Balance tuning (damage scaling, dodge reliability, mana pressure, NP pacing).
+   - Additional route integrations beyond Lancer.
 
 ### Berserker Special Logic (Implemented)
 - Burning Ache mechanic:
@@ -93,6 +133,7 @@
 5. Continue loads the most recently updated save slot.
 6. Load opens slot list across all routes.
 7. New Game can always create additional save slots.
+8. Lancer route now includes mandatory combat checkpoints before late-route progression.
 
 ### Save System Status
 - Multi-slot saves are active in the saves folder.
@@ -100,9 +141,11 @@
 - Route state includes scene index and route-specific tracked variables.
 - Escape from active route saves state and returns to menu.
 - Route completion deletes only the active slot for that run.
+- Lancer save state now also tracks combat gate outcomes and recent combat history.
 
 ### Technical Notes
 - Resolution: 1280x720.
 - Frame timing: fixed 60 FPS.
 - Menu screens support SVG-backed branding with robust rendering fallback behavior.
 - Logging to game.log remains active for runtime and save/load error tracing.
+- Combat UI layout is now constrained to screen bounds with submenu list-window rendering.
