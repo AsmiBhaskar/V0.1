@@ -8,10 +8,8 @@ from combat.combat_constants import (
 )
 
 
-def calculate_dodge_modifier(agi: int, lck: int, sp_current: int, sp_max: int) -> float:
-    sp_pct = (sp_current / sp_max) * 100 if sp_max > 0 else 0
-    modifier = (agi * 0.3) + (lck * 0.2) + (sp_pct * 0.5)
-    return min(modifier, 100.0)
+def calculate_dodge_modifier(agi: int, lck: int) -> float:
+    return min((agi * 0.3) + (lck * 0.2), 100.0)
 
 
 def calculate_dodge_chance(
@@ -24,7 +22,7 @@ def calculate_dodge_chance(
     if sp_max <= 0:
         return 0.0
     sp_ratio = sp_current / sp_max
-    modifier = calculate_dodge_modifier(agi, lck, sp_current, sp_max)
+    modifier = calculate_dodge_modifier(agi, lck)
     exhaustion = EXHAUSTION_PENALTY if sp_current < EXHAUSTION_THRESHOLD else 1.0
     return (base_dodge * sp_ratio * modifier * exhaustion) / 100
 

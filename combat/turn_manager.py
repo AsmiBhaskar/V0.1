@@ -2,11 +2,13 @@ import random
 
 from combat.combat_constants import (
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_FIGHT,
     ACTION_ITEM,
     ACTION_NP,
     AI_NP_THRESHOLD,
+    BLOCK_DAMAGE_REDUCTION,
     AI_SKILL_CHANCE,
     CRIT_CHANCE_BASE,
     EXHAUSTION_THRESHOLD,
@@ -17,6 +19,7 @@ from combat.combat_constants import (
     NP_GAIN_ON_HIT,
     NP_GAIN_ON_HIT_RECV,
     NP_MAX,
+    SP_COST_BLOCK,
     SP_REGEN_CONSECUTIVE,
     SP_REGEN_IDLE,
     SP_REGEN_REST,
@@ -57,6 +60,7 @@ def initialize_runtime_state(state):
     ctx.setdefault("low_sp_triggered", False)
     ctx.setdefault("used_np_this_battle", False)
     ctx.setdefault("auto_dodge_intent", False)
+    ctx.setdefault("player_blocking", False)
     ctx.setdefault("pending_enemy_action", None)
 
     if "turn_flags" not in ctx:
@@ -68,7 +72,7 @@ def process_player_action(state, selected_action):
     action_payload = _normalize_action_payload(selected_action)
     action = action_payload.get("action")
 
-    if action not in {ACTION_FIGHT, ACTION_ACT, ACTION_ITEM, ACTION_NP, ACTION_DODGE}:
+    if action not in {ACTION_FIGHT, ACTION_ACT, ACTION_ITEM, ACTION_NP, ACTION_DODGE, ACTION_BLOCK}:
         return None
 
     committed = False
@@ -90,6 +94,9 @@ def process_player_action(state, selected_action):
         state.context_flags["turn_flags"]["rested"] = True
         state.log_event("You hold position and prepare to evade the next strike.")
         committed = True
+
+    elif action == ACTION_BLOCK:
+        committed = _prepare_block(state)
 
     if not committed:
         return None
@@ -127,19 +134,20 @@ def process_enemy_turn(state):
     if state.phase != "dodge_phase":
         return None
 
-    if "dodge_choice" not in state.context_flags:
+    if "dodge_choice" not in state.context_flags and not state.context_flags.get("player_blocking", False):
         return None
 
     pending = state.context_flags.pop("pending_enemy_action", None)
+    has_dodge_choice = "dodge_choice" in state.context_flags
     dodge_choice = bool(state.context_flags.pop("dodge_choice", False))
     if pending is None:
         state.phase = "player_action"
         return None
 
     turn_flags = state.context_flags["turn_flags"]
-    turn_flags["attempted_dodge"] = dodge_choice
+    turn_flags["attempted_dodge"] = has_dodge_choice and dodge_choice
 
-    if dodge_choice:
+    if has_dodge_choice and dodge_choice:
         state.context_flags["total_dodge_attempts"] += 1
         success, _ = _resolve_dodge_attempt(state)
         if success:
@@ -151,6 +159,25 @@ def process_enemy_turn(state):
             state.consecutive_dodges = 0
             fire_hook(HOOK_ON_DODGE_FAIL, state, state.player.name, {"turn": state.turn})
             _enemy_hits_player(state, pending["damage"], pending["label"])
+
+    elif state.context_flags.pop("player_blocking", False):
+        if state.player.sp >= SP_COST_BLOCK:
+            state.player.sp = max(0, state.player.sp - SP_COST_BLOCK)
+
+            reduced = max(1, int(pending["damage"] * BLOCK_DAMAGE_REDUCTION))
+            absorbed = pending["damage"] - reduced
+
+            turn_flags["blocked"] = True
+            state.consecutive_dodges = 0
+
+            _enemy_hits_player(state, reduced, pending["label"] + " (blocked)")
+            state.log_event(f"Block absorbs {absorbed} damage.")
+
+        else:
+            state.log_event("Stance collapses -- insufficient SP.")
+            state.consecutive_dodges = 0
+            _enemy_hits_player(state, pending["damage"], pending["label"])
+
     else:
         state.consecutive_dodges = 0
         _enemy_hits_player(state, pending["damage"], pending["label"])
@@ -546,8 +573,15 @@ def _build_result(state, winner: str):
 def _apply_end_turn_recovery(state):
     flags = state.context_flags["turn_flags"]
 
-    if flags["attempted_dodge"]:
-        regen_sp = SP_REGEN_CONSECUTIVE if state.consecutive_dodges > 1 else SP_REGEN_IDLE
+    if flags["attempted_dodge"] and flags["dodge_success"]:
+        regen_sp = 0
+
+    elif flags["attempted_dodge"] and not flags["dodge_success"]:
+        regen_sp = SP_REGEN_CONSECUTIVE if state.consecutive_dodges > 1 else 3
+
+    elif flags.get("blocked"):
+        regen_sp = 5
+
     else:
         regen_sp = SP_REGEN_REST if flags["rested"] else SP_REGEN_IDLE
 
@@ -716,4 +750,16 @@ def _reset_turn_flags(state):
         "rested": False,
         "attempted_dodge": False,
         "dodge_success": False,
+        "blocked": False,
     }
+
+
+def _prepare_block(state):
+    if state.player.sp < SP_COST_BLOCK:
+        state.log_event("Not enough SP to hold a defensive stance.")
+        return False
+
+    state.context_flags["player_blocking"] = True
+    state.context_flags["turn_flags"]["rested"] = False
+    state.log_event("You brace for impact -- defensive stance locked.")
+    return True

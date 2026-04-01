@@ -3,6 +3,7 @@ import pygame
 from combat.combat_constants import (
     ACTIONS,
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_ITEM,
     ACTION_NP,
@@ -16,6 +17,7 @@ from combat.combat_constants import (
     EXHAUSTION_THRESHOLD,
     HP_BAR_COLOR,
     MANA_BAR_COLOR,
+    SP_COST_BLOCK,
     SP_BAR_COLOR,
 )
 
@@ -93,6 +95,9 @@ def _button_enabled(state, action: str):
     if action == ACTION_ITEM:
         return len(state.context_flags.get("inventory", [])) > 0
 
+    if action == ACTION_BLOCK and state.player.sp < SP_COST_BLOCK:
+        return False
+
     return True
 
 
@@ -102,11 +107,11 @@ def draw_action_bar(surface, state):
     pygame.draw.rect(surface, COMBAT_PANEL, panel_rect)
     pygame.draw.rect(surface, COMBAT_GOLD, panel_rect, 2)
 
-    label_font = _font(24, bold=True)
+    label_font = _font(22, bold=True)
     key_font = _font(16)
 
     selected = int(state.context_flags.get("action_index", 0))
-    button_w = 128
+    button_w = max(1, w // max(1, len(ACTIONS)))
 
     key_hint = {
         "FIGHT": "F",
@@ -114,10 +119,13 @@ def draw_action_bar(surface, state):
         "ITEM": "I",
         "NOBLE PHANTASM": "N",
         "DODGE": "D",
+        "BLOCK": "B",
     }
 
     for i, action in enumerate(ACTIONS):
-        btn_rect = pygame.Rect(x + i * button_w, y, button_w, h)
+        btn_x = x + i * button_w
+        btn_width = button_w if i < (len(ACTIONS) - 1) else (x + w - btn_x)
+        btn_rect = pygame.Rect(btn_x, y, btn_width, h)
         enabled = _button_enabled(state, action)
 
         if i == selected and state.phase == "player_action" and not state.context_flags.get("submenu_open", False):
@@ -130,7 +138,7 @@ def draw_action_bar(surface, state):
         label_rect = label_surf.get_rect(center=(btn_rect.centerx, y + 52))
         surface.blit(label_surf, label_rect)
 
-        hint_surf = key_font.render(key_hint[action], True, text_color)
+        hint_surf = key_font.render(key_hint.get(action, "?"), True, text_color)
         hint_rect = hint_surf.get_rect(center=(btn_rect.centerx, y + 95))
         surface.blit(hint_surf, hint_rect)
 

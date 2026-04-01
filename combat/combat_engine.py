@@ -3,6 +3,7 @@ import pygame
 from combat.combat_constants import (
     ACTIONS,
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_FIGHT,
     ACTION_ITEM,
@@ -163,11 +164,13 @@ def _handle_keydown(key, state):
         pygame.K_i: ACTION_ITEM,
         pygame.K_n: ACTION_NP,
         pygame.K_d: ACTION_DODGE,
+        pygame.K_b: ACTION_BLOCK,
     }
 
     if key in direct:
         action = direct[key]
-        state.context_flags["action_index"] = ACTIONS.index(action)
+        if action in ACTIONS:
+            state.context_flags["action_index"] = ACTIONS.index(action)
         return _activate_or_open_submenu(action, state)
 
     if key in (pygame.K_RETURN, pygame.K_KP_ENTER):

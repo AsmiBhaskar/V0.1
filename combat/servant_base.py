@@ -35,8 +35,17 @@ class ServantBase:
 
         self.hp_max = self.strength * 12
         self.hp = self.hp_max
-        self.sp_max = END_TO_SP.get(str(self.endurance), self.endurance)
+
+        if isinstance(self.endurance, str):
+            self.sp_max = END_TO_SP.get(self.endurance, 100)
+        else:
+            self.sp_max = int(self.endurance)
         self.sp = self.sp_max
-        self.mana_max = MANA_TO_BASE.get(str(self.mana_rank), self.mana_rank)
+
+        if isinstance(self.mana_rank, str):
+            self.mana_max = MANA_TO_BASE.get(self.mana_rank, 200)
+        else:
+            self.mana_max = int(self.mana_rank)
         self.mana = self.mana_max
+
         self.base_attack = self.strength
