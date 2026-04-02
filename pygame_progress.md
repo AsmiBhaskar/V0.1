@@ -103,6 +103,12 @@
    - Balance tuning (damage scaling, dodge reliability, mana pressure, NP pacing).
    - Additional route integrations beyond Lancer.
 
+### Deferred Development Notes
+- Rank-based conversion constants in combat/combat_constants.py are intentionally retained for scaling.
+   - Current servant factory files mostly use pre-converted numeric values (for example, endurance=120).
+   - If future servants are authored with rank strings (A, A+, EX), ServantBase can convert them through END_TO_SP and MANA_TO_BASE without refactor.
+   - Re-evaluate constant cleanup later only if the project commits to numeric-only servant definitions.
+
 ### Berserker Special Logic (Implemented)
 - Burning Ache mechanic:
    - Passive ache increases per decision turn.
