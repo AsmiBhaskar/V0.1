@@ -22,11 +22,13 @@ def make_nasir(is_enemy: bool = False) -> ServantBase:
         base_dodge=0.65,
         unique_vars={
             "consecutive_hits": 0,
-            "battle_continuation_used": False,
+            "battle_continuation_count": 0,
             "zero_state_active": False,
             "adaptive_bonus": 0.0,
             "emotional_severance_turns": 0,
             "minds_eye_free_dodge_used": False,
+            "adaptive_locked": False,
+            "damage_resistance_bonus": 0.0,
         },
         passives={
             "perfected_form": True,
@@ -41,7 +43,7 @@ def make_nasir(is_enemy: bool = False) -> ServantBase:
                 "id": "zuxi_combat_call",
                 "name": "Zuxi - Combat Call",
                 "mana_cost": 20,
-                "cooldown": 0,
+                "cooldown": 6,
                 "damage_mult": 1.5,
                 "effect": "mana_burst",
             },
@@ -88,6 +90,8 @@ def _register_nasir_hooks():
 
     def on_turn_start(state, ctx):
         uv = state.player.unique_vars
+        uv["damage_resistance_bonus"] = min(0.20, 0.01 * (state.turn + 1))
+
         if state.turn > 0 and state.turn % 2 == 0:
             uv["adaptive_bonus"] = min(uv["adaptive_bonus"] + 0.03, 0.15)
             state.player.base_dodge = 0.65 + uv["adaptive_bonus"]
@@ -101,11 +105,20 @@ def _register_nasir_hooks():
 
     def on_death(state, ctx):
         uv = state.player.unique_vars
-        if not uv.get("battle_continuation_used", False):
-            state.player.hp = 1
-            state.player.sp = 1
-            uv["battle_continuation_used"] = True
-            state.log_event("Hardened Discipline - Nasir endures.")
+        continuation_count = int(uv.get("battle_continuation_count", 0))
+
+        if continuation_count == 0:
+            uv["battle_continuation_count"] = 1
+            state.player.hp = max(1, int(state.player.hp_max * 0.50))
+            state.log_event("Hardened Discipline - Battle Continuation I restores 50% HP.")
+            return
+
+        if continuation_count == 1:
+            uv["battle_continuation_count"] = 2
+            uv["adaptive_locked"] = True
+            state.player.passives["adaptive_evolution"] = False
+            state.player.hp = max(1, int(state.player.hp_max * 0.20))
+            state.log_event("Hardened Discipline - Battle Continuation II restores 20% HP. Adaptive Evolution sealed.")
 
     register_hook(HOOK_ON_TURN_START, "Nasir", on_turn_start)
     register_hook(HOOK_ON_DODGE_SUC, "Nasir", on_dodge_success)

@@ -8,6 +8,20 @@
 - First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-02):
+   - Reworked Nasir Hardened Discipline behavior:
+      - Battle Continuation now has two activations (first revive: 50% HP, second revive: 20% HP).
+      - Second revive now locks Adaptive Evolution for the rest of combat.
+      - Per-turn damage resistance growth is now active from turn 1 at +1% per turn, capped at 20%.
+   - Combat tracker panel was redesigned from a static passive/effect list into a rolling turn log:
+      - Each completed turn now records selected action, skill cooldown states, and active effect summary.
+      - Tracker now prioritizes recent turn-by-turn combat state rather than long static lists.
+   - Updated Zuxi - Combat Call behavior:
+      - Cooldown increased to 6 turns.
+      - Mana Burst now applies a 3-turn explosive-wave state.
+      - Using NP now instantly refreshes Combat Call if it is on cooldown.
+      - After True Name NP, Combat Call damage gets an additional +50% multiplier.
+   - Recent combat module edits were compile-validated with py_compile.
 - Berserker ending branch bug addressed:
    - True ending is no longer hard-locked behind a single exact path.
    - Near-perfect salvation path support added (6 of 7 salvation flags with Scene 9 salvation), alongside stat checks.
