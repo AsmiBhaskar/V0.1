@@ -31,7 +31,7 @@ class ServantBase:
     unique_vars: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
-        from combat.combat_constants import END_TO_SP, MANA_TO_BASE
+        from combat.data.combat_constants import END_TO_SP, MANA_TO_BASE
 
         self.hp_max = self.strength * 12
         self.hp = self.hp_max
@@ -49,3 +49,4 @@ class ServantBase:
         self.mana = self.mana_max
 
         self.base_attack = self.strength
+

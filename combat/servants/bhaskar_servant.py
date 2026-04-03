@@ -1,5 +1,5 @@
-from combat.passive_triggers import HOOK_ON_DEATH, HOOK_ON_HIT_RECV, HOOK_ON_TURN_START, register_hook
-from combat.servant_base import ServantBase
+from combat.systems.passive_triggers import HOOK_ON_DEATH, HOOK_ON_HIT_RECV, HOOK_ON_TURN_START, register_hook
+from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
 
@@ -109,3 +109,4 @@ def _register_bhaskar_hooks():
     register_hook(HOOK_ON_HIT_RECV, "Bhaskar", on_hit_received)
     register_hook(HOOK_ON_DEATH, "Bhaskar", on_death)
     _HOOKS_REGISTERED = True
+

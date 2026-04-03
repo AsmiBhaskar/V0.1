@@ -1,4 +1,4 @@
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     EXHAUSTION_THRESHOLD,
     EXHAUSTION_PENALTY,
     FATIGUE_SP_PENALTY,
@@ -47,3 +47,4 @@ def attempt_dodge(servant, consecutive_dodges: int, perfected_form: bool = False
     success = random.random() < chance
     sp_cost = calculate_sp_cost(consecutive_dodges, perfected_form) if success else 0
     return success, sp_cost
+

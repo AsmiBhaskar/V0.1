@@ -1,10 +1,10 @@
-from combat.passive_triggers import (
+from combat.systems.passive_triggers import (
     HOOK_ON_DEATH,
     HOOK_ON_DODGE_SUC,
     HOOK_ON_TURN_START,
     register_hook,
 )
-from combat.servant_base import ServantBase
+from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
 
@@ -124,3 +124,4 @@ def _register_nasir_hooks():
     register_hook(HOOK_ON_DODGE_SUC, "Nasir", on_dodge_success)
     register_hook(HOOK_ON_DEATH, "Nasir", on_death)
     _HOOKS_REGISTERED = True
+

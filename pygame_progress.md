@@ -8,6 +8,45 @@
 - First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-03):
+   - Reorganized the combat package into responsibility-based subfolders to reduce root-level file clutter.
+   - File move log:
+      - Moved to combat/core/:
+         - combat_engine.py
+         - turn_manager.py
+         - combat_state.py
+         - combat_result.py
+         - encounter_table.py
+      - Moved to combat/ui/:
+         - combat_renderer.py
+         - combat_ui.py
+         - combat_log.py
+         - enemy_panel.py
+      - Moved to combat/systems/:
+         - damage_calc.py
+         - dodge_calc.py
+         - passive_triggers.py
+         - status_effects.py
+      - Moved to combat/data/:
+         - combat_constants.py
+         - item_data.py
+         - spirit_data.py
+         - ache_enemy_data.py
+      - Moved to combat/entities/:
+         - servant_base.py
+      - Kept in place:
+         - combat/servants/*.py
+         - combat/servants/__init__.py
+         - combat/__init__.py
+   - Import update scope:
+      - Route integration imports updated to combat.core.* modules.
+      - Servant modules updated to import from combat.systems.passive_triggers and combat.entities.servant_base.
+      - Combat internals updated to import from combat.core.*, combat.ui.*, combat.systems.*, and combat.data.*.
+   - Packaging changes:
+      - Added package markers: combat/core/__init__.py, combat/ui/__init__.py, combat/systems/__init__.py, combat/data/__init__.py, combat/entities/__init__.py.
+   - Validation completed:
+      - compileall run for game.py, game_core/, and combat/ (passed).
+      - Import smoke test for combat.core.combat_engine and combat.core.encounter_table (passed).
 - Session update (2026-04-02):
    - Reworked Nasir Hardened Discipline behavior:
       - Battle Continuation now has two activations (first revive: 50% HP, second revive: 20% HP).
@@ -82,20 +121,24 @@
    - game_core/berserker_data.py
    - game_core/berserker_route.py
 - Combat system:
-   - combat/combat_engine.py
-   - combat/turn_manager.py
-   - combat/combat_renderer.py
-   - combat/combat_ui.py
-   - combat/combat_log.py
-   - combat/enemy_panel.py
-   - combat/combat_state.py
-   - combat/combat_result.py
-   - combat/damage_calc.py
-   - combat/dodge_calc.py
-   - combat/passive_triggers.py
-   - combat/status_effects.py
-   - combat/encounter_table.py
-   - combat/item_data.py
+   - combat/core/combat_engine.py
+   - combat/core/turn_manager.py
+   - combat/core/combat_state.py
+   - combat/core/combat_result.py
+   - combat/core/encounter_table.py
+   - combat/ui/combat_renderer.py
+   - combat/ui/combat_ui.py
+   - combat/ui/combat_log.py
+   - combat/ui/enemy_panel.py
+   - combat/systems/damage_calc.py
+   - combat/systems/dodge_calc.py
+   - combat/systems/passive_triggers.py
+   - combat/systems/status_effects.py
+   - combat/data/combat_constants.py
+   - combat/data/item_data.py
+   - combat/data/spirit_data.py
+   - combat/data/ache_enemy_data.py
+   - combat/entities/servant_base.py
    - combat/servants/*.py
 
 ### Route Completion Status
@@ -118,7 +161,7 @@
    - Additional route integrations beyond Lancer.
 
 ### Deferred Development Notes
-- Rank-based conversion constants in combat/combat_constants.py are intentionally retained for scaling.
+- Rank-based conversion constants in combat/data/combat_constants.py are intentionally retained for scaling.
    - Current servant factory files mostly use pre-converted numeric values (for example, endurance=120).
    - If future servants are authored with rank strings (A, A+, EX), ServantBase can convert them through END_TO_SP and MANA_TO_BASE without refactor.
    - Re-evaluate constant cleanup later only if the project commits to numeric-only servant definitions.

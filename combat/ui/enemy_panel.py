@@ -1,6 +1,6 @@
 import pygame
 
-from combat.combat_constants import BAR_BG_COLOR, BAR_BORDER, COMBAT_GOLD, COMBAT_PANEL, COMBAT_WHITE, HP_BAR_COLOR
+from combat.data.combat_constants import BAR_BG_COLOR, BAR_BORDER, COMBAT_GOLD, COMBAT_PANEL, COMBAT_WHITE, HP_BAR_COLOR
 
 _FONTS = {}
 
@@ -67,3 +67,4 @@ def draw_enemy_panel(surface, state, title: str):
     turn_text = hp_font.render(f"TURN {state.turn + 1}", True, COMBAT_WHITE)
     turn_rect = turn_text.get_rect(topright=(right_margin, 18))
     surface.blit(turn_text, turn_rect)
+

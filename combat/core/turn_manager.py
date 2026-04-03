@@ -1,6 +1,6 @@
 import random
 
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     ACTION_ACT,
     ACTION_BLOCK,
     ACTION_DODGE,
@@ -24,11 +24,11 @@ from combat.combat_constants import (
     SP_REGEN_IDLE,
     SP_REGEN_REST,
 )
-from combat.combat_result import CombatResult
-from combat.damage_calc import calculate_damage
-from combat.dodge_calc import attempt_dodge
-from combat.item_data import DEFAULT_INVENTORY, ITEMS
-from combat.passive_triggers import (
+from combat.core.combat_result import CombatResult
+from combat.systems.damage_calc import calculate_damage
+from combat.systems.dodge_calc import attempt_dodge
+from combat.data.item_data import DEFAULT_INVENTORY, ITEMS
+from combat.systems.passive_triggers import (
     HOOK_ON_DEATH,
     HOOK_ON_DODGE_FAIL,
     HOOK_ON_DODGE_SUC,
@@ -40,7 +40,7 @@ from combat.passive_triggers import (
     HOOK_ON_SKILL_USE,
     fire_hook,
 )
-from combat.status_effects import tick_statuses
+from combat.systems.status_effects import tick_statuses
 
 
 def initialize_runtime_state(state):
@@ -865,3 +865,4 @@ def _prepare_block(state):
     state.context_flags["turn_flags"]["rested"] = False
     state.log_event("You brace for impact -- defensive stance locked.")
     return True
+

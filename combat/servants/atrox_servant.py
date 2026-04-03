@@ -1,5 +1,5 @@
-from combat.passive_triggers import HOOK_ON_DODGE_SUC, HOOK_ON_LOW_SP, HOOK_ON_TURN_START, register_hook
-from combat.servant_base import ServantBase
+from combat.systems.passive_triggers import HOOK_ON_DODGE_SUC, HOOK_ON_LOW_SP, HOOK_ON_TURN_START, register_hook
+from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
 
@@ -89,3 +89,4 @@ def _register_atrox_hooks():
     register_hook(HOOK_ON_DODGE_SUC, "Atrox", on_dodge_success)
     register_hook(HOOK_ON_LOW_SP, "Atrox", on_low_sp)
     _HOOKS_REGISTERED = True
+

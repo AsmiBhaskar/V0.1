@@ -1,6 +1,6 @@
 import pygame
 
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     ACTIONS,
     ACTION_ACT,
     ACTION_BLOCK,
@@ -296,3 +296,4 @@ def draw_combat_tracker(surface, state, x=850, y=208, w=414, h=244):
     if hidden > 0:
         more_text = _fit_text(sub_font, f"+{hidden} older turn logs", w - 18)
         surface.blit(sub_font.render(more_text, True, COMBAT_DIM), (x + 9, y + h - 20))
+

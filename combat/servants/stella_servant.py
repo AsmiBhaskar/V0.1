@@ -1,5 +1,5 @@
-from combat.passive_triggers import HOOK_ON_HIT, HOOK_ON_TURN_START, register_hook
-from combat.servant_base import ServantBase
+from combat.systems.passive_triggers import HOOK_ON_HIT, HOOK_ON_TURN_START, register_hook
+from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
 
@@ -90,3 +90,4 @@ def _register_stella_hooks():
     register_hook(HOOK_ON_TURN_START, "Stella", on_turn_start)
     register_hook(HOOK_ON_HIT, "Stella", on_hit)
     _HOOKS_REGISTERED = True
+
