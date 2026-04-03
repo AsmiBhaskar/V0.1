@@ -2,10 +2,65 @@
 
 ### Phase Status
 - Phase 1 Narrative: COMPLETE
+- Phase 2 Combat: IN PROGRESS
 - All six core routes are now implemented as dedicated modular route systems.
 - Placeholder flow is no longer used for primary route content.
+- First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-03):
+   - Reorganized the combat package into responsibility-based subfolders to reduce root-level file clutter.
+   - File move log:
+      - Moved to combat/core/:
+         - combat_engine.py
+         - turn_manager.py
+         - combat_state.py
+         - combat_result.py
+         - encounter_table.py
+      - Moved to combat/ui/:
+         - combat_renderer.py
+         - combat_ui.py
+         - combat_log.py
+         - enemy_panel.py
+      - Moved to combat/systems/:
+         - damage_calc.py
+         - dodge_calc.py
+         - passive_triggers.py
+         - status_effects.py
+      - Moved to combat/data/:
+         - combat_constants.py
+         - item_data.py
+         - spirit_data.py
+         - ache_enemy_data.py
+      - Moved to combat/entities/:
+         - servant_base.py
+      - Kept in place:
+         - combat/servants/*.py
+         - combat/servants/__init__.py
+         - combat/__init__.py
+   - Import update scope:
+      - Route integration imports updated to combat.core.* modules.
+      - Servant modules updated to import from combat.systems.passive_triggers and combat.entities.servant_base.
+      - Combat internals updated to import from combat.core.*, combat.ui.*, combat.systems.*, and combat.data.*.
+   - Packaging changes:
+      - Added package markers: combat/core/__init__.py, combat/ui/__init__.py, combat/systems/__init__.py, combat/data/__init__.py, combat/entities/__init__.py.
+   - Validation completed:
+      - compileall run for game.py, game_core/, and combat/ (passed).
+      - Import smoke test for combat.core.combat_engine and combat.core.encounter_table (passed).
+- Session update (2026-04-02):
+   - Reworked Nasir Hardened Discipline behavior:
+      - Battle Continuation now has two activations (first revive: 50% HP, second revive: 20% HP).
+      - Second revive now locks Adaptive Evolution for the rest of combat.
+      - Per-turn damage resistance growth is now active from turn 1 at +1% per turn, capped at 20%.
+   - Combat tracker panel was redesigned from a static passive/effect list into a rolling turn log:
+      - Each completed turn now records selected action, skill cooldown states, and active effect summary.
+      - Tracker now prioritizes recent turn-by-turn combat state rather than long static lists.
+   - Updated Zuxi - Combat Call behavior:
+      - Cooldown increased to 6 turns.
+      - Mana Burst now applies a 3-turn explosive-wave state.
+      - Using NP now instantly refreshes Combat Call if it is on cooldown.
+      - After True Name NP, Combat Call damage gets an additional +50% multiplier.
+   - Recent combat module edits were compile-validated with py_compile.
 - Berserker ending branch bug addressed:
    - True ending is no longer hard-locked behind a single exact path.
    - Near-perfect salvation path support added (6 of 7 salvation flags with Scene 9 salvation), alongside stat checks.
@@ -14,6 +69,17 @@
    - Shows pass/fail for each true-ending threshold.
    - Shows salvation flag hit count and any missing salvation flags.
    - Shows destruction lock status and predicted ending before final resolution.
+- Added a standalone modular combat package under combat/:
+   - Includes engine loop, turn manager, renderer, servant factories, encounter table, damage/dodge math, passives, status effects, and item data.
+   - Dependency flow is route -> combat only (combat does not import route modules).
+- Lancer route combat integration expanded:
+   - Gate 1: Nasir vs Kitik (Archer) from scene 7 onward.
+   - Gate 2: Nasir vs Bhaskar (Berserker) from scene 9 onward.
+   - Defeat/draw now safely returns to menu and preserves retry state through save data.
+- Combat UI bounds fixes applied:
+   - Enemy panel HP/turn text now stays within visible frame.
+   - ACT/ITEM/NP submenu now supports in-panel scrolling for long lists.
+   - Option labels are width-fitted to prevent text clipping/overflow.
 
 ### Current Build Overview
 - The game runs in a Pygame windowed interface with keyboard-only navigation.
@@ -54,14 +120,51 @@
 - Berserker route:
    - game_core/berserker_data.py
    - game_core/berserker_route.py
+- Combat system:
+   - combat/core/combat_engine.py
+   - combat/core/turn_manager.py
+   - combat/core/combat_state.py
+   - combat/core/combat_result.py
+   - combat/core/encounter_table.py
+   - combat/ui/combat_renderer.py
+   - combat/ui/combat_ui.py
+   - combat/ui/combat_log.py
+   - combat/ui/enemy_panel.py
+   - combat/systems/damage_calc.py
+   - combat/systems/dodge_calc.py
+   - combat/systems/passive_triggers.py
+   - combat/systems/status_effects.py
+   - combat/data/combat_constants.py
+   - combat/data/item_data.py
+   - combat/data/spirit_data.py
+   - combat/data/ache_enemy_data.py
+   - combat/entities/servant_base.py
+   - combat/servants/*.py
 
 ### Route Completion Status
-- Lancer: complete modular route with choice-driven progression and tracked variables.
+- Lancer: modular route with choice-driven progression, tracked variables, and two integrated combat gates (Archer and Berserker).
 - Archer: complete modular route with choice-driven progression and tracked variables.
 - Caster: complete modular route with choice-driven progression and tracked variables.
 - Assassin: complete modular route with choice-driven progression and tracked variables.
 - Rider: complete modular route with choice-driven progression and tracked variables.
 - Berserker: complete special-case modular route with custom mechanics and dual ending logic.
+
+### Combat System Status (Current)
+- Implemented:
+   - Core turn loop with player action, enemy attack, dodge phase, regen/cooldown ticks, and result return.
+   - Hook-driven passive system with servant-specific behavior registration.
+   - Skill, item, and NP action handling with mana/SP/NP resource updates.
+   - Encounter-driven servant factory initialization and context flags.
+   - Route-side result persistence (winner, turns, resources, and combat flags).
+- In active testing:
+   - Balance tuning (damage scaling, dodge reliability, mana pressure, NP pacing).
+   - Additional route integrations beyond Lancer.
+
+### Deferred Development Notes
+- Rank-based conversion constants in combat/data/combat_constants.py are intentionally retained for scaling.
+   - Current servant factory files mostly use pre-converted numeric values (for example, endurance=120).
+   - If future servants are authored with rank strings (A, A+, EX), ServantBase can convert them through END_TO_SP and MANA_TO_BASE without refactor.
+   - Re-evaluate constant cleanup later only if the project commits to numeric-only servant definitions.
 
 ### Berserker Special Logic (Implemented)
 - Burning Ache mechanic:
@@ -93,6 +196,7 @@
 5. Continue loads the most recently updated save slot.
 6. Load opens slot list across all routes.
 7. New Game can always create additional save slots.
+8. Lancer route now includes mandatory combat checkpoints before late-route progression.
 
 ### Save System Status
 - Multi-slot saves are active in the saves folder.
@@ -100,9 +204,11 @@
 - Route state includes scene index and route-specific tracked variables.
 - Escape from active route saves state and returns to menu.
 - Route completion deletes only the active slot for that run.
+- Lancer save state now also tracks combat gate outcomes and recent combat history.
 
 ### Technical Notes
 - Resolution: 1280x720.
 - Frame timing: fixed 60 FPS.
 - Menu screens support SVG-backed branding with robust rendering fallback behavior.
 - Logging to game.log remains active for runtime and save/load error tracing.
+- Combat UI layout is now constrained to screen bounds with submenu list-window rendering.

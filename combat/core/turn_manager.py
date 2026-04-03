@@ -1,12 +1,14 @@
 import random
 
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_FIGHT,
     ACTION_ITEM,
     ACTION_NP,
     AI_NP_THRESHOLD,
+    BLOCK_DAMAGE_REDUCTION,
     AI_SKILL_CHANCE,
     CRIT_CHANCE_BASE,
     EXHAUSTION_THRESHOLD,
@@ -17,15 +19,16 @@ from combat.combat_constants import (
     NP_GAIN_ON_HIT,
     NP_GAIN_ON_HIT_RECV,
     NP_MAX,
+    SP_COST_BLOCK,
     SP_REGEN_CONSECUTIVE,
     SP_REGEN_IDLE,
     SP_REGEN_REST,
 )
-from combat.combat_result import CombatResult
-from combat.damage_calc import calculate_damage
-from combat.dodge_calc import attempt_dodge
-from combat.item_data import DEFAULT_INVENTORY, ITEMS
-from combat.passive_triggers import (
+from combat.core.combat_result import CombatResult
+from combat.systems.damage_calc import calculate_damage
+from combat.systems.dodge_calc import attempt_dodge
+from combat.data.item_data import DEFAULT_INVENTORY, ITEMS
+from combat.systems.passive_triggers import (
     HOOK_ON_DEATH,
     HOOK_ON_DODGE_FAIL,
     HOOK_ON_DODGE_SUC,
@@ -37,7 +40,7 @@ from combat.passive_triggers import (
     HOOK_ON_SKILL_USE,
     fire_hook,
 )
-from combat.status_effects import tick_statuses
+from combat.systems.status_effects import tick_statuses
 
 
 def initialize_runtime_state(state):
@@ -57,7 +60,10 @@ def initialize_runtime_state(state):
     ctx.setdefault("low_sp_triggered", False)
     ctx.setdefault("used_np_this_battle", False)
     ctx.setdefault("auto_dodge_intent", False)
+    ctx.setdefault("player_blocking", False)
     ctx.setdefault("pending_enemy_action", None)
+    ctx.setdefault("turn_skill_cooldown_log", [])
+    ctx.setdefault("turn_action_label", None)
 
     if "turn_flags" not in ctx:
         _reset_turn_flags(state)
@@ -68,7 +74,7 @@ def process_player_action(state, selected_action):
     action_payload = _normalize_action_payload(selected_action)
     action = action_payload.get("action")
 
-    if action not in {ACTION_FIGHT, ACTION_ACT, ACTION_ITEM, ACTION_NP, ACTION_DODGE}:
+    if action not in {ACTION_FIGHT, ACTION_ACT, ACTION_ITEM, ACTION_NP, ACTION_DODGE, ACTION_BLOCK}:
         return None
 
     committed = False
@@ -87,9 +93,13 @@ def process_player_action(state, selected_action):
 
     elif action == ACTION_DODGE:
         state.context_flags["auto_dodge_intent"] = True
+        state.context_flags["turn_action_label"] = "DODGE"
         state.context_flags["turn_flags"]["rested"] = True
         state.log_event("You hold position and prepare to evade the next strike.")
         committed = True
+
+    elif action == ACTION_BLOCK:
+        committed = _prepare_block(state)
 
     if not committed:
         return None
@@ -127,19 +137,20 @@ def process_enemy_turn(state):
     if state.phase != "dodge_phase":
         return None
 
-    if "dodge_choice" not in state.context_flags:
+    if "dodge_choice" not in state.context_flags and not state.context_flags.get("player_blocking", False):
         return None
 
     pending = state.context_flags.pop("pending_enemy_action", None)
+    has_dodge_choice = "dodge_choice" in state.context_flags
     dodge_choice = bool(state.context_flags.pop("dodge_choice", False))
     if pending is None:
         state.phase = "player_action"
         return None
 
     turn_flags = state.context_flags["turn_flags"]
-    turn_flags["attempted_dodge"] = dodge_choice
+    turn_flags["attempted_dodge"] = has_dodge_choice and dodge_choice
 
-    if dodge_choice:
+    if has_dodge_choice and dodge_choice:
         state.context_flags["total_dodge_attempts"] += 1
         success, _ = _resolve_dodge_attempt(state)
         if success:
@@ -151,12 +162,32 @@ def process_enemy_turn(state):
             state.consecutive_dodges = 0
             fire_hook(HOOK_ON_DODGE_FAIL, state, state.player.name, {"turn": state.turn})
             _enemy_hits_player(state, pending["damage"], pending["label"])
+
+    elif state.context_flags.pop("player_blocking", False):
+        if state.player.sp >= SP_COST_BLOCK:
+            state.player.sp = max(0, state.player.sp - SP_COST_BLOCK)
+
+            reduced = max(1, int(pending["damage"] * BLOCK_DAMAGE_REDUCTION))
+            absorbed = pending["damage"] - reduced
+
+            turn_flags["blocked"] = True
+            state.consecutive_dodges = 0
+
+            _enemy_hits_player(state, reduced, pending["label"] + " (blocked)")
+            state.log_event(f"Block absorbs {absorbed} damage.")
+
+        else:
+            state.log_event("Stance collapses -- insufficient SP.")
+            state.consecutive_dodges = 0
+            _enemy_hits_player(state, pending["damage"], pending["label"])
+
     else:
         state.consecutive_dodges = 0
         _enemy_hits_player(state, pending["damage"], pending["label"])
 
     result = _resolve_player_death(state)
     if result:
+        _append_turn_skill_cooldown_log(state)
         return result
 
     tick_statuses(state.player_statuses, state.player, state)
@@ -167,6 +198,7 @@ def process_enemy_turn(state):
     _tick_cooldowns(state.context_flags["enemy_cooldowns"])
     _tick_effects(state)
     _check_threshold_hooks(state)
+    _append_turn_skill_cooldown_log(state)
 
     if state.enemy.hp <= 0:
         return _build_result(state, "player")
@@ -183,6 +215,9 @@ def _normalize_action_payload(selected_action):
 
 
 def _perform_player_attack(state, source_label: str, damage_mult: float):
+    if not state.context_flags.get("turn_action_label"):
+        state.context_flags["turn_action_label"] = source_label
+
     state.context_flags["turn_flags"]["rested"] = False
 
     sure_hit = bool(state.context_flags.pop("player_next_hit_sure", False))
@@ -228,6 +263,7 @@ def _execute_player_skill(state, skill_id):
 
     state.player.mana -= mana_cost
     _register_skill_use(skill, cooldowns, uses)
+    state.context_flags["turn_action_label"] = skill["name"]
     state.context_flags["turn_flags"]["used_skill"] = True
     state.context_flags["turn_flags"]["rested"] = False
 
@@ -236,11 +272,15 @@ def _execute_player_skill(state, skill_id):
 
     _apply_skill_effect(state, skill)
 
+    skill_damage_mult = float(skill.get("damage_mult", 1.0))
+    if skill.get("id") == "zuxi_combat_call" and state.context_flags.get("zuxi_true_name_empower", False):
+        skill_damage_mult *= 1.5
+
     if skill.get("damage_mult"):
         _perform_player_attack(
             state,
             source_label=skill["name"],
-            damage_mult=float(skill.get("damage_mult", 1.0)),
+            damage_mult=skill_damage_mult,
         )
 
     return True
@@ -262,6 +302,7 @@ def _use_item(state, item_id):
         return False
 
     inventory.remove(item_id)
+    state.context_flags["turn_action_label"] = item["name"]
     state.context_flags["turn_flags"]["rested"] = True
 
     category = item.get("category")
@@ -302,13 +343,22 @@ def _execute_player_np(state, mode: str):
 
     state.player.mana -= mana_cost
     state.context_flags["player_np"] = 0
+    state.context_flags["turn_action_label"] = "NP True Name" if true_name else "NP"
     state.context_flags["used_np_this_battle"] = True
     state.context_flags["result_flags"].add("used_np")
     state.context_flags["turn_flags"]["used_np"] = True
     state.context_flags["turn_flags"]["rested"] = False
 
+    # NP release instantly refreshes Combat Call if it is cooling down.
+    player_cooldowns = state.context_flags.get("player_cooldowns", {})
+    if int(player_cooldowns.get("zuxi_combat_call", 0)) > 0:
+        player_cooldowns.pop("zuxi_combat_call", None)
+        state.log_event("Zuxi - Combat Call is instantly refreshed.")
+
     if true_name:
         state.context_flags["np_true_name_used"] = True
+        state.context_flags["zuxi_true_name_empower"] = True
+        state.log_event("True Name resonance empowers Zuxi - Combat Call by 50%.")
 
     fire_hook(HOOK_ON_NP_USE, state, state.player.name, {"mode": mode})
 
@@ -329,7 +379,11 @@ def _apply_skill_effect(state, skill):
     if not effect:
         return
 
-    if effect == "guaranteed_dodge":
+    if effect == "mana_burst":
+        # Mana Burst becomes a timed explosive-wave attack mode.
+        _set_effect(state, "mana_burst_wave", 3)
+        state.log_event("Mana Burst forms an explosive wave for 3 turns.")
+    elif effect == "guaranteed_dodge":
         state.context_flags["player_next_dodge_guaranteed"] = True
     elif effect == "clear_fear":
         state.player.unique_vars["emotional_severance_turns"] = 2
@@ -499,6 +553,9 @@ def _player_hits_enemy(state, damage: int, source_label: str, is_crit: bool):
 
 
 def _enemy_hits_player(state, damage: int, source_label: str):
+    resistance = max(0.0, float(state.player.unique_vars.get("damage_resistance_bonus", 0.0)))
+    damage = max(1, int(round(damage * (1.0 - resistance))))
+
     state.player.hp = max(0, state.player.hp - damage)
     state.log_event(f"{state.enemy.name}'s {source_label} deals {damage} damage.")
 
@@ -546,8 +603,15 @@ def _build_result(state, winner: str):
 def _apply_end_turn_recovery(state):
     flags = state.context_flags["turn_flags"]
 
-    if flags["attempted_dodge"]:
-        regen_sp = SP_REGEN_CONSECUTIVE if state.consecutive_dodges > 1 else SP_REGEN_IDLE
+    if flags["attempted_dodge"] and flags["dodge_success"]:
+        regen_sp = 0
+
+    elif flags["attempted_dodge"] and not flags["dodge_success"]:
+        regen_sp = SP_REGEN_CONSECUTIVE if state.consecutive_dodges > 1 else 3
+
+    elif flags.get("blocked"):
+        regen_sp = 5
+
     else:
         regen_sp = SP_REGEN_REST if flags["rested"] else SP_REGEN_IDLE
 
@@ -597,6 +661,8 @@ def _player_damage_multiplier(state):
     mult += float(state.player.unique_vars.get("song_bonus", 0.0))
     mult += float(state.player.unique_vars.get("rage_damage_bonus", 0.0))
 
+    if _has_effect(state, "mana_burst_wave"):
+        mult += 0.15
     if _has_effect(state, "territory_creation"):
         mult += 0.10
     if _has_effect(state, "player_damage_up_05"):
@@ -669,6 +735,9 @@ def _is_skill_available(owner, skill, cooldowns, uses):
     if not skill_id:
         return False
 
+    if owner.name == "Nasir" and skill_id == "adaptive_activate" and owner.unique_vars.get("adaptive_locked", False):
+        return False
+
     if int(cooldowns.get(skill_id, 0)) > 0:
         return False
 
@@ -709,11 +778,91 @@ def _find_skill(skills, skill_id):
     return None
 
 
+def _short_skill_name(name: str, max_len: int = 12) -> str:
+    normalized = str(name).replace(" - ", " ").strip()
+    if len(normalized) <= max_len:
+        return normalized
+    return normalized[:max_len].rstrip()
+
+
+def _skill_tracker_status(state, skill, cooldowns, uses):
+    skill_id = skill.get("id")
+    label = _short_skill_name(skill.get("name", skill_id or "Skill"))
+
+    if state.player.name == "Nasir" and skill_id == "adaptive_activate" and state.player.unique_vars.get("adaptive_locked", False):
+        status = "LOCK"
+    else:
+        limit = skill.get("uses")
+        used = int(uses.get(skill_id, 0))
+        if limit is not None and used >= int(limit):
+            status = "USED"
+        else:
+            cd = int(cooldowns.get(skill_id, 0))
+            status = f"CD{cd}" if cd > 0 else "RDY"
+
+    return f"{label}:{status}"
+
+
+def _append_turn_skill_cooldown_log(state):
+    ctx = state.context_flags
+    cooldowns = ctx.get("player_cooldowns", {})
+    uses = ctx.get("player_skill_uses", {})
+
+    skill_states = [_skill_tracker_status(state, skill, cooldowns, uses) for skill in state.player.actives]
+    cooldown_summary = ", ".join(skill_states) if skill_states else "No skills"
+
+    effect_turns = ctx.get("effect_turns", {})
+    active_effects = [
+        (key, int(turns))
+        for key, turns in effect_turns.items()
+        if int(turns) > 0
+    ]
+    active_effects.sort(key=lambda pair: (-pair[1], pair[0]))
+
+    if active_effects:
+        effect_preview = [f"{name}:{turns}t" for name, turns in active_effects[:3]]
+        if len(active_effects) > 3:
+            effect_preview.append(f"+{len(active_effects) - 3}")
+        effect_summary = ", ".join(effect_preview)
+    else:
+        effect_summary = "none"
+
+    action_label = ctx.get("turn_action_label") or "No skill"
+    tracker = ctx.setdefault("turn_skill_cooldown_log", [])
+    tracker.append(
+        {
+            "turn": state.turn + 1,
+            "action": action_label,
+            "cooldowns": cooldown_summary,
+            "effects": effect_summary,
+        }
+    )
+    if len(tracker) > 24:
+        tracker.pop(0)
+
+    ctx["turn_action_label"] = None
+
+
 def _reset_turn_flags(state):
+    state.context_flags["turn_action_label"] = None
     state.context_flags["turn_flags"] = {
         "used_skill": False,
         "used_np": False,
         "rested": False,
         "attempted_dodge": False,
         "dodge_success": False,
+        "blocked": False,
     }
+
+
+def _prepare_block(state):
+    if state.player.sp < SP_COST_BLOCK:
+        state.log_event("Not enough SP to hold a defensive stance.")
+        return False
+
+    state.context_flags["player_blocking"] = True
+    state.context_flags["turn_action_label"] = "BLOCK"
+    state.context_flags["turn_flags"]["rested"] = False
+    state.log_event("You brace for impact -- defensive stance locked.")
+    return True
+

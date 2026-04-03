@@ -1,6 +1,6 @@
 import random
 
-from combat.combat_constants import BASE_DAMAGE_VARIANCE, CRIT_CHANCE_BASE, CRIT_MULTIPLIER
+from combat.data.combat_constants import BASE_DAMAGE_VARIANCE, CRIT_CHANCE_BASE, CRIT_MULTIPLIER
 
 
 def _roll_variance(base_value: float, variance: float = BASE_DAMAGE_VARIANCE) -> float:
@@ -28,3 +28,4 @@ def calculate_damage(
         rolled *= crit_multiplier
     reduced = rolled * max(0.0, defense_factor)
     return max(1, int(round(reduced))), is_crit
+

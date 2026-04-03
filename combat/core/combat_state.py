@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from combat.servant_base import ServantBase
+from combat.entities.servant_base import ServantBase
 
 
 @dataclass
@@ -23,3 +23,4 @@ class CombatState:
         self.log.append(text)
         if len(self.log) > 50:
             self.log.pop(0)
+

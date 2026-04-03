@@ -1,5 +1,5 @@
-from combat.passive_triggers import HOOK_ON_SKILL_USE, HOOK_ON_TURN_START, register_hook
-from combat.servant_base import ServantBase
+from combat.systems.passive_triggers import HOOK_ON_SKILL_USE, HOOK_ON_TURN_START, register_hook
+from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
 
@@ -89,3 +89,4 @@ def _register_kiki_hooks():
     register_hook(HOOK_ON_SKILL_USE, "Kiki", on_skill_use)
     register_hook(HOOK_ON_TURN_START, "Kiki", on_turn_start)
     _HOOKS_REGISTERED = True
+

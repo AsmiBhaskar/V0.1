@@ -1,6 +1,6 @@
 import pygame
 
-from combat.combat_constants import COMBAT_DIM, COMBAT_GOLD, COMBAT_LOG_MAX_LINES, COMBAT_PANEL, COMBAT_WHITE
+from combat.data.combat_constants import COMBAT_DIM, COMBAT_GOLD, COMBAT_LOG_MAX_LINES, COMBAT_PANEL, COMBAT_WHITE
 
 _FONTS = {}
 
@@ -33,3 +33,4 @@ def draw_combat_log(surface, state, x=0, y=200, w=1280, h=260):
         surf = line_font.render(line, True, color)
         surface.blit(surf, (x + 16, text_y))
         text_y += line_height
+

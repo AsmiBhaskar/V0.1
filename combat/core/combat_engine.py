@@ -1,20 +1,21 @@
 import pygame
 
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     ACTIONS,
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_FIGHT,
     ACTION_ITEM,
     ACTION_NP,
     MAX_TURNS,
 )
-from combat.combat_result import CombatResult
-from combat.combat_state import CombatState
-from combat.combat_renderer import render_combat_frame
-from combat.item_data import ITEMS
-from combat.passive_triggers import HOOK_ON_TURN_END, HOOK_ON_TURN_START, fire_hook
-from combat.turn_manager import initialize_runtime_state, process_enemy_turn, process_player_action
+from combat.core.combat_result import CombatResult
+from combat.core.combat_state import CombatState
+from combat.ui.combat_renderer import render_combat_frame
+from combat.data.item_data import ITEMS
+from combat.systems.passive_triggers import HOOK_ON_TURN_END, HOOK_ON_TURN_START, fire_hook
+from combat.core.turn_manager import initialize_runtime_state, process_enemy_turn, process_player_action
 from game_core.constants import FPS
 
 
@@ -99,16 +100,16 @@ def _build_enemy(encounter: dict, context: dict):
         return enemy_fn()
 
     if context.get("spirit_hunt"):
-        from combat.spirit_data import make_random_spirit
+        from combat.data.spirit_data import make_random_spirit
 
         return make_random_spirit()
 
     if context.get("ache_active"):
-        from combat.ache_enemy_data import make_random_ache_enemy
+        from combat.data.ache_enemy_data import make_random_ache_enemy
 
         return make_random_ache_enemy()
 
-    from combat.spirit_data import make_random_spirit
+    from combat.data.spirit_data import make_random_spirit
 
     return make_random_spirit()
 
@@ -163,11 +164,13 @@ def _handle_keydown(key, state):
         pygame.K_i: ACTION_ITEM,
         pygame.K_n: ACTION_NP,
         pygame.K_d: ACTION_DODGE,
+        pygame.K_b: ACTION_BLOCK,
     }
 
     if key in direct:
         action = direct[key]
-        state.context_flags["action_index"] = ACTIONS.index(action)
+        if action in ACTIONS:
+            state.context_flags["action_index"] = ACTIONS.index(action)
         return _activate_or_open_submenu(action, state)
 
     if key in (pygame.K_RETURN, pygame.K_KP_ENTER):
@@ -296,3 +299,4 @@ def _finalize_result_for_context(state, result: CombatResult) -> CombatResult:
         result.flags.append("spirit_captured")
 
     return result
+

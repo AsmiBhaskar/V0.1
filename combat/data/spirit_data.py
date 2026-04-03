@@ -1,6 +1,6 @@
 import random
 
-from combat.servant_base import ServantBase
+from combat.entities.servant_base import ServantBase
 
 SPIRIT_POOL = [
     {"name": "Wandering Shade", "strength": 40, "agility": 40, "luck": 20},
@@ -24,3 +24,4 @@ def make_random_spirit() -> ServantBase:
         actives=[],
         np_item={},
     )
+

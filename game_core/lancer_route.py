@@ -1,6 +1,6 @@
 import pygame
-from combat.combat_engine import run_combat
-from combat.encounter_table import ENCOUNTERS
+from combat.core.combat_engine import run_combat
+from combat.core.encounter_table import ENCOUNTERS
 
 from game_core.constants import BAR_COLOR, BLACK, FPS, WHITE, WINDOW_WIDTH
 from game_core.lancer_data import LANCER_SCENES
@@ -254,3 +254,4 @@ def play_lancer_route(screen, clock, state):
 
     delete_save("Lancer", state=state)
     return False
+

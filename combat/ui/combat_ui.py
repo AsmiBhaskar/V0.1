@@ -1,8 +1,9 @@
 import pygame
 
-from combat.combat_constants import (
+from combat.data.combat_constants import (
     ACTIONS,
     ACTION_ACT,
+    ACTION_BLOCK,
     ACTION_DODGE,
     ACTION_ITEM,
     ACTION_NP,
@@ -16,6 +17,7 @@ from combat.combat_constants import (
     EXHAUSTION_THRESHOLD,
     HP_BAR_COLOR,
     MANA_BAR_COLOR,
+    SP_COST_BLOCK,
     SP_BAR_COLOR,
 )
 
@@ -39,6 +41,37 @@ def _fit_text(font, text: str, max_width: int) -> str:
         if font.size(candidate)[0] <= max_width:
             return candidate
     return suffix
+
+
+def _wrap_text(font, text: str, max_width: int, max_lines: int = 2) -> list[str]:
+    words = text.split()
+    if not words:
+        return [""]
+
+    lines: list[str] = []
+    current = words[0]
+
+    for word in words[1:]:
+        candidate = f"{current} {word}"
+        if font.size(candidate)[0] <= max_width:
+            current = candidate
+            continue
+
+        lines.append(current)
+        current = word
+        if len(lines) >= max_lines:
+            break
+
+    if len(lines) < max_lines:
+        lines.append(current)
+
+    if len(lines) > max_lines:
+        lines = lines[:max_lines]
+
+    if len(lines) == max_lines and font.size(lines[-1])[0] > max_width:
+        lines[-1] = _fit_text(font, lines[-1], max_width)
+
+    return lines
 
 
 def draw_resource_bar(surface, label, current, maximum, color, x, y, w=260, h=18):
@@ -93,6 +126,9 @@ def _button_enabled(state, action: str):
     if action == ACTION_ITEM:
         return len(state.context_flags.get("inventory", [])) > 0
 
+    if action == ACTION_BLOCK and state.player.sp < SP_COST_BLOCK:
+        return False
+
     return True
 
 
@@ -102,11 +138,11 @@ def draw_action_bar(surface, state):
     pygame.draw.rect(surface, COMBAT_PANEL, panel_rect)
     pygame.draw.rect(surface, COMBAT_GOLD, panel_rect, 2)
 
-    label_font = _font(24, bold=True)
+    label_font = _font(22, bold=True)
     key_font = _font(16)
 
     selected = int(state.context_flags.get("action_index", 0))
-    button_w = 128
+    button_w = max(1, w // max(1, len(ACTIONS)))
 
     key_hint = {
         "FIGHT": "F",
@@ -114,10 +150,13 @@ def draw_action_bar(surface, state):
         "ITEM": "I",
         "NOBLE PHANTASM": "N",
         "DODGE": "D",
+        "BLOCK": "B",
     }
 
     for i, action in enumerate(ACTIONS):
-        btn_rect = pygame.Rect(x + i * button_w, y, button_w, h)
+        btn_x = x + i * button_w
+        btn_width = button_w if i < (len(ACTIONS) - 1) else (x + w - btn_x)
+        btn_rect = pygame.Rect(btn_x, y, btn_width, h)
         enabled = _button_enabled(state, action)
 
         if i == selected and state.phase == "player_action" and not state.context_flags.get("submenu_open", False):
@@ -130,7 +169,7 @@ def draw_action_bar(surface, state):
         label_rect = label_surf.get_rect(center=(btn_rect.centerx, y + 52))
         surface.blit(label_surf, label_rect)
 
-        hint_surf = key_font.render(key_hint[action], True, text_color)
+        hint_surf = key_font.render(key_hint.get(action, "?"), True, text_color)
         hint_rect = hint_surf.get_rect(center=(btn_rect.centerx, y + 95))
         surface.blit(hint_surf, hint_rect)
 
@@ -196,3 +235,65 @@ def draw_skill_submenu(surface, state):
 
     if start_index + visible_rows < len(options):
         surface.blit(body_font.render("v more", True, COMBAT_DIM), (w - 96, y + h - 24))
+
+
+def draw_combat_tracker(surface, state, x=850, y=208, w=414, h=244):
+    panel_rect = pygame.Rect(x, y, w, h)
+    pygame.draw.rect(surface, COMBAT_PANEL, panel_rect)
+    pygame.draw.rect(surface, COMBAT_GOLD, panel_rect, 2)
+
+    title_font = _font(18, bold=True)
+    line_font = _font(14)
+    sub_font = _font(13)
+
+    title = _fit_text(title_font, "TURN SKILL LOG", w - 18)
+    surface.blit(title_font.render(title, True, COMBAT_GOLD), (x + 9, y + 8))
+
+    np_current = int(state.context_flags.get("player_np", 0))
+    summary_text = _fit_text(sub_font, f"NP {np_current}/100  |  Logs update each completed turn", w - 18)
+    surface.blit(sub_font.render(summary_text, True, COMBAT_DIM), (x + 9, y + 28))
+
+    tracker_log = state.context_flags.get("turn_skill_cooldown_log", [])
+    current_action = state.context_flags.get("turn_action_label") or "none"
+
+    if not tracker_log:
+        hint = "No turn snapshots yet. Complete a turn to log skill and cooldown state."
+        for idx, line in enumerate(_wrap_text(sub_font, hint, w - 18, max_lines=3)):
+            surface.blit(sub_font.render(line, True, COMBAT_DIM), (x + 9, y + 56 + (idx * 16)))
+
+        pending = _fit_text(sub_font, f"Current action: {current_action}", w - 18)
+        surface.blit(sub_font.render(pending, True, COMBAT_WHITE), (x + 9, y + h - 20))
+        return
+
+    row_y = y + 50
+    row_limit = y + h - 10
+    shown = 0
+
+    for entry in reversed(tracker_log):
+        action_line = _fit_text(line_font, f"T{int(entry.get('turn', 0)):02d}  Action: {entry.get('action', 'No skill')}", w - 18)
+        cd_lines = _wrap_text(sub_font, f"CD  {entry.get('cooldowns', 'No skills')}", w - 18, max_lines=2)
+        fx_lines = _wrap_text(sub_font, f"FX  {entry.get('effects', 'none')}", w - 18, max_lines=1)
+
+        needed_height = 16 + (len(cd_lines) * 15) + (len(fx_lines) * 15) + 6
+        if row_y + needed_height > row_limit:
+            break
+
+        surface.blit(line_font.render(action_line, True, COMBAT_GOLD), (x + 9, row_y))
+        row_y += 16
+
+        for line in cd_lines:
+            surface.blit(sub_font.render(line, True, COMBAT_WHITE), (x + 9, row_y))
+            row_y += 15
+
+        for line in fx_lines:
+            surface.blit(sub_font.render(line, True, COMBAT_DIM), (x + 9, row_y))
+            row_y += 15
+
+        row_y += 6
+        shown += 1
+
+    hidden = len(tracker_log) - shown
+    if hidden > 0:
+        more_text = _fit_text(sub_font, f"+{hidden} older turn logs", w - 18)
+        surface.blit(sub_font.render(more_text, True, COMBAT_DIM), (x + 9, y + h - 20))
+

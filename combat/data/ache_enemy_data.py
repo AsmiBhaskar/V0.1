@@ -1,6 +1,6 @@
 import random
 
-from combat.servant_base import ServantBase
+from combat.entities.servant_base import ServantBase
 
 ACHE_POOL = [
     {"name": "Fractured Echo", "strength": 65, "agility": 55, "luck": 30},
@@ -24,3 +24,4 @@ def make_random_ache_enemy() -> ServantBase:
         actives=[],
         np_item={},
     )
+
