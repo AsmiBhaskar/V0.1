@@ -6,6 +6,10 @@ ARCHER_STATS_TEMPLATE = {
     "grand_verdict_readiness": 0,
     "seen_heard": 0,
     "ending": "",
+    "archer_opening_berserker_done": False,
+    "archer_training_lancer_won": False,
+    "archer_final_berserker_won": False,
+    "archer_combat_attempts": 0,
 }
 
 ARCHER_SCENES = [

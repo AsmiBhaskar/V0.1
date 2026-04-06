@@ -8,6 +8,25 @@
 - First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-04):
+   - Archer route combat integration pass completed with three checkpoints:
+      - Opening scripted-loss combat: Kitik vs Bhaskar (Berserker).
+      - Training gate combat: Kitik vs Nasir (Lancer), win required to continue.
+      - Final gate combat: Kitik vs Bhaskar (Berserker), win required to continue.
+   - Added Archer combat progression state to route data:
+      - archer_opening_berserker_done
+      - archer_training_lancer_won
+      - archer_final_berserker_won
+      - archer_combat_attempts
+   - Route flow behavior:
+      - Opening Berserker fight now always records progression as a defeat event for story continuity.
+      - Training/final losses and draws return to menu and preserve retry state through save data.
+   - Encounter table additions:
+      - archer_vs_berserker_opening
+      - archer_vs_berserker_final
+   - Validation completed:
+      - compileall passed for game_core/archer_data.py, game_core/archer_route.py, and combat/core/encounter_table.py.
+      - import smoke check passed for Archer encounter keys and route gate constants.
 - Session update (2026-04-03):
    - Reorganized the combat package into responsibility-based subfolders to reduce root-level file clutter.
    - File move log:
@@ -143,7 +162,7 @@
 
 ### Route Completion Status
 - Lancer: modular route with choice-driven progression, tracked variables, and two integrated combat gates (Archer and Berserker).
-- Archer: complete modular route with choice-driven progression and tracked variables.
+- Archer: modular route with choice-driven progression, tracked variables, and three integrated combat gates (opening scripted-loss vs Berserker, training vs Lancer, final vs Berserker).
 - Caster: complete modular route with choice-driven progression and tracked variables.
 - Assassin: complete modular route with choice-driven progression and tracked variables.
 - Rider: complete modular route with choice-driven progression and tracked variables.
@@ -196,7 +215,7 @@
 5. Continue loads the most recently updated save slot.
 6. Load opens slot list across all routes.
 7. New Game can always create additional save slots.
-8. Lancer route now includes mandatory combat checkpoints before late-route progression.
+8. Lancer and Archer routes now include mandatory combat checkpoints before late-route progression.
 
 ### Save System Status
 - Multi-slot saves are active in the saves folder.
@@ -205,6 +224,7 @@
 - Escape from active route saves state and returns to menu.
 - Route completion deletes only the active slot for that run.
 - Lancer save state now also tracks combat gate outcomes and recent combat history.
+- Archer save state now also tracks combat gate outcomes and recent combat history.
 
 ### Technical Notes
 - Resolution: 1280x720.
