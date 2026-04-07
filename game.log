@@ -706,3 +706,359 @@ cannot load library 'libcairo-2.dll': error 0x7e.  Additionally, ctypes.util.fin
 2026-04-04 15:20:54,343 | INFO | Game closed
 2026-04-06 14:45:29,975 | INFO | Game started
 2026-04-06 14:46:15,061 | INFO | Game closed
+2026-04-07 14:59:01,424 | INFO | Game started
+2026-04-07 15:03:41,464 | INFO | Game closed
+2026-04-07 15:45:44,555 | INFO | Game started
+2026-04-07 15:45:53,475 | INFO | Combat start | title=FINAL ENCOUNTER - VERDICT AGAINST THE BURNING SUN | player=Kitik | enemy=Bhaskar | context={'route': 'Archer', 'spirit_hunt': False, 'ache_active': False, 'phase': 'final', 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-07 15:46:49,157 | INFO | Turn 1 | player_action payload={'action': 'ACT', 'skill_id': 'mystic_eyes_sniper'}
+2026-04-07 15:46:49,157 | INFO | Turn 1 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'mystic_eyes_sniper'} | bonus_action=False | P(HP=720/720,SP=100/100,M=300/300) E(HP=1320/1320,SP=110/110,M=200/200)
+2026-04-07 15:46:49,157 | INFO | Turn 1 | skill committed | skill=mystic_eyes_sniper | mana_cost=35 | mana_now=265
+2026-04-07 15:46:49,157 | INFO | Turn 1 | Dominance miss | chance=0.110 | new_stack=0.01
+2026-04-07 15:46:49,157 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-07 15:46:49,174 | INFO | Turn 1 | enemy action prepared | label=Cheat Gainer | dmg=120 | cannot_be_dodged=False
+2026-04-07 15:48:27,697 | INFO | Turn 1 | dodge failed against Cheat Gainer
+2026-04-07 15:48:27,697 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=600/720,SP=100/100,M=280/300) E(HP=1320/1320,SP=110/110,M=180/200)
+2026-04-07 15:48:27,698 | INFO | Turn 1 complete | P(HP=600/720,SP=100/100,M=280/300) E(HP=1320/1320,SP=110/110,M=180/200)
+2026-04-07 15:48:59,418 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:48:59,419 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=600/720,SP=100/100,M=280/300) E(HP=1320/1320,SP=110/110,M=180/200)
+2026-04-07 15:48:59,419 | INFO | Turn 2 | Dominance miss | chance=0.120 | new_stack=0.02
+2026-04-07 15:48:59,419 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-07 15:48:59,434 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=106 | cannot_be_dodged=False
+2026-04-07 15:49:01,100 | INFO | Turn 2 | dodge failed against basic attack
+2026-04-07 15:49:01,100 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=494/720,SP=100/100,M=300/300) E(HP=1192/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:01,100 | INFO | Turn 2 complete | P(HP=494/720,SP=100/100,M=300/300) E(HP=1192/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:18,335 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:18,335 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=300/300) E(HP=1192/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:18,335 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=290
+2026-04-07 15:49:18,336 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:18,336 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:19,989 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:19,989 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=290/300) E(HP=1098/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:19,989 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=280
+2026-04-07 15:49:19,989 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:19,989 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:21,703 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:21,703 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=280/300) E(HP=1005/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:21,703 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=270
+2026-04-07 15:49:21,703 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:21,703 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:23,024 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:23,024 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=270/300) E(HP=914/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:23,024 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=260
+2026-04-07 15:49:23,024 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:23,025 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:25,054 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:25,054 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=260/300) E(HP=824/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:25,054 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=250
+2026-04-07 15:49:25,054 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:25,055 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:26,725 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:26,725 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=250/300) E(HP=733/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:26,725 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=240
+2026-04-07 15:49:26,725 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:26,726 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:28,360 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:28,360 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=240/300) E(HP=642/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:28,360 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=230
+2026-04-07 15:49:28,361 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:28,361 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:30,922 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:30,922 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=230/300) E(HP=547/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:30,922 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=220
+2026-04-07 15:49:30,922 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:30,923 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:32,648 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:32,648 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=220/300) E(HP=464/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:32,648 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=210
+2026-04-07 15:49:32,648 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:32,649 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:33,997 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:33,998 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=210/300) E(HP=375/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:33,998 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=200
+2026-04-07 15:49:33,998 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:33,998 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:36,023 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:36,023 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=200/300) E(HP=294/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:36,023 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=190
+2026-04-07 15:49:36,023 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:36,024 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:37,666 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:37,666 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=190/300) E(HP=204/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:37,666 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=180
+2026-04-07 15:49:37,666 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:37,666 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:39,673 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:39,673 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=180/300) E(HP=107/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:39,673 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=170
+2026-04-07 15:49:39,674 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:39,674 | INFO | Turn 3 | quick action committed, player keeps turn
+2026-04-07 15:49:43,672 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:49:43,672 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=494/720,SP=100/100,M=170/300) E(HP=12/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:43,672 | INFO | Turn 3 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=160
+2026-04-07 15:49:43,672 | INFO | Turn 3 | quick action skill=improvised_arrow
+2026-04-07 15:49:43,672 | INFO | Turn 3 | enemy defeated before enemy phase | P(HP=494/720,SP=100/100,M=160/300) E(HP=0/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:43,672 | INFO | CombatResult built | winner=player | turns=2 | flags=[] | P(HP=494/720,SP=100/100,M=160/300) E(HP=0/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:43,672 | INFO | Combat end | phase=player_action | winner=player | turns=2 | flags=[] | P(HP=494/720,SP=100/100,M=160/300) E(HP=0/1320,SP=110/110,M=180/200)
+2026-04-07 15:49:58,900 | INFO | Game closed
+2026-04-07 15:56:05,775 | INFO | Game started
+2026-04-07 15:56:13,946 | INFO | Combat start | title=ENCOUNTER - THE UNBROKEN AXIS | player=Kitik | enemy=Nasir | context={'route': 'Archer', 'spirit_hunt': False, 'ache_active': False, 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-07 15:56:14,160 | INFO | Turn 1 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:56:14,160 | INFO | Turn 1 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=720/720,SP=100/100,M=300/300) E(HP=1200/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:14,160 | INFO | Turn 1 | Dominance miss | chance=0.110 | new_stack=0.01
+2026-04-07 15:56:14,160 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-07 15:56:14,177 | INFO | Turn 1 | enemy action prepared | label=basic attack | dmg=109 | cannot_be_dodged=False
+2026-04-07 15:56:15,353 | INFO | Turn 1 | dodge failed against basic attack
+2026-04-07 15:56:15,353 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=611/720,SP=100/100,M=300/300) E(HP=1140/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:15,353 | INFO | Turn 1 complete | P(HP=611/720,SP=100/100,M=300/300) E(HP=1140/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:18,530 | INFO | Turn 2 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:56:18,530 | INFO | Turn 2 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=611/720,SP=100/100,M=300/300) E(HP=1140/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:18,530 | INFO | Turn 2 | skill committed | skill=improvised_arrow | mana_cost=10 | mana_now=290
+2026-04-07 15:56:18,531 | INFO | Turn 2 | quick action skill=improvised_arrow
+2026-04-07 15:56:18,531 | INFO | Turn 2 | quick action committed, player keeps turn
+2026-04-07 15:56:21,747 | INFO | Turn 2 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:56:21,747 | INFO | Turn 2 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=611/720,SP=100/100,M=290/300) E(HP=1057/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:21,747 | INFO | Turn 2 | skill committed | skill=improvised_arrow | mana_cost=40 | mana_now=250
+2026-04-07 15:56:21,748 | INFO | Turn 2 | quick action skill=improvised_arrow
+2026-04-07 15:56:21,748 | INFO | Turn 2 | quick action committed, player keeps turn
+2026-04-07 15:56:23,347 | INFO | Turn 2 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:56:23,347 | INFO | Turn 2 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=611/720,SP=100/100,M=250/300) E(HP=965/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:23,347 | INFO | Turn 2 | skill committed | skill=improvised_arrow | mana_cost=70 | mana_now=180
+2026-04-07 15:56:23,347 | INFO | Turn 2 | quick action skill=improvised_arrow
+2026-04-07 15:56:23,347 | INFO | Turn 2 | quick action committed, player keeps turn
+2026-04-07 15:56:25,398 | INFO | Turn 2 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:56:25,398 | INFO | Turn 2 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=611/720,SP=100/100,M=180/300) E(HP=880/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:25,398 | INFO | Turn 2 | skill committed | skill=improvised_arrow | mana_cost=100 | mana_now=80
+2026-04-07 15:56:25,398 | INFO | Turn 2 | quick action skill=improvised_arrow
+2026-04-07 15:56:25,399 | INFO | Turn 2 | quick action committed, player keeps turn
+2026-04-07 15:56:28,313 | INFO | Turn 2 | player_action payload={'action': 'ACT', 'skill_id': 'improvised_arrow'}
+2026-04-07 15:56:28,313 | INFO | Turn 2 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'improvised_arrow'} | bonus_action=False | P(HP=611/720,SP=100/100,M=80/300) E(HP=786/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:28,313 | INFO | Turn 2 | action did not commit | action=ACT
+2026-04-07 15:56:32,640 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:56:32,640 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=611/720,SP=100/100,M=80/300) E(HP=786/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:32,640 | INFO | Turn 2 | Dominance miss | chance=0.120 | new_stack=0.02
+2026-04-07 15:56:32,640 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-07 15:56:32,657 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=104 | cannot_be_dodged=False
+2026-04-07 15:56:34,629 | INFO | Turn 2 | dodge failed against basic attack
+2026-04-07 15:56:34,629 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=507/720,SP=100/100,M=95/300) E(HP=678/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:34,629 | INFO | Turn 2 complete | P(HP=507/720,SP=100/100,M=95/300) E(HP=678/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:40,077 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'mystic_eyes_sniper'}
+2026-04-07 15:56:40,077 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'mystic_eyes_sniper'} | bonus_action=False | P(HP=507/720,SP=100/100,M=95/300) E(HP=678/1200,SP=120/120,M=200/200)
+2026-04-07 15:56:40,077 | INFO | Turn 3 | skill committed | skill=mystic_eyes_sniper | mana_cost=35 | mana_now=60
+2026-04-07 15:56:40,077 | INFO | Turn 3 | Dominance miss | chance=0.130 | new_stack=0.03
+2026-04-07 15:56:40,078 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-07 15:56:40,094 | INFO | Turn 3 | enemy action prepared | label=Hardened Discipline | dmg=130 | cannot_be_dodged=False
+2026-04-07 15:56:42,095 | INFO | Turn 3 | dodge failed against Hardened Discipline
+2026-04-07 15:56:42,095 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=377/720,SP=100/100,M=75/300) E(HP=678/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:42,095 | INFO | Turn 3 complete | P(HP=377/720,SP=100/100,M=75/300) E(HP=678/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:44,348 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:56:44,348 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=377/720,SP=100/100,M=75/300) E(HP=678/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:44,349 | INFO | Turn 4 | Dominance miss | chance=0.140 | new_stack=0.04
+2026-04-07 15:56:44,349 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-07 15:56:44,366 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=158 | cannot_be_dodged=False
+2026-04-07 15:56:46,654 | INFO | Turn 4 | dodge success against basic attack
+2026-04-07 15:56:46,654 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=377/720,SP=85/100,M=100/300) E(HP=516/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:46,654 | INFO | Turn 4 complete | P(HP=377/720,SP=85/100,M=100/300) E(HP=516/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:55,913 | INFO | Turn 5 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:56:55,913 | INFO | Turn 5 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=377/720,SP=85/100,M=100/300) E(HP=516/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:55,913 | INFO | Turn 5 | Dominance miss | chance=0.150 | new_stack=0.05
+2026-04-07 15:56:55,913 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-07 15:56:55,929 | INFO | Turn 5 | enemy action prepared | label=basic attack | dmg=97 | cannot_be_dodged=False
+2026-04-07 15:56:56,906 | INFO | Turn 5 | dodge failed against basic attack
+2026-04-07 15:56:56,906 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=280/720,SP=88/100,M=125/300) E(HP=439/1200,SP=120/120,M=170/200)
+2026-04-07 15:56:56,906 | INFO | Turn 5 complete | P(HP=280/720,SP=88/100,M=125/300) E(HP=439/1200,SP=120/120,M=170/200)
+2026-04-07 15:57:00,009 | INFO | Turn 6 | player_action payload={'action': 'ACT', 'skill_id': 'mana_burst'}
+2026-04-07 15:57:00,009 | INFO | Turn 6 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'mana_burst'} | bonus_action=False | P(HP=280/720,SP=88/100,M=125/300) E(HP=439/1200,SP=120/120,M=170/200)
+2026-04-07 15:57:00,009 | INFO | Turn 6 | skill committed | skill=mana_burst | mana_cost=20 | mana_now=105
+2026-04-07 15:57:00,009 | INFO | Turn 6 | Dominance proc | chance=0.160 | proc_count=1
+2026-04-07 15:57:04,326 | INFO | Turn 6 | player_action payload={'action': 'ACT', 'skill_id': 'mana_burst'}
+2026-04-07 15:57:04,326 | INFO | Turn 6 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'mana_burst'} | bonus_action=True | P(HP=280/720,SP=88/100,M=105/300) E(HP=294/1200,SP=120/120,M=170/200)
+2026-04-07 15:57:04,326 | INFO | Turn 6 | skill committed | skill=mana_burst | mana_cost=25 | mana_now=80
+2026-04-07 15:57:04,326 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-07 15:57:04,343 | INFO | Turn 6 | enemy action prepared | label=Zuxi - Combat Call | dmg=139 | cannot_be_dodged=False
+2026-04-07 15:57:05,839 | INFO | Turn 6 | dodge failed against Zuxi - Combat Call
+2026-04-07 15:57:05,839 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=285/720,SP=91/100,M=95/300) E(HP=137/1200,SP=120/120,M=150/200)
+2026-04-07 15:57:05,839 | INFO | Turn 6 complete | P(HP=285/720,SP=91/100,M=95/300) E(HP=137/1200,SP=120/120,M=150/200)
+2026-04-07 15:57:07,410 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:57:07,410 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=285/720,SP=91/100,M=95/300) E(HP=137/1200,SP=120/120,M=150/200)
+2026-04-07 15:57:07,410 | INFO | Turn 7 | Dominance miss | chance=0.110 | new_stack=0.01
+2026-04-07 15:57:07,411 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-07 15:57:07,426 | INFO | Turn 7 | enemy action prepared | label=Zuxi (Sealed) | dmg=223 | cannot_be_dodged=False
+2026-04-07 15:57:08,109 | INFO | Turn 7 | dodge failed against Zuxi (Sealed)
+2026-04-07 15:57:08,109 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=62/720,SP=94/100,M=120/300) E(HP=44/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:08,109 | INFO | Turn 7 complete | P(HP=62/720,SP=94/100,M=120/300) E(HP=44/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:25,627 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:57:25,627 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=62/720,SP=94/100,M=120/300) E(HP=44/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:25,627 | INFO | Turn 8 | enemy defeated before enemy phase | P(HP=62/720,SP=94/100,M=120/300) E(HP=0/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:25,627 | INFO | CombatResult built | winner=player | turns=7 | flags=['below_half_hp'] | P(HP=62/720,SP=94/100,M=120/300) E(HP=0/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:25,628 | INFO | Combat end | phase=player_action | winner=player | turns=7 | flags=['below_half_hp'] | P(HP=62/720,SP=94/100,M=120/300) E(HP=0/1200,SP=120/120,M=100/200)
+2026-04-07 15:57:42,929 | INFO | Combat start | title=ENCOUNTER - THE UNIGNORABLE VERDICT | player=Nasir | enemy=Kitik | context={'route': 'Lancer', 'spirit_hunt': False, 'ache_active': False, 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-07 15:57:48,738 | INFO | Turn 1 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:57:48,738 | INFO | Turn 1 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=1200/1200,SP=120/120,M=200/200) E(HP=720/720,SP=100/100,M=300/300)
+2026-04-07 15:57:48,738 | INFO | Turn 1 | skill committed | skill=zuxi_combat_call | mana_cost=20 | mana_now=180
+2026-04-07 15:57:48,738 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-07 15:57:48,755 | INFO | Turn 1 | enemy action prepared | label=Mana Burst | dmg=106 | cannot_be_dodged=True
+2026-04-07 15:57:50,502 | INFO | Turn 1 | dodge failed against Mana Burst
+2026-04-07 15:57:50,502 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=1095/1200,SP=120/120,M=195/200) E(HP=554/720,SP=100/100,M=280/300)
+2026-04-07 15:57:50,502 | INFO | Turn 1 complete | P(HP=1095/1200,SP=120/120,M=195/200) E(HP=554/720,SP=100/100,M=280/300)
+2026-04-07 15:57:51,485 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:57:51,485 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=1095/1200,SP=120/120,M=195/200) E(HP=554/720,SP=100/100,M=280/300)
+2026-04-07 15:57:51,485 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-07 15:57:51,502 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=62 | cannot_be_dodged=True
+2026-04-07 15:57:52,328 | INFO | Turn 2 | dodge failed against basic attack
+2026-04-07 15:57:52,328 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=1034/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:57:52,328 | INFO | Turn 2 complete | P(HP=1034/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:57:56,839 | INFO | Turn 3 | player_action payload={'action': 'ACT', 'skill_id': 'adaptive_activate'}
+2026-04-07 15:57:56,839 | INFO | Turn 3 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'adaptive_activate'} | bonus_action=False | P(HP=1034/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:57:56,839 | INFO | Turn 3 | skill committed | skill=adaptive_activate | mana_cost=15 | mana_now=185
+2026-04-07 15:57:56,839 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-07 15:57:56,856 | INFO | Turn 3 | enemy action prepared | label=basic attack | dmg=94 | cannot_be_dodged=True
+2026-04-07 15:57:59,782 | INFO | Turn 3 | dodge failed against basic attack
+2026-04-07 15:57:59,782 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=943/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:57:59,782 | INFO | Turn 3 complete | P(HP=943/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:58:01,360 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:01,360 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=943/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:58:01,360 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-07 15:58:01,377 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=94 | cannot_be_dodged=True
+2026-04-07 15:58:04,989 | INFO | Turn 4 | dodge failed against basic attack
+2026-04-07 15:58:04,989 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=853/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:58:04,989 | INFO | Turn 4 complete | P(HP=853/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:58:06,534 | INFO | Turn 5 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:06,534 | INFO | Turn 5 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=853/1200,SP=120/120,M=200/200) E(HP=434/720,SP=100/100,M=280/300)
+2026-04-07 15:58:06,534 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-07 15:58:06,550 | INFO | Turn 5 | enemy action prepared | label=basic attack | dmg=59 | cannot_be_dodged=True
+2026-04-07 15:58:08,842 | INFO | Turn 5 | dodge failed against basic attack
+2026-04-07 15:58:08,842 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=797/1200,SP=120/120,M=200/200) E(HP=334/720,SP=100/100,M=280/300)
+2026-04-07 15:58:08,842 | INFO | Turn 5 complete | P(HP=797/1200,SP=120/120,M=200/200) E(HP=334/720,SP=100/100,M=280/300)
+2026-04-07 15:58:11,752 | INFO | Turn 6 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:58:11,752 | INFO | Turn 6 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=797/1200,SP=120/120,M=200/200) E(HP=334/720,SP=100/100,M=280/300)
+2026-04-07 15:58:11,752 | INFO | Turn 6 | action did not commit | action=ACT
+2026-04-07 15:58:17,885 | INFO | Turn 6 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:17,885 | INFO | Turn 6 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=797/1200,SP=120/120,M=200/200) E(HP=334/720,SP=100/100,M=280/300)
+2026-04-07 15:58:17,885 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-07 15:58:17,900 | INFO | Turn 6 | enemy action prepared | label=Improvised Arrow | dmg=83 | cannot_be_dodged=True
+2026-04-07 15:58:18,581 | INFO | Turn 6 | dodge failed against Improvised Arrow
+2026-04-07 15:58:18,581 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=719/1200,SP=120/120,M=200/200) E(HP=195/720,SP=100/100,M=270/300)
+2026-04-07 15:58:18,581 | INFO | Turn 6 complete | P(HP=719/1200,SP=120/120,M=200/200) E(HP=195/720,SP=100/100,M=270/300)
+2026-04-07 15:58:20,927 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:20,928 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=719/1200,SP=120/120,M=200/200) E(HP=195/720,SP=100/100,M=270/300)
+2026-04-07 15:58:20,928 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-07 15:58:20,943 | INFO | Turn 7 | enemy action prepared | label=basic attack | dmg=57 | cannot_be_dodged=True
+2026-04-07 15:58:22,071 | INFO | Turn 7 | dodge failed against basic attack
+2026-04-07 15:58:22,071 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=666/1200,SP=120/120,M=200/200) E(HP=93/720,SP=100/100,M=270/300)
+2026-04-07 15:58:22,071 | INFO | Turn 7 complete | P(HP=666/1200,SP=120/120,M=200/200) E(HP=93/720,SP=100/100,M=270/300)
+2026-04-07 15:58:24,183 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:24,183 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=666/1200,SP=120/120,M=200/200) E(HP=93/720,SP=100/100,M=270/300)
+2026-04-07 15:58:24,183 | INFO | Turn 8 | enemy defeated before enemy phase | P(HP=666/1200,SP=120/120,M=200/200) E(HP=0/720,SP=100/100,M=270/300)
+2026-04-07 15:58:24,183 | INFO | CombatResult built | winner=player | turns=7 | flags=[] | P(HP=666/1200,SP=120/120,M=200/200) E(HP=0/720,SP=100/100,M=270/300)
+2026-04-07 15:58:24,183 | INFO | Combat end | phase=player_action | winner=player | turns=7 | flags=[] | P(HP=666/1200,SP=120/120,M=200/200) E(HP=0/720,SP=100/100,M=270/300)
+2026-04-07 15:58:37,018 | INFO | Combat start | title=ENCOUNTER - THE BURNING SUN | player=Nasir | enemy=Bhaskar | context={'route': 'Lancer', 'spirit_hunt': False, 'ache_active': False, 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-07 15:58:53,345 | INFO | Turn 1 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:58:53,345 | INFO | Turn 1 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=1200/1200,SP=120/120,M=200/200) E(HP=1320/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:53,345 | INFO | Turn 1 | skill committed | skill=zuxi_combat_call | mana_cost=20 | mana_now=180
+2026-04-07 15:58:53,345 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-07 15:58:53,361 | INFO | Turn 1 | enemy action prepared | label=basic attack | dmg=101 | cannot_be_dodged=False
+2026-04-07 15:58:54,176 | INFO | Turn 1 | dodge success against basic attack
+2026-04-07 15:58:54,176 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=1200/1200,SP=120/120,M=195/200) E(HP=1133/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:54,176 | INFO | Turn 1 complete | P(HP=1200/1200,SP=120/120,M=195/200) E(HP=1133/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:54,924 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:54,924 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=1200/1200,SP=120/120,M=195/200) E(HP=1133/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:54,924 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-07 15:58:54,941 | INFO | Turn 2 | enemy action prepared | label=Rage Against Unjust | dmg=135 | cannot_be_dodged=False
+2026-04-07 15:58:55,837 | INFO | Turn 2 | dodge failed against Rage Against Unjust
+2026-04-07 15:58:55,837 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=1068/1200,SP=120/120,M=200/200) E(HP=1023/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:55,837 | INFO | Turn 2 complete | P(HP=1068/1200,SP=120/120,M=200/200) E(HP=1023/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:57,162 | INFO | Turn 3 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:58:57,247 | INFO | Turn 3 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=1068/1200,SP=120/120,M=200/200) E(HP=1023/1320,SP=110/110,M=200/200)
+2026-04-07 15:58:57,248 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-07 15:58:57,255 | INFO | Turn 3 | enemy action prepared | label=Cheat Gainer | dmg=141 | cannot_be_dodged=False
+2026-04-07 15:58:57,833 | INFO | Turn 3 | dodge failed against Cheat Gainer
+2026-04-07 15:58:57,833 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=931/1200,SP=120/120,M=200/200) E(HP=898/1320,SP=110/110,M=180/200)
+2026-04-07 15:58:57,833 | INFO | Turn 3 complete | P(HP=931/1200,SP=120/120,M=200/200) E(HP=898/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:02,658 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:02,658 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=931/1200,SP=120/120,M=200/200) E(HP=898/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:02,658 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-07 15:59:02,675 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=120 | cannot_be_dodged=False
+2026-04-07 15:59:03,361 | INFO | Turn 4 | dodge failed against basic attack
+2026-04-07 15:59:03,361 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=816/1200,SP=120/120,M=200/200) E(HP=794/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:03,361 | INFO | Turn 4 complete | P(HP=816/1200,SP=120/120,M=200/200) E(HP=794/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:04,770 | INFO | Turn 5 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:04,770 | INFO | Turn 5 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=816/1200,SP=120/120,M=200/200) E(HP=794/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:04,770 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-07 15:59:04,786 | INFO | Turn 5 | enemy action prepared | label=basic attack | dmg=108 | cannot_be_dodged=False
+2026-04-07 15:59:05,470 | INFO | Turn 5 | dodge success against basic attack
+2026-04-07 15:59:05,470 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:05,470 | INFO | Turn 5 complete | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:10,362 | INFO | Turn 6 | player_action payload={'action': 'ACT', 'skill_id': 'adaptive_activate'}
+2026-04-07 15:59:10,362 | INFO | Turn 6 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'adaptive_activate'} | bonus_action=False | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:10,362 | INFO | Turn 6 | skill committed | skill=adaptive_activate | mana_cost=15 | mana_now=185
+2026-04-07 15:59:10,362 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-07 15:59:10,379 | INFO | Turn 6 | enemy action prepared | label=basic attack | dmg=114 | cannot_be_dodged=False
+2026-04-07 15:59:11,477 | INFO | Turn 6 | dodge success against basic attack
+2026-04-07 15:59:11,477 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:11,477 | INFO | Turn 6 complete | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:13,063 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:13,063 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=816/1200,SP=110/120,M=200/200) E(HP=691/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:13,064 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-07 15:59:13,080 | INFO | Turn 7 | enemy action prepared | label=basic attack | dmg=107 | cannot_be_dodged=False
+2026-04-07 15:59:14,380 | INFO | Turn 7 | dodge failed against basic attack
+2026-04-07 15:59:14,380 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=716/1200,SP=113/120,M=200/200) E(HP=584/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:14,380 | INFO | Turn 7 complete | P(HP=716/1200,SP=113/120,M=200/200) E(HP=584/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:15,652 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:15,652 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=716/1200,SP=113/120,M=200/200) E(HP=584/1320,SP=110/110,M=180/200)
+2026-04-07 15:59:15,652 | INFO | Turn 8 | handoff to enemy_attack
+2026-04-07 15:59:15,667 | INFO | Turn 8 | enemy action prepared | label=Cardinal Algorithm | dmg=129 | cannot_be_dodged=False
+2026-04-07 15:59:16,386 | INFO | Turn 8 | dodge failed against Cardinal Algorithm
+2026-04-07 15:59:16,386 | INFO | Turn 8 | cycle resolved, returning to player_action | P(HP=597/1200,SP=116/120,M=200/200) E(HP=584/1320,SP=110/110,M=165/200)
+2026-04-07 15:59:16,386 | INFO | Turn 8 complete | P(HP=597/1200,SP=116/120,M=200/200) E(HP=584/1320,SP=110/110,M=165/200)
+2026-04-07 15:59:17,082 | INFO | Turn 9 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:17,082 | INFO | Turn 9 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=597/1200,SP=116/120,M=200/200) E(HP=584/1320,SP=110/110,M=165/200)
+2026-04-07 15:59:17,082 | INFO | Turn 9 | handoff to enemy_attack
+2026-04-07 15:59:17,098 | INFO | Turn 9 | enemy action prepared | label=Divine Spear - Bhaskar | dmg=264 | cannot_be_dodged=False
+2026-04-07 15:59:18,694 | INFO | Turn 9 | dodge failed against Divine Spear - Bhaskar
+2026-04-07 15:59:18,695 | INFO | Turn 9 | cycle resolved, returning to player_action | P(HP=357/1200,SP=119/120,M=200/200) E(HP=584/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:18,695 | INFO | Turn 9 complete | P(HP=357/1200,SP=119/120,M=200/200) E(HP=584/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:21,059 | INFO | Turn 10 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:59:21,059 | INFO | Turn 10 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=357/1200,SP=119/120,M=200/200) E(HP=584/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:21,059 | INFO | Turn 10 | skill committed | skill=zuxi_combat_call | mana_cost=20 | mana_now=180
+2026-04-07 15:59:21,059 | INFO | Turn 10 | handoff to enemy_attack
+2026-04-07 15:59:21,076 | INFO | Turn 10 | enemy action prepared | label=Rage Against Unjust | dmg=141 | cannot_be_dodged=False
+2026-04-07 15:59:22,698 | INFO | Turn 10 | dodge success against Rage Against Unjust
+2026-04-07 15:59:22,698 | INFO | Turn 10 | cycle resolved, returning to player_action | P(HP=357/1200,SP=109/120,M=195/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:22,698 | INFO | Turn 10 complete | P(HP=357/1200,SP=109/120,M=195/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:25,772 | INFO | Turn 11 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:59:25,772 | INFO | Turn 11 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=357/1200,SP=109/120,M=195/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:25,772 | INFO | Turn 11 | action did not commit | action=ACT
+2026-04-07 15:59:30,150 | INFO | Turn 11 | player_action payload={'action': 'ITEM', 'item_id': 'hp_uncommon'}
+2026-04-07 15:59:30,150 | INFO | Turn 11 | process_player_action | action=ITEM | payload={'action': 'ITEM', 'item_id': 'hp_uncommon'} | bonus_action=False | P(HP=357/1200,SP=109/120,M=195/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:30,150 | INFO | Turn 11 | handoff to enemy_attack
+2026-04-07 15:59:30,166 | INFO | Turn 11 | enemy action prepared | label=basic attack | dmg=117 | cannot_be_dodged=False
+2026-04-07 15:59:30,937 | INFO | Turn 11 | dodge failed against basic attack
+2026-04-07 15:59:30,937 | INFO | Turn 11 | cycle resolved, returning to player_action | P(HP=503/1200,SP=112/120,M=200/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:30,937 | INFO | Turn 11 complete | P(HP=503/1200,SP=112/120,M=200/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:31,853 | INFO | Turn 12 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:31,854 | INFO | Turn 12 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=503/1200,SP=112/120,M=200/200) E(HP=402/1320,SP=110/110,M=135/200)
+2026-04-07 15:59:31,854 | INFO | Turn 12 | handoff to enemy_attack
+2026-04-07 15:59:31,870 | INFO | Turn 12 | enemy action prepared | label=Divine Spear Fragment | dmg=230 | cannot_be_dodged=False
+2026-04-07 15:59:32,604 | INFO | Turn 12 | dodge success against Divine Spear Fragment
+2026-04-07 15:59:32,604 | INFO | Turn 12 | cycle resolved, returning to player_action | P(HP=503/1200,SP=102/120,M=200/200) E(HP=285/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:32,604 | INFO | Turn 12 complete | P(HP=503/1200,SP=102/120,M=200/200) E(HP=285/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:34,331 | INFO | Turn 13 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:59:34,331 | INFO | Turn 13 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=503/1200,SP=102/120,M=200/200) E(HP=285/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:34,331 | INFO | Turn 13 | action did not commit | action=ACT
+2026-04-07 15:59:37,207 | INFO | Turn 13 | player_action payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'}
+2026-04-07 15:59:37,207 | INFO | Turn 13 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'zuxi_combat_call'} | bonus_action=False | P(HP=503/1200,SP=102/120,M=200/200) E(HP=285/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:37,207 | INFO | Turn 13 | action did not commit | action=ACT
+2026-04-07 15:59:38,371 | INFO | Turn 13 | player_action payload={'action': 'FIGHT'}
+2026-04-07 15:59:38,371 | INFO | Turn 13 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=503/1200,SP=102/120,M=200/200) E(HP=285/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:38,371 | INFO | Turn 13 | handoff to enemy_attack
+2026-04-07 15:59:38,387 | INFO | Turn 13 | enemy action prepared | label=basic attack | dmg=102 | cannot_be_dodged=False
+2026-04-07 15:59:39,000 | INFO | Turn 13 | dodge failed against basic attack
+2026-04-07 15:59:39,000 | INFO | Turn 13 | cycle resolved, returning to player_action | P(HP=414/1200,SP=105/120,M=200/200) E(HP=177/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:39,000 | INFO | Turn 13 complete | P(HP=414/1200,SP=105/120,M=200/200) E(HP=177/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:45,123 | INFO | Turn 14 | player_action payload={'action': 'NOBLE PHANTASM', 'mode': 'true_name'}
+2026-04-07 15:59:45,123 | INFO | Turn 14 | process_player_action | action=NOBLE PHANTASM | payload={'action': 'NOBLE PHANTASM', 'mode': 'true_name'} | bonus_action=False | P(HP=414/1200,SP=105/120,M=200/200) E(HP=177/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:45,123 | INFO | Turn 14 | NP committed | mode=true_name | mana_cost=60 | mana_now=140
+2026-04-07 15:59:45,123 | INFO | Turn 14 | enemy defeated before enemy phase | P(HP=414/1200,SP=105/120,M=140/200) E(HP=0/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:45,124 | INFO | CombatResult built | winner=player | turns=13 | flags=['below_half_hp', 'used_np'] | P(HP=414/1200,SP=105/120,M=140/200) E(HP=0/1320,SP=110/110,M=65/200)
+2026-04-07 15:59:45,124 | INFO | Combat end | phase=player_action | winner=player | turns=13 | flags=['below_half_hp', 'used_np'] | P(HP=414/1200,SP=105/120,M=140/200) E(HP=0/1320,SP=110/110,M=65/200)
+2026-04-07 16:00:02,609 | INFO | Game closed

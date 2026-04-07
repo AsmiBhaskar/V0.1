@@ -8,6 +8,24 @@
 - First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-07):
+   - Kitik combat kit rework completed and validated in combat module:
+      - Song of Sorrow low-HP trigger edge case fixed.
+      - Song bonus cap removed (unbounded turn scaling).
+      - Dominance of Decision extra-action flow implemented with stacking chance.
+      - Absolute Aim active replaced by Mystic Eyes - Sniper with next-attack modifier package.
+      - Improvised Arrow converted to quick action (no enemy handoff until a non-quick action is committed).
+   - Kitik NP overhaul completed:
+      - Grand Verdict replaced with a 3-turn Reality Marble lifecycle.
+      - Added RM state tracking in combat state and shared Grand Verdict constants.
+      - Added Final Act resolution on expiry and cleanup behavior.
+      - Added suppression/counter handling for Bhaskar Oblivious Exception and Core Matrix precedence.
+   - Combat UX and instrumentation updates:
+      - ACT submenu now shows dynamic mana costs for scaling skills.
+      - Detailed combat flow logging expanded through combat engine and turn manager.
+   - Validation completed:
+      - diagnostics show no errors in updated combat files.
+      - compileall passed for updated combat modules.
 - Session update (2026-04-04):
    - Archer route combat integration pass completed with three checkpoints:
       - Opening scripted-loss combat: Kitik vs Bhaskar (Berserker).
@@ -175,9 +193,22 @@
    - Skill, item, and NP action handling with mana/SP/NP resource updates.
    - Encounter-driven servant factory initialization and context flags.
    - Route-side result persistence (winner, turns, resources, and combat flags).
+   - Kitik Reality Marble NP lifecycle with Final Act and field-precedence checks.
 - In active testing:
    - Balance tuning (damage scaling, dodge reliability, mana pressure, NP pacing).
    - Additional route integrations beyond Lancer.
+
+### Next To-Do (Caster and Berserker)
+- Caster:
+   - Integrate and verify a mandatory combat gate in Caster route flow (Kiki vs Stella) with retry-safe save behavior.
+   - Validate Core Matrix behavior against enemy field effects and NP interactions in both base and true-name contexts.
+   - Rebalance Segmentation and Territory Creation windows after recent field-control updates.
+- Berserker:
+   - Validate Oblivious Exception immunity semantics against all current debuff/system-effect sources.
+   - Add a focused regression pass for Recursion + Burning Ache interaction at low HP and high ache states.
+   - Add combat-result driven Berserker route state updates for ache decay/escalation consistency.
+- Shared validation:
+   - Build a short matchup matrix for Kiki, Kitik, and Bhaskar encounter permutations and log outcomes for tuning.
 
 ### Deferred Development Notes
 - Rank-based conversion constants in combat/data/combat_constants.py are intentionally retained for scaling.

@@ -19,6 +19,10 @@ class CombatState:
 
     context_flags: dict = field(default_factory=dict)
 
+    reality_marble_active: bool = False
+    reality_marble_turns_remaining: int = 0
+    reality_marble_final_act_triggered: bool = False
+
     def log_event(self, text: str):
         self.log.append(text)
         if len(self.log) > 50:

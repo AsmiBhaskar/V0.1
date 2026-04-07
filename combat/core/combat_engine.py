@@ -1,3 +1,5 @@
+import logging
+
 import pygame
 
 from combat.data.combat_constants import (
@@ -15,8 +17,10 @@ from combat.core.combat_state import CombatState
 from combat.ui.combat_renderer import render_combat_frame
 from combat.data.item_data import ITEMS
 from combat.systems.passive_triggers import HOOK_ON_TURN_END, HOOK_ON_TURN_START, fire_hook
-from combat.core.turn_manager import initialize_runtime_state, process_enemy_turn, process_player_action
+from combat.core.turn_manager import get_skill_mana_cost, initialize_runtime_state, process_enemy_turn, process_player_action
 from game_core.constants import FPS
+
+LOGGER = logging.getLogger(__name__)
 
 
 def run_combat(screen, clock, encounter: dict) -> CombatResult:
@@ -35,6 +39,13 @@ def run_combat(screen, clock, encounter: dict) -> CombatResult:
     title = encounter.get("title", "ENCOUNTER")
     state.log_event(f"{title}")
     state.log_event(f"{player.name} vs {enemy.name}")
+    LOGGER.info(
+        "Combat start | title=%s | player=%s | enemy=%s | context=%s",
+        title,
+        player.name,
+        enemy.name,
+        context,
+    )
 
     _apply_context_modifiers(state)
     _reset_ui_state(state)
@@ -44,6 +55,7 @@ def run_combat(screen, clock, encounter: dict) -> CombatResult:
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                LOGGER.info("Combat interrupted by quit | %s", _combat_snapshot(state))
                 return CombatResult(
                     winner="draw",
                     hp_remaining=state.player.hp,
@@ -58,28 +70,58 @@ def run_combat(screen, clock, encounter: dict) -> CombatResult:
                     selected_action = payload
 
         if state.phase == "player_action" and selected_action:
-            fire_hook(HOOK_ON_TURN_START, state, state.player.name, {"turn": state.turn})
+            LOGGER.info("Turn %d | player_action payload=%s", state.turn + 1, selected_action)
+            if not state.context_flags.get("turn_start_hook_fired", False):
+                fire_hook(HOOK_ON_TURN_START, state, state.player.name, {"turn": state.turn})
+                state.context_flags["turn_start_hook_fired"] = True
             result = process_player_action(state, selected_action)
             selected_action = None
             if result:
-                return _finalize_result_for_context(state, result)
+                finalized = _finalize_result_for_context(state, result)
+                LOGGER.info(
+                    "Combat end | phase=player_action | winner=%s | turns=%d | flags=%s | %s",
+                    finalized.winner,
+                    finalized.turns_taken,
+                    finalized.flags,
+                    _combat_snapshot(state),
+                )
+                return finalized
 
         elif state.phase == "enemy_attack":
             result = process_enemy_turn(state)
             if result:
-                return _finalize_result_for_context(state, result)
+                finalized = _finalize_result_for_context(state, result)
+                LOGGER.info(
+                    "Combat end | phase=enemy_attack | winner=%s | turns=%d | flags=%s | %s",
+                    finalized.winner,
+                    finalized.turns_taken,
+                    finalized.flags,
+                    _combat_snapshot(state),
+                )
+                return finalized
 
         elif state.phase == "dodge_phase":
             if "dodge_choice" in state.context_flags:
                 result = process_enemy_turn(state)
                 if result:
-                    return _finalize_result_for_context(state, result)
+                    finalized = _finalize_result_for_context(state, result)
+                    LOGGER.info(
+                        "Combat end | phase=dodge_phase | winner=%s | turns=%d | flags=%s | %s",
+                        finalized.winner,
+                        finalized.turns_taken,
+                        finalized.flags,
+                        _combat_snapshot(state),
+                    )
+                    return finalized
 
                 if state.phase == "player_action":
                     fire_hook(HOOK_ON_TURN_END, state, state.player.name, {"turn": state.turn})
                     state.turn += 1
+                    state.context_flags["turn_start_hook_fired"] = False
+                    LOGGER.info("Turn %d complete | %s", state.turn, _combat_snapshot(state))
 
                     if state.turn >= MAX_TURNS:
+                        LOGGER.info("Combat ended by turn limit | %s", _combat_snapshot(state))
                         return CombatResult(
                             winner="draw",
                             hp_remaining=state.player.hp,
@@ -210,8 +252,10 @@ def _handle_submenu_key(key, state):
 def _activate_or_open_submenu(action: str, state):
     if action == ACTION_ACT:
         options = []
+        uses = state.context_flags.get("player_skill_uses", {})
         for skill in state.player.actives:
-            label = f"{skill['name']}  |  Mana {skill.get('mana_cost', 0)}"
+            mana_cost = get_skill_mana_cost(skill, uses)
+            label = f"{skill['name']}  |  Mana {mana_cost}"
             options.append(
                 {
                     "label": label,
@@ -299,4 +343,13 @@ def _finalize_result_for_context(state, result: CombatResult) -> CombatResult:
         result.flags.append("spirit_captured")
 
     return result
+
+
+def _combat_snapshot(state) -> str:
+    return (
+        f"P(HP={state.player.hp}/{state.player.hp_max},SP={state.player.sp}/{state.player.sp_max},"
+        f"M={state.player.mana}/{state.player.mana_max}) "
+        f"E(HP={state.enemy.hp}/{state.enemy.hp_max},SP={state.enemy.sp}/{state.enemy.sp_max},"
+        f"M={state.enemy.mana}/{state.enemy.mana_max})"
+    )
 
