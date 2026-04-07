@@ -1,3 +1,4 @@
+import logging
 import random
 
 from combat.data.combat_constants import (
@@ -12,6 +13,10 @@ from combat.data.combat_constants import (
     AI_SKILL_CHANCE,
     CRIT_CHANCE_BASE,
     EXHAUSTION_THRESHOLD,
+    GRAND_VERDICT_CRIT_BONUS,
+    GRAND_VERDICT_DAMAGE_BONUS,
+    GRAND_VERDICT_DURATION,
+    GRAND_VERDICT_FINAL_ACT_MULTIPLIER,
     HP_REGEN_DEFAULT,
     MANA_REGEN_DEFAULT,
     MANA_REGEN_REST,
@@ -42,6 +47,8 @@ from combat.systems.passive_triggers import (
 )
 from combat.systems.status_effects import tick_statuses
 
+LOGGER = logging.getLogger(__name__)
+
 
 def initialize_runtime_state(state):
     ctx = state.context_flags
@@ -64,6 +71,14 @@ def initialize_runtime_state(state):
     ctx.setdefault("pending_enemy_action", None)
     ctx.setdefault("turn_skill_cooldown_log", [])
     ctx.setdefault("turn_action_label", None)
+    ctx.setdefault("dominance_stack", 0.0)
+    ctx.setdefault("dominance_bonus_turn_pending", False)
+    ctx.setdefault("dominance_proc_count", 0)
+    ctx.setdefault("quick_action_committed", False)
+    ctx.setdefault("turn_start_hook_fired", False)
+    ctx.setdefault("core_matrix_active", False)
+    ctx.setdefault("reality_field_owner", None)
+    ctx.setdefault("reality_marble_suppressed", False)
 
     if "turn_flags" not in ctx:
         _reset_turn_flags(state)
@@ -71,10 +86,21 @@ def initialize_runtime_state(state):
 
 def process_player_action(state, selected_action):
     initialize_runtime_state(state)
+    state.context_flags["quick_action_committed"] = False
     action_payload = _normalize_action_payload(selected_action)
     action = action_payload.get("action")
+    is_dominance_bonus_action = bool(state.context_flags.pop("dominance_bonus_turn_pending", False))
+    LOGGER.info(
+        "Turn %d | process_player_action | action=%s | payload=%s | bonus_action=%s | %s",
+        state.turn + 1,
+        action,
+        action_payload,
+        is_dominance_bonus_action,
+        _state_snapshot(state),
+    )
 
     if action not in {ACTION_FIGHT, ACTION_ACT, ACTION_ITEM, ACTION_NP, ACTION_DODGE, ACTION_BLOCK}:
+        LOGGER.info("Turn %d | ignored invalid action payload=%s", state.turn + 1, action_payload)
         return None
 
     committed = False
@@ -102,12 +128,26 @@ def process_player_action(state, selected_action):
         committed = _prepare_block(state)
 
     if not committed:
+        if is_dominance_bonus_action:
+            state.context_flags["dominance_bonus_turn_pending"] = True
+        LOGGER.info("Turn %d | action did not commit | action=%s", state.turn + 1, action)
         return None
 
     if state.enemy.hp <= 0:
+        LOGGER.info("Turn %d | enemy defeated before enemy phase | %s", state.turn + 1, _state_snapshot(state))
         return _build_result(state, "player")
 
+    if state.context_flags.pop("quick_action_committed", False):
+        LOGGER.info("Turn %d | quick action committed, player keeps turn", state.turn + 1)
+        state.phase = "player_action"
+        return None
+
+    if _try_dominance_of_decision(state, is_dominance_bonus_action):
+        state.phase = "player_action"
+        return None
+
     state.phase = "enemy_attack"
+    LOGGER.info("Turn %d | handoff to enemy_attack", state.turn + 1)
     return None
 
 
@@ -119,6 +159,13 @@ def process_enemy_turn(state):
         state.context_flags["pending_enemy_action"] = pending
         state.phase = "dodge_phase"
         state.log_event(pending["announce"])
+        LOGGER.info(
+            "Turn %d | enemy action prepared | label=%s | dmg=%s | cannot_be_dodged=%s",
+            state.turn + 1,
+            pending.get("label"),
+            pending.get("damage"),
+            pending.get("cannot_be_dodged", False),
+        )
 
         if state.context_flags.pop("auto_dodge_intent", False):
             state.context_flags["dodge_choice"] = True
@@ -145,6 +192,7 @@ def process_enemy_turn(state):
     dodge_choice = bool(state.context_flags.pop("dodge_choice", False))
     if pending is None:
         state.phase = "player_action"
+        LOGGER.info("Turn %d | pending enemy action missing, returning to player_action", state.turn + 1)
         return None
 
     turn_flags = state.context_flags["turn_flags"]
@@ -152,16 +200,22 @@ def process_enemy_turn(state):
 
     if has_dodge_choice and dodge_choice:
         state.context_flags["total_dodge_attempts"] += 1
-        success, _ = _resolve_dodge_attempt(state)
+        if pending.get("cannot_be_dodged", False):
+            success = False
+            state.log_event(f"{state.enemy.name}'s strike cannot be dodged.")
+        else:
+            success, _ = _resolve_dodge_attempt(state)
         if success:
             turn_flags["dodge_success"] = True
             state.consecutive_dodges += 1
             fire_hook(HOOK_ON_DODGE_SUC, state, state.player.name, {"turn": state.turn})
             state.log_event(f"Dodge success - {pending['label']} misses cleanly.")
+            LOGGER.info("Turn %d | dodge success against %s", state.turn + 1, pending.get("label"))
         else:
             state.consecutive_dodges = 0
             fire_hook(HOOK_ON_DODGE_FAIL, state, state.player.name, {"turn": state.turn})
             _enemy_hits_player(state, pending["damage"], pending["label"])
+            LOGGER.info("Turn %d | dodge failed against %s", state.turn + 1, pending.get("label"))
 
     elif state.context_flags.pop("player_blocking", False):
         if state.player.sp >= SP_COST_BLOCK:
@@ -175,11 +229,19 @@ def process_enemy_turn(state):
 
             _enemy_hits_player(state, reduced, pending["label"] + " (blocked)")
             state.log_event(f"Block absorbs {absorbed} damage.")
+            LOGGER.info(
+                "Turn %d | block resolved | incoming=%d | reduced=%d | absorbed=%d",
+                state.turn + 1,
+                int(pending["damage"]),
+                int(reduced),
+                int(absorbed),
+            )
 
         else:
             state.log_event("Stance collapses -- insufficient SP.")
             state.consecutive_dodges = 0
             _enemy_hits_player(state, pending["damage"], pending["label"])
+            LOGGER.info("Turn %d | block failed due to low SP", state.turn + 1)
 
     else:
         state.consecutive_dodges = 0
@@ -188,6 +250,7 @@ def process_enemy_turn(state):
     result = _resolve_player_death(state)
     if result:
         _append_turn_skill_cooldown_log(state)
+        LOGGER.info("Turn %d | player defeated during enemy resolution", state.turn + 1)
         return result
 
     tick_statuses(state.player_statuses, state.player, state)
@@ -198,13 +261,21 @@ def process_enemy_turn(state):
     _tick_cooldowns(state.context_flags["enemy_cooldowns"])
     _tick_effects(state)
     _check_threshold_hooks(state)
+
+    reality_result = update_reality_marble(state)
+    if reality_result:
+        _append_turn_skill_cooldown_log(state)
+        return reality_result
+
     _append_turn_skill_cooldown_log(state)
 
     if state.enemy.hp <= 0:
+        LOGGER.info("Turn %d | enemy defeated during end-of-turn", state.turn + 1)
         return _build_result(state, "player")
 
     _reset_turn_flags(state)
     state.phase = "player_action"
+    LOGGER.info("Turn %d | cycle resolved, returning to player_action | %s", state.turn + 1, _state_snapshot(state))
     return None
 
 
@@ -220,21 +291,43 @@ def _perform_player_attack(state, source_label: str, damage_mult: float):
 
     state.context_flags["turn_flags"]["rested"] = False
 
-    sure_hit = bool(state.context_flags.pop("player_next_hit_sure", False))
-    force_crit = bool(state.context_flags.pop("player_next_hit_crit", False))
-    crit_chance = 1.0 if force_crit else CRIT_CHANCE_BASE
+    next_attack_mods = _consume_next_attack_modifiers(state, state.enemy)
+    absolute_aim_active = bool(state.player.passives.get("absolute_aim_passive", False))
+    sure_hit = bool(next_attack_mods["sure_hit"]) or absolute_aim_active
+    force_crit = bool(next_attack_mods["force_crit"])
+    unblockable = bool(next_attack_mods["unblockable"])
+    crit_bonus = (GRAND_VERDICT_CRIT_BONUS / 100.0) if _is_reality_marble_buff_active(state) else 0.0
+    crit_chance = 1.0 if force_crit else min(1.0, CRIT_CHANCE_BASE + crit_bonus)
+    enemy_dodge_disabled = _is_reality_marble_debuff_active(state)
 
-    if not sure_hit and random.random() < max(0.0, min(0.35, state.enemy.base_dodge * 0.35)):
+    if (
+        not sure_hit
+        and not unblockable
+        and not enemy_dodge_disabled
+        and random.random() < max(0.0, min(0.35, state.enemy.base_dodge * 0.35))
+    ):
         state.log_event(f"{state.player.name}'s attack misses.")
         return True
 
     final_mult = damage_mult * _player_damage_multiplier(state)
-    damage, is_crit = calculate_damage(
-        attack=state.player.base_attack,
-        defense_factor=_enemy_defense_factor(state),
-        damage_multiplier=final_mult,
-        crit_chance=crit_chance,
-    )
+    final_mult *= 1.0 + float(next_attack_mods["missing_hp_bonus"])
+
+    if next_attack_mods["missing_hp_bonus"] > 0:
+        state.log_event(
+            f"Vulnerability Exploitation: +{next_attack_mods['missing_hp_bonus'] * 100:.0f}% damage."
+        )
+
+    damage_kwargs = {
+        "attack": state.player.base_attack,
+        "defense_factor": 1.0 if unblockable else _enemy_defense_factor(state),
+        "damage_multiplier": final_mult,
+        "crit_chance": crit_chance,
+    }
+
+    if force_crit and next_attack_mods["crit_multiplier"] is not None:
+        damage_kwargs["crit_multiplier"] = float(next_attack_mods["crit_multiplier"])
+
+    damage, is_crit = calculate_damage(**damage_kwargs)
     _player_hits_enemy(state, damage, source_label, is_crit)
     return True
 
@@ -249,6 +342,10 @@ def _execute_player_skill(state, skill_id):
         state.log_event("Skill not found.")
         return False
 
+    if skill.get("id") == "mystic_eyes_sniper" and state.context_flags.get("player_next_mystic_eyes", False):
+        state.log_event("Mystic Eyes - Sniper is already primed for your next attack.")
+        return False
+
     cooldowns = state.context_flags["player_cooldowns"]
     uses = state.context_flags["player_skill_uses"]
 
@@ -259,6 +356,13 @@ def _execute_player_skill(state, skill_id):
     mana_cost = _skill_mana_cost(skill, uses)
     if state.player.mana < mana_cost:
         state.log_event("Not enough mana.")
+        LOGGER.info(
+            "Turn %d | skill blocked for mana | skill=%s | need=%d | have=%d",
+            state.turn + 1,
+            skill_id,
+            int(mana_cost),
+            int(state.player.mana),
+        )
         return False
 
     state.player.mana -= mana_cost
@@ -269,8 +373,19 @@ def _execute_player_skill(state, skill_id):
 
     fire_hook(HOOK_ON_SKILL_USE, state, state.player.name, {"skill_id": skill_id})
     state.log_event(f"{state.player.name} uses {skill['name']}.")
+    LOGGER.info(
+        "Turn %d | skill committed | skill=%s | mana_cost=%d | mana_now=%d",
+        state.turn + 1,
+        skill.get("id"),
+        int(mana_cost),
+        int(state.player.mana),
+    )
 
+    is_quick_action = _is_quick_action_skill(skill)
     _apply_skill_effect(state, skill)
+    if is_quick_action:
+        state.context_flags["quick_action_committed"] = True
+        LOGGER.info("Turn %d | quick action skill=%s", state.turn + 1, skill.get("id"))
 
     skill_damage_mult = float(skill.get("damage_mult", 1.0))
     if skill.get("id") == "zuxi_combat_call" and state.context_flags.get("zuxi_true_name_empower", False):
@@ -327,6 +442,11 @@ def _execute_player_np(state, mode: str):
 
     if state.context_flags.get("player_np", 0) < NP_COST_DEFAULT:
         state.log_event("NP gauge is not full.")
+        LOGGER.info(
+            "Turn %d | NP blocked, gauge not full | gauge=%d",
+            state.turn + 1,
+            int(state.context_flags.get("player_np", 0)),
+        )
         return False
 
     true_name = mode == "true_name"
@@ -339,6 +459,13 @@ def _execute_player_np(state, mode: str):
 
     if state.player.mana < mana_cost:
         state.log_event("Not enough mana for Noble Phantasm.")
+        LOGGER.info(
+            "Turn %d | NP blocked for mana | mode=%s | need=%d | have=%d",
+            state.turn + 1,
+            mode,
+            int(mana_cost),
+            int(state.player.mana),
+        )
         return False
 
     state.player.mana -= mana_cost
@@ -348,6 +475,30 @@ def _execute_player_np(state, mode: str):
     state.context_flags["result_flags"].add("used_np")
     state.context_flags["turn_flags"]["used_np"] = True
     state.context_flags["turn_flags"]["rested"] = False
+    LOGGER.info(
+        "Turn %d | NP committed | mode=%s | mana_cost=%d | mana_now=%d",
+        state.turn + 1,
+        mode,
+        int(mana_cost),
+        int(state.player.mana),
+    )
+
+    if true_name:
+        state.context_flags["np_true_name_used"] = True
+
+    fire_hook(HOOK_ON_NP_USE, state, state.player.name, {"mode": mode})
+
+    if state.player.name == "Kiki" and np_item.get("id") == "core_matrix_token":
+        state.context_flags["core_matrix_active"] = True
+        state.context_flags["reality_field_owner"] = "player"
+        if state.reality_marble_active:
+            state.context_flags["reality_marble_suppressed"] = True
+            state.log_event("Core Matrix seizes field priority and cancels Reality Marble suppression.")
+        else:
+            state.log_event("Core Matrix overlays the battlefield.")
+
+    if state.player.name == "Kitik" and np_item.get("id") == "grand_verdict_score":
+        return execute_grand_verdict(state, true_name)
 
     # NP release instantly refreshes Combat Call if it is cooling down.
     player_cooldowns = state.context_flags.get("player_cooldowns", {})
@@ -356,22 +507,153 @@ def _execute_player_np(state, mode: str):
         state.log_event("Zuxi - Combat Call is instantly refreshed.")
 
     if true_name:
-        state.context_flags["np_true_name_used"] = True
         state.context_flags["zuxi_true_name_empower"] = True
         state.log_event("True Name resonance empowers Zuxi - Combat Call by 50%.")
 
-    fire_hook(HOOK_ON_NP_USE, state, state.player.name, {"mode": mode})
+    next_attack_mods = _consume_next_attack_modifiers(state, state.enemy)
 
     mult = 3.0 if true_name else 2.2
-    defense_factor = 1.0 if true_name else _enemy_defense_factor(state)
-    damage, _ = calculate_damage(
-        attack=state.player.base_attack,
-        defense_factor=defense_factor,
-        damage_multiplier=mult * _player_damage_multiplier(state),
-        crit_chance=0.0,
-    )
-    _player_hits_enemy(state, damage, np_item.get("name", "Noble Phantasm"), is_crit=False)
+    mult *= 1.0 + float(next_attack_mods["missing_hp_bonus"])
+
+    if next_attack_mods["missing_hp_bonus"] > 0:
+        state.log_event(
+            f"Vulnerability Exploitation: +{next_attack_mods['missing_hp_bonus'] * 100:.0f}% damage."
+        )
+
+    force_crit = bool(next_attack_mods["force_crit"])
+    damage_kwargs = {
+        "attack": state.player.base_attack,
+        "defense_factor": 1.0 if true_name or next_attack_mods["unblockable"] else _enemy_defense_factor(state),
+        "damage_multiplier": mult * _player_damage_multiplier(state),
+        "crit_chance": 1.0 if force_crit else 0.0,
+    }
+
+    if force_crit and next_attack_mods["crit_multiplier"] is not None:
+        damage_kwargs["crit_multiplier"] = float(next_attack_mods["crit_multiplier"])
+
+    damage, is_crit = calculate_damage(**damage_kwargs)
+    _player_hits_enemy(state, damage, np_item.get("name", "Noble Phantasm"), is_crit=is_crit)
     return True
+
+
+def execute_grand_verdict(state, true_name: bool):
+    state.reality_marble_active = True
+    state.reality_marble_turns_remaining = GRAND_VERDICT_DURATION
+    state.reality_marble_final_act_triggered = False
+
+    previous_field_owner = state.context_flags.get("reality_field_owner")
+    state.context_flags["reality_marble_suppressed"] = False
+
+    song_bonus = float(state.player.unique_vars.get("song_bonus", 0.0))
+    if song_bonus < 0.30:
+        state.player.unique_vars["song_bonus"] = 0.30
+        state.log_event("Song of Sorrow surges to full chorus.")
+
+    enemy_has_oblivious_exception = bool(state.enemy.passives.get("oblivious_exception", False))
+    enemy_core_matrix_active = bool(
+        state.context_flags.get("core_matrix_active", False)
+        and previous_field_owner == "enemy"
+    )
+
+    if enemy_has_oblivious_exception:
+        state.context_flags["reality_field_owner"] = "player"
+        state.context_flags["reality_marble_suppressed"] = True
+        state.log_event("Oblivious Exception rejects Reality Marble suppression effects.")
+
+    elif enemy_core_matrix_active and not true_name:
+        state.context_flags["reality_field_owner"] = "enemy"
+        state.context_flags["reality_marble_suppressed"] = True
+        state.log_event("Core Matrix distorts the field; evasion suppression is blocked.")
+
+    elif enemy_core_matrix_active and true_name:
+        state.context_flags["core_matrix_active"] = False
+        state.context_flags["reality_field_owner"] = "player"
+        state.log_event("True Name Release overwrites Core Matrix precedence.")
+
+    else:
+        # Reality Marble defaults to player control when not countered.
+        state.context_flags["reality_field_owner"] = "player"
+
+    if true_name:
+        state.log_event("True Name Release: Grand Verdict manifests as a 3-turn Reality Marble.")
+    else:
+        state.log_event("Grand Verdict manifests as a 3-turn Reality Marble.")
+
+    return True
+
+
+def update_reality_marble(state):
+    if not state.reality_marble_active:
+        return None
+
+    if state.enemy.hp <= 0:
+        deactivate_grand_verdict(state, announce=False)
+        return None
+
+    state.reality_marble_turns_remaining = max(0, int(state.reality_marble_turns_remaining) - 1)
+
+    if state.reality_marble_turns_remaining > 0:
+        state.log_event(
+            f"Grand Verdict remains in effect ({state.reality_marble_turns_remaining} turns remaining)."
+        )
+        return None
+
+    if state.reality_marble_final_act_triggered:
+        deactivate_grand_verdict(state)
+        return None
+
+    state.reality_marble_final_act_triggered = True
+    result = execute_final_act(state)
+    deactivate_grand_verdict(state)
+    return result
+
+
+def execute_final_act(state):
+    state.log_event("Final Act: the court's closing judgment descends.")
+
+    next_attack_mods = _consume_next_attack_modifiers(state, state.enemy)
+    mult = GRAND_VERDICT_FINAL_ACT_MULTIPLIER
+    mult *= 1.0 + float(next_attack_mods["missing_hp_bonus"])
+
+    if next_attack_mods["missing_hp_bonus"] > 0:
+        state.log_event(
+            f"Vulnerability Exploitation: +{next_attack_mods['missing_hp_bonus'] * 100:.0f}% damage."
+        )
+
+    force_crit = bool(next_attack_mods["force_crit"])
+    crit_bonus = (GRAND_VERDICT_CRIT_BONUS / 100.0) if _is_reality_marble_buff_active(state) else 0.0
+    crit_chance = 1.0 if force_crit else min(1.0, CRIT_CHANCE_BASE + crit_bonus)
+
+    damage_kwargs = {
+        "attack": state.player.base_attack,
+        "defense_factor": 1.0 if next_attack_mods["unblockable"] else _enemy_defense_factor(state),
+        "damage_multiplier": mult * _player_damage_multiplier(state),
+        "crit_chance": crit_chance,
+    }
+
+    if force_crit and next_attack_mods["crit_multiplier"] is not None:
+        damage_kwargs["crit_multiplier"] = float(next_attack_mods["crit_multiplier"])
+
+    damage, is_crit = calculate_damage(**damage_kwargs)
+    _player_hits_enemy(state, damage, "Grand Verdict - Final Act", is_crit=is_crit)
+
+    if state.enemy.hp <= 0:
+        return _build_result(state, "player")
+
+    return None
+
+
+def deactivate_grand_verdict(state, announce: bool = True):
+    state.reality_marble_active = False
+    state.reality_marble_turns_remaining = 0
+    state.reality_marble_final_act_triggered = False
+    state.context_flags["reality_marble_suppressed"] = False
+
+    if state.context_flags.get("reality_field_owner") == "player":
+        state.context_flags["reality_field_owner"] = None
+
+    if announce:
+        state.log_event("Grand Verdict's Reality Marble dissolves.")
 
 
 def _apply_skill_effect(state, skill):
@@ -406,6 +688,16 @@ def _apply_skill_effect(state, skill):
         state.player.sp = min(state.player.sp_max, state.player.sp + 15)
     elif effect == "sure_hit_next":
         state.context_flags["player_next_hit_sure"] = True
+    elif effect == "improvised_arrow":
+        return
+    elif effect == "mystic_eyes_sniper":
+        state.context_flags["player_next_mystic_eyes"] = True
+        state.context_flags["player_next_hit_sure"] = True
+        state.context_flags["player_next_hit_unblockable"] = True
+        state.context_flags["player_next_hit_crit"] = True
+        state.context_flags["player_next_hit_crit_multiplier"] = 2.0
+        state.context_flags["player_next_hit_vuln_scale"] = 0.30
+        state.log_event("Mystic Eyes - Sniper primed: next attack is unblockable and guaranteed critical.")
     elif effect == "emergency_heal":
         threshold = int(state.player.hp_max * 0.20)
         heal_pct = 0.40 if state.player.hp <= threshold else 0.20
@@ -448,6 +740,8 @@ def _prepare_enemy_action(state):
     enemy = state.enemy
     enemy_cooldowns = state.context_flags["enemy_cooldowns"]
     enemy_uses = state.context_flags["enemy_skill_uses"]
+    cannot_be_dodged = bool(enemy.passives.get("absolute_aim_passive", False))
+    evasion_locked = _is_reality_marble_debuff_active(state)
 
     if (
         state.context_flags.get("enemy_np", 0) >= AI_NP_THRESHOLD
@@ -457,6 +751,13 @@ def _prepare_enemy_action(state):
         mana_cost = int(enemy.np_item.get("base_mana_cost", 50))
         enemy.mana -= mana_cost
         state.context_flags["enemy_np"] = 0
+
+        if enemy.name == "Kiki" and enemy.np_item.get("id") == "core_matrix_token":
+            state.context_flags["core_matrix_active"] = True
+            state.context_flags["reality_field_owner"] = "enemy"
+            if state.reality_marble_active:
+                state.context_flags["reality_marble_suppressed"] = True
+
         damage, _ = calculate_damage(
             attack=enemy.base_attack,
             defense_factor=1.0,
@@ -467,12 +768,14 @@ def _prepare_enemy_action(state):
             "label": enemy.np_item.get("name", "Noble Phantasm"),
             "damage": damage,
             "announce": f"{enemy.name} invokes {enemy.np_item.get('name', 'Noble Phantasm')}!",
+            "cannot_be_dodged": cannot_be_dodged,
         }
 
     available_skills = [
         skill
         for skill in enemy.actives
-        if _is_skill_available(enemy, skill, enemy_cooldowns, enemy_uses)
+        if (not evasion_locked or not _is_evasion_skill(skill))
+        and _is_skill_available(enemy, skill, enemy_cooldowns, enemy_uses)
     ]
 
     if available_skills and random.random() < AI_SKILL_CHANCE:
@@ -492,6 +795,7 @@ def _prepare_enemy_action(state):
             "label": skill["name"],
             "damage": damage,
             "announce": f"{enemy.name} prepares {skill['name']}.",
+            "cannot_be_dodged": cannot_be_dodged,
         }
 
     damage, is_crit = calculate_damage(
@@ -505,6 +809,7 @@ def _prepare_enemy_action(state):
         "label": "basic attack",
         "damage": damage,
         "announce": f"{enemy.name} lunges with a basic attack{crit_text}.",
+        "cannot_be_dodged": cannot_be_dodged,
     }
 
 
@@ -590,7 +895,7 @@ def _build_result(state, winner: str):
     if state.player.hp <= int(state.player.hp_max * 0.5):
         flags.add("below_half_hp")
 
-    return CombatResult(
+    result = CombatResult(
         winner=winner,
         hp_remaining=state.player.hp,
         sp_remaining=state.player.sp,
@@ -598,6 +903,14 @@ def _build_result(state, winner: str):
         turns_taken=state.turn,
         flags=sorted(flags),
     )
+    LOGGER.info(
+        "CombatResult built | winner=%s | turns=%d | flags=%s | %s",
+        result.winner,
+        result.turns_taken,
+        result.flags,
+        _state_snapshot(state),
+    )
+    return result
 
 
 def _apply_end_turn_recovery(state):
@@ -632,8 +945,10 @@ def _apply_end_turn_recovery(state):
 
 def _check_threshold_hooks(state):
     if not state.context_flags.get("low_hp_triggered", False) and state.player.hp < int(state.player.hp_max * 0.30):
-        fire_hook(HOOK_ON_LOW_HP, state, state.player.name, {"turn": state.turn})
-        state.context_flags["low_hp_triggered"] = True
+        # Handlers may set ctx["consumed"] = False to defer one-shot lockout.
+        low_hp_ctx = {"turn": state.turn, "consumed": True}
+        fire_hook(HOOK_ON_LOW_HP, state, state.player.name, low_hp_ctx)
+        state.context_flags["low_hp_triggered"] = bool(low_hp_ctx.get("consumed", True))
 
     if not state.context_flags.get("low_sp_triggered", False) and state.player.sp < EXHAUSTION_THRESHOLD:
         fire_hook(HOOK_ON_LOW_SP, state, state.player.name, {"turn": state.turn})
@@ -660,6 +975,9 @@ def _player_damage_multiplier(state):
     mult = 1.0
     mult += float(state.player.unique_vars.get("song_bonus", 0.0))
     mult += float(state.player.unique_vars.get("rage_damage_bonus", 0.0))
+
+    if _is_reality_marble_buff_active(state):
+        mult += GRAND_VERDICT_DAMAGE_BONUS / 100.0
 
     if _has_effect(state, "mana_burst_wave"):
         mult += 0.15
@@ -752,7 +1070,13 @@ def _skill_mana_cost(skill, uses):
     cost = int(skill.get("mana_cost", 0))
     if skill.get("id") == "mana_burst":
         cost += 5 * int(uses.get("mana_burst", 0))
+    if skill.get("id") == "improvised_arrow":
+        cost += 30 * int(uses.get("improvised_arrow", 0))
     return cost
+
+
+def get_skill_mana_cost(skill, uses):
+    return _skill_mana_cost(skill, uses)
 
 
 def _register_skill_use(skill, cooldowns, uses):
@@ -776,6 +1100,56 @@ def _find_skill(skills, skill_id):
         if skill.get("id") == skill_id:
             return skill
     return None
+
+
+def _is_quick_action_skill(skill):
+    return skill.get("effect") == "improvised_arrow"
+
+
+def _is_reality_marble_buff_active(state) -> bool:
+    return bool(state.reality_marble_active)
+
+
+def _is_reality_marble_debuff_active(state) -> bool:
+    if not _is_reality_marble_buff_active(state):
+        return False
+
+    if bool(state.context_flags.get("reality_marble_suppressed", False)):
+        return False
+
+    if (
+        bool(state.context_flags.get("core_matrix_active", False))
+        and state.context_flags.get("reality_field_owner") == "enemy"
+    ):
+        return False
+
+    if bool(state.enemy.passives.get("oblivious_exception", False)):
+        return False
+
+    return True
+
+
+def _is_evasion_skill(skill) -> bool:
+    effect = str(skill.get("effect", "")).lower()
+    evasion_effects = {
+        "guaranteed_dodge",
+        "reveal_and_dodge_boost",
+        "damage_down_dodge_up",
+        "pattern_analysis",
+        "instant_profile",
+        "iron_path_mode",
+    }
+    if effect in evasion_effects:
+        return True
+
+    combined = " ".join(
+        [
+            str(skill.get("id", "")).lower(),
+            str(skill.get("name", "")).lower(),
+            effect,
+        ]
+    )
+    return ("dodge" in combined) or ("evasion" in combined)
 
 
 def _short_skill_name(name: str, max_len: int = 12) -> str:
@@ -865,4 +1239,73 @@ def _prepare_block(state):
     state.context_flags["turn_flags"]["rested"] = False
     state.log_event("You brace for impact -- defensive stance locked.")
     return True
+
+
+def _consume_next_attack_modifiers(state, target):
+    sure_hit = bool(state.context_flags.pop("player_next_hit_sure", False))
+    force_crit = bool(state.context_flags.pop("player_next_hit_crit", False))
+    crit_multiplier = state.context_flags.pop("player_next_hit_crit_multiplier", None)
+    unblockable = bool(state.context_flags.pop("player_next_hit_unblockable", False))
+    vuln_scale = float(state.context_flags.pop("player_next_hit_vuln_scale", 0.0))
+    state.context_flags.pop("player_next_mystic_eyes", False)
+
+    missing_hp_bonus = 0.0
+    if vuln_scale > 0 and getattr(target, "hp_max", 0) > 0:
+        missing_ratio = (target.hp_max - target.hp) / target.hp_max
+        missing_ratio = max(0.0, min(1.0, float(missing_ratio)))
+        missing_hp_bonus = min(0.30, missing_ratio * vuln_scale)
+
+    return {
+        "sure_hit": sure_hit,
+        "force_crit": force_crit,
+        "crit_multiplier": crit_multiplier,
+        "unblockable": unblockable,
+        "missing_hp_bonus": missing_hp_bonus,
+    }
+
+
+def _try_dominance_of_decision(state, is_bonus_action: bool) -> bool:
+    if is_bonus_action:
+        return False
+
+    if state.player.name != "Kitik":
+        return False
+
+    if not state.player.passives.get("dominance_of_decision", False):
+        return False
+
+    stack = float(state.context_flags.get("dominance_stack", 0.0))
+    base_chance = max(0.0, float(state.player.luck) / 1000.0)
+    chance = min(1.0, base_chance + stack)
+
+    if random.random() < chance:
+        state.context_flags["dominance_stack"] = 0.0
+        state.context_flags["dominance_bonus_turn_pending"] = True
+        state.context_flags["dominance_proc_count"] = int(state.context_flags.get("dominance_proc_count", 0)) + 1
+        state.log_event(f"Dominance of Decision triggers ({chance:.0%}) -- extra action granted.")
+        LOGGER.info(
+            "Turn %d | Dominance proc | chance=%.3f | proc_count=%d",
+            state.turn + 1,
+            chance,
+            int(state.context_flags.get("dominance_proc_count", 0)),
+        )
+        return True
+
+    state.context_flags["dominance_stack"] = stack + 0.01
+    LOGGER.info(
+        "Turn %d | Dominance miss | chance=%.3f | new_stack=%.2f",
+        state.turn + 1,
+        chance,
+        float(state.context_flags.get("dominance_stack", 0.0)),
+    )
+    return False
+
+
+def _state_snapshot(state) -> str:
+    return (
+        f"P(HP={state.player.hp}/{state.player.hp_max},SP={state.player.sp}/{state.player.sp_max},"
+        f"M={state.player.mana}/{state.player.mana_max}) "
+        f"E(HP={state.enemy.hp}/{state.enemy.hp_max},SP={state.enemy.sp}/{state.enemy.sp_max},"
+        f"M={state.enemy.mana}/{state.enemy.mana_max})"
+    )
 

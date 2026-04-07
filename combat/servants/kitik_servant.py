@@ -26,18 +26,18 @@ def make_kitik(is_enemy: bool = False) -> ServantBase:
         },
         actives=[
             {
-                "id": "absolute_aim_act",
-                "name": "Absolute Aim",
-                "mana_cost": 25,
-                "cooldown": 2,
-                "effect": "sure_hit_next",
+                "id": "mystic_eyes_sniper",
+                "name": "Mystic Eyes - Sniper",
+                "mana_cost": 35,
+                "cooldown": 4,
+                "effect": "mystic_eyes_sniper",
             },
             {
                 "id": "mana_burst",
                 "name": "Mana Burst",
                 "mana_cost": 20,
                 "cooldown": 0,
-                "effect": "scaled_burst",
+                "effect": "mana_burst",
                 "damage_mult": 1.7,
             },
             {
@@ -45,7 +45,7 @@ def make_kitik(is_enemy: bool = False) -> ServantBase:
                 "name": "Improvised Arrow",
                 "mana_cost": 10,
                 "cooldown": 0,
-                "effect": "item_projectile",
+                "effect": "improvised_arrow",
                 "damage_mult": 1.3,
             },
             {
@@ -59,10 +59,11 @@ def make_kitik(is_enemy: bool = False) -> ServantBase:
         ],
         np_item={
             "id": "grand_verdict_score",
-            "name": "Grand Verdict Score",
+            "name": "Grand Verdict - Opera of the Unignorable Court",
             "base_mana_cost": 55,
             "true_name_cost": 55,
-            "true_name_effect": "reality_marble_no_enemy_dodge",
+            "base_effect": "grand_verdict_reality_marble",
+            "true_name_effect": "grand_verdict_reality_marble_true_name",
             "once_per_battle": True,
         },
     )
@@ -77,17 +78,21 @@ def _register_kitik_hooks():
 
     def on_turn_start(state, ctx):
         uv = state.player.unique_vars
-        uv["song_bonus"] = min(uv.get("song_bonus", 0.0) + 0.05, 0.30)
+        uv["song_bonus"] = uv.get("song_bonus", 0.0) + 0.05
 
     def on_low_hp(state, ctx):
         uv = state.player.unique_vars
         if uv.get("song_triggered", False):
+            ctx["consumed"] = True
             return
         threshold = int(state.player.hp_max * 0.20)
         if state.player.hp <= threshold:
             state.player.hp = min(state.player.hp_max, state.player.hp + int(state.player.hp_max * 0.20))
             uv["song_triggered"] = True
+            ctx["consumed"] = True
             state.log_event("Song of Sorrow - Kitik stabilizes with a final refrain.")
+        else:
+            ctx["consumed"] = False
 
     register_hook(HOOK_ON_TURN_START, "Kitik", on_turn_start)
     register_hook(HOOK_ON_LOW_HP, "Kitik", on_low_hp)

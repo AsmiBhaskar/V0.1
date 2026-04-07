@@ -24,6 +24,29 @@ ENCOUNTERS = {
         "title": "ENCOUNTER - THE UNBROKEN AXIS",
         "context": {"route": "Archer", "spirit_hunt": False, "ache_active": False},
     },
+    "archer_vs_berserker_opening": {
+        "player_fn": make_kitik,
+        "enemy_fn": lambda: make_bhaskar(is_enemy=True),
+        "title": "ENCOUNTER - THE BURNING SUN DESCENDS",
+        "context": {
+            "route": "Archer",
+            "spirit_hunt": False,
+            "ache_active": False,
+            "archer_scripted_loss": True,
+            "phase": "opening",
+        },
+    },
+    "archer_vs_berserker_final": {
+        "player_fn": make_kitik,
+        "enemy_fn": lambda: make_bhaskar(is_enemy=True),
+        "title": "FINAL ENCOUNTER - VERDICT AGAINST THE BURNING SUN",
+        "context": {
+            "route": "Archer",
+            "spirit_hunt": False,
+            "ache_active": False,
+            "phase": "final",
+        },
+    },
     "caster_vs_assassin": {
         "player_fn": make_kiki,
         "enemy_fn": lambda: make_stella(is_enemy=True),

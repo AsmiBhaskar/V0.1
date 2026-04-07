@@ -1,9 +1,16 @@
 import pygame
+from combat.core.combat_engine import run_combat
+from combat.core.encounter_table import ENCOUNTERS
 
 from game_core.constants import BAR_COLOR, BLACK, FPS, WHITE, WINDOW_WIDTH
 from game_core.archer_data import ARCHER_SCENES
 from game_core.storage import delete_save, save_progress
 from game_core.ui import draw_centered_text, draw_left_text, draw_wrapped_block, run_info_screen
+
+
+ARCHER_BERSERKER_OPENING_GATE_INDEX = 2
+ARCHER_LANCER_TRAINING_GATE_INDEX = 6
+ARCHER_BERSERKER_FINAL_GATE_INDEX = 8
 
 
 def apply_archer_choice_effects(state, choice):
@@ -32,8 +39,128 @@ def summarize_archer_stats(state):
         f"humility_pride: {state.get('humility_pride', 0)}",
         f"grand_verdict_readiness: {state.get('grand_verdict_readiness', 0)}",
         f"seen_heard: {state.get('seen_heard', 0)}",
+        f"opening_loss_recorded: {state.get('archer_opening_berserker_done', False)}",
+        f"training_lancer_won: {state.get('archer_training_lancer_won', False)}",
+        f"final_berserker_won: {state.get('archer_final_berserker_won', False)}",
+        f"combat_attempts: {state.get('archer_combat_attempts', 0)}",
         f"flags set: {len(state.get('archer_route_flags', []))}",
     ]
+
+
+def _append_archer_flag(state, flag):
+    flags = state.setdefault("archer_route_flags", [])
+    if flag not in flags:
+        flags.append(flag)
+
+
+def _store_archer_combat_result(state, encounter_key, result, outcome_override=None):
+    state["archer_combat_attempts"] = int(state.get("archer_combat_attempts", 0)) + 1
+    outcome = outcome_override if outcome_override else result.winner
+    latest = {
+        "encounter": encounter_key,
+        "winner": outcome,
+        "raw_winner": result.winner,
+        "turns_taken": result.turns_taken,
+        "hp_remaining": result.hp_remaining,
+        "sp_remaining": result.sp_remaining,
+        "mana_remaining": result.mana_remaining,
+        "flags": list(result.flags),
+    }
+    state["archer_last_combat"] = latest
+
+    history = state.setdefault("archer_combat_history", [])
+    history.append(latest)
+    if len(history) > 10:
+        history.pop(0)
+
+
+def run_archer_berserker_opening_combat(screen, clock, state):
+    result = run_combat(screen, clock, ENCOUNTERS["archer_vs_berserker_opening"])
+    _store_archer_combat_result(state, "archer_vs_berserker_opening", result, outcome_override="enemy")
+
+    state["archer_opening_berserker_done"] = True
+    _append_archer_flag(state, "defeated_by_berserker_opening")
+
+    if result.winner == "player":
+        lines = [
+            "You wound Bhaskar, but the pressure escalates beyond control.",
+            "The clash still ends in collapse and retreat.",
+            "This defeat is now part of Archer's route progression.",
+        ]
+    else:
+        lines = [
+            "The Burning Sun overwhelms you exactly as feared.",
+            "You survive, but the defeat leaves a permanent mark.",
+        ]
+
+    should_quit = run_info_screen(screen, clock, "Defeat - The Burning Sun", lines)
+    if should_quit:
+        return True
+
+    save_progress("Archer", state)
+    return False
+
+
+def run_archer_lancer_training_combat(screen, clock, state):
+    result = run_combat(screen, clock, ENCOUNTERS["archer_vs_lancer"])
+    _store_archer_combat_result(state, "archer_vs_lancer", result)
+
+    if result.winner == "player":
+        state["archer_training_lancer_won"] = True
+        _append_archer_flag(state, "defeated_lancer_training")
+        for flag in result.flags:
+            _append_archer_flag(state, f"archer_vs_lancer_{flag}")
+
+        lines = [
+            "Training verdict: you outpace Nasir in the exchange.",
+            f"Turns: {result.turns_taken}  HP/SP/Mana: {result.hp_remaining}/{result.sp_remaining}/{result.mana_remaining}",
+            "You may continue the route.",
+        ]
+        return run_info_screen(screen, clock, "Training Victory", lines)
+
+    if result.winner == "draw":
+        lines = [
+            "Training duel ends in a deadlock.",
+            "Return from menu to retry this checkpoint.",
+        ]
+        return run_info_screen(screen, clock, "Training Draw", lines)
+
+    lines = [
+        "Nasir wins the training exchange.",
+        "Return from menu to retry this checkpoint.",
+    ]
+    return run_info_screen(screen, clock, "Training Defeat", lines)
+
+
+def run_archer_berserker_final_combat(screen, clock, state):
+    result = run_combat(screen, clock, ENCOUNTERS["archer_vs_berserker_final"])
+    _store_archer_combat_result(state, "archer_vs_berserker_final", result)
+
+    if result.winner == "player":
+        state["archer_final_berserker_won"] = True
+        _append_archer_flag(state, "defeated_berserker_final")
+        for flag in result.flags:
+            _append_archer_flag(state, f"archer_vs_berserker_final_{flag}")
+
+        lines = [
+            "Grand Verdict lands true against the Burning Sun.",
+            f"Turns: {result.turns_taken}  HP/SP/Mana: {result.hp_remaining}/{result.sp_remaining}/{result.mana_remaining}",
+            "You may continue the route.",
+        ]
+        return run_info_screen(screen, clock, "Final Combat Victory", lines)
+
+    if result.winner == "draw":
+        lines = [
+            "The final clash stalls before resolution.",
+            "Return from menu to retry this checkpoint.",
+        ]
+        return run_info_screen(screen, clock, "Final Combat Draw", lines)
+
+    lines = [
+        "Bhaskar crushes the final push.",
+        "Return from menu to retry this checkpoint.",
+    ]
+    return run_info_screen(screen, clock, "Final Combat Defeat", lines)
 
 
 def run_archer_choice_scene(screen, clock, scene, state):
@@ -104,6 +231,33 @@ def run_archer_choice_scene(screen, clock, scene, state):
 
 def play_archer_route(screen, clock, state):
     while state["scene_index"] < len(ARCHER_SCENES):
+        if state["scene_index"] >= ARCHER_BERSERKER_OPENING_GATE_INDEX and not state.get("archer_opening_berserker_done", False):
+            should_quit = run_archer_berserker_opening_combat(screen, clock, state)
+            if should_quit:
+                return True
+
+        if state["scene_index"] >= ARCHER_LANCER_TRAINING_GATE_INDEX and not state.get("archer_training_lancer_won", False):
+            should_quit = run_archer_lancer_training_combat(screen, clock, state)
+            if should_quit:
+                return True
+
+            if not state.get("archer_training_lancer_won", False):
+                save_progress("Archer", state)
+                return False
+
+            save_progress("Archer", state)
+
+        if state["scene_index"] >= ARCHER_BERSERKER_FINAL_GATE_INDEX and not state.get("archer_final_berserker_won", False):
+            should_quit = run_archer_berserker_final_combat(screen, clock, state)
+            if should_quit:
+                return True
+
+            if not state.get("archer_final_berserker_won", False):
+                save_progress("Archer", state)
+                return False
+
+            save_progress("Archer", state)
+
         scene = ARCHER_SCENES[state["scene_index"]]
         selected_index, should_quit = run_archer_choice_scene(screen, clock, scene, state)
 
