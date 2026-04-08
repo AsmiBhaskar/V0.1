@@ -5,6 +5,10 @@ ASSASSIN_STATS_TEMPLATE = {
     "memory_retention": 0,
     "reverence_binding": 0,
     "hunt_progress": 0,
+    "assassin_caster_hook_done": False,
+    "assassin_combat_attempts": 0,
+    "assassin_last_combat": {},
+    "assassin_combat_history": [],
     "ending": "",
 }
 

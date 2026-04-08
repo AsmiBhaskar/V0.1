@@ -667,13 +667,16 @@ def _apply_skill_effect(state, skill):
         state.log_event("Mana Burst forms an explosive wave for 3 turns.")
     elif effect == "guaranteed_dodge":
         state.context_flags["player_next_dodge_guaranteed"] = True
+        state.log_event("Adaptive Evolution primed: next dodge is guaranteed and costs no SP.")
     elif effect == "clear_fear":
         state.player.unique_vars["emotional_severance_turns"] = 2
+        state.log_event("Emotional Severance active: fear-state interference is cleared for 2 turns.")
     elif effect == "zero_state":
         state.player.unique_vars["zero_state_active"] = True
         state.player.passives["minds_eye"] = False
         state.player.hp = min(state.player.hp_max, state.player.hp + int(state.player.hp_max * 0.30))
         _set_effect(state, "sp_cost_half", 3)
+        state.log_event("Hardened Discipline - Zero State: recovers 30% HP and halves dodge SP cost for 3 turns.")
     elif effect == "enemy_damage_down":
         _set_effect(state, "enemy_damage_down_25", 3)
     elif effect == "reveal_and_dodge_boost":
