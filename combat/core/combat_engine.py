@@ -168,6 +168,17 @@ def _apply_context_modifiers(state):
         state.log_event("Core Matrix saturates the field. Stella's movement reads as predictable.")
         state.log_event("Kiki's pressure spikes - this battle is overwhelmingly one-sided.")
 
+    if context.get("assassin_berserker_cutscene"):
+        state.player.base_dodge = max(0.05, state.player.base_dodge - 0.10)
+        state.enemy.base_attack = int(round(state.enemy.base_attack * 1.15))
+        state.context_flags["enemy_np"] = max(int(state.context_flags.get("enemy_np", 0)), 60)
+        state.log_event("The Burning Sun descends - pressure and heat distort every escape line.")
+
+    if context.get("assassin_scene9_final_hook"):
+        state.player.base_dodge = max(0.05, state.player.base_dodge - 0.05)
+        state.context_flags["enemy_np"] = max(int(state.context_flags.get("enemy_np", 0)), 30)
+        state.log_event("An unknown signal manifests as hostile pressure in the hunt corridor.")
+
     if context.get("ache_active"):
         ache = int(state.player.unique_vars.get("ache_level", 0))
         state.context_flags["ache_start"] = ache

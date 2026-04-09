@@ -1372,3 +1372,395 @@ cannot load library 'libcairo-2.dll': error 0x7e.  Additionally, ctypes.util.fin
 2026-04-08 14:51:25,530 | INFO | Turn 11 | player defeated during enemy resolution
 2026-04-08 14:51:25,530 | INFO | Combat end | phase=dodge_phase | winner=enemy | turns=10 | flags=['below_half_hp'] | P(HP=0/480,SP=60/90,M=390/400) E(HP=363/480,SP=90/90,M=440/500)
 2026-04-08 14:51:48,438 | INFO | Game closed
+2026-04-09 13:44:20,963 | INFO | Game started
+2026-04-09 13:44:53,406 | INFO | Combat start | title=ENCOUNTER - THE SILENT ADMINISTRATOR | player=Stella | enemy=Kiki | context={'route': 'Assassin', 'spirit_hunt': False, 'ache_active': False, 'assassin_scripted_loss': True, 'phase': 'opening', 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'core_matrix_active': False, 'reality_field_owner': None, 'reality_marble_suppressed': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-09 13:44:58,901 | INFO | Turn 1 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:44:58,901 | INFO | Turn 1 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=90/90,M=400/400) E(HP=480/480,SP=90/90,M=500/500)
+2026-04-09 13:44:58,901 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-09 13:44:58,918 | INFO | Turn 1 | enemy action prepared | label=basic attack | dmg=54 | cannot_be_dodged=False
+2026-04-09 13:44:58,934 | INFO | Turn 1 | dodge failed against basic attack
+2026-04-09 13:44:58,934 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=426/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:44:58,934 | INFO | Turn 1 complete | P(HP=426/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:45:04,494 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:04,494 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=426/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:45:04,494 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-09 13:45:04,511 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=50 | cannot_be_dodged=False
+2026-04-09 13:45:05,942 | INFO | Turn 2 | dodge failed against basic attack
+2026-04-09 13:45:05,942 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=376/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:45:05,942 | INFO | Turn 2 complete | P(HP=376/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:45:06,560 | INFO | Turn 3 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:06,560 | INFO | Turn 3 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=376/480,SP=90/90,M=400/400) E(HP=436/480,SP=90/90,M=500/500)
+2026-04-09 13:45:06,560 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-09 13:45:06,576 | INFO | Turn 3 | enemy action prepared | label=Correction Protocol | dmg=64 | cannot_be_dodged=False
+2026-04-09 13:45:06,938 | INFO | Turn 3 | dodge success against Correction Protocol
+2026-04-09 13:45:06,938 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=376/480,SP=75/90,M=400/400) E(HP=436/480,SP=90/90,M=480/500)
+2026-04-09 13:45:06,938 | INFO | Turn 3 complete | P(HP=376/480,SP=75/90,M=400/400) E(HP=436/480,SP=90/90,M=480/500)
+2026-04-09 13:45:12,204 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:12,204 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=376/480,SP=75/90,M=400/400) E(HP=436/480,SP=90/90,M=480/500)
+2026-04-09 13:45:12,204 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-09 13:45:12,300 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=51 | cannot_be_dodged=False
+2026-04-09 13:45:12,918 | INFO | Turn 4 | dodge failed against basic attack
+2026-04-09 13:45:12,918 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=325/480,SP=78/90,M=400/400) E(HP=393/480,SP=90/90,M=480/500)
+2026-04-09 13:45:12,918 | INFO | Turn 4 complete | P(HP=325/480,SP=78/90,M=400/400) E(HP=393/480,SP=90/90,M=480/500)
+2026-04-09 13:45:20,264 | INFO | Turn 5 | player_action payload={'action': 'ACT', 'skill_id': 'stellae_scriptum'}
+2026-04-09 13:45:20,264 | INFO | Turn 5 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'stellae_scriptum'} | bonus_action=False | P(HP=325/480,SP=78/90,M=400/400) E(HP=393/480,SP=90/90,M=480/500)
+2026-04-09 13:45:20,264 | INFO | Turn 5 | skill committed | skill=stellae_scriptum | mana_cost=50 | mana_now=350
+2026-04-09 13:45:20,264 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-09 13:45:20,281 | INFO | Turn 5 | enemy action prepared | label=Gaze of Admin | dmg=53 | cannot_be_dodged=False
+2026-04-09 13:45:22,714 | INFO | Turn 5 | dodge failed against Gaze of Admin
+2026-04-09 13:45:22,714 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=272/480,SP=81/90,M=365/400) E(HP=393/480,SP=90/90,M=465/500)
+2026-04-09 13:45:22,714 | INFO | Turn 5 complete | P(HP=272/480,SP=81/90,M=365/400) E(HP=393/480,SP=90/90,M=465/500)
+2026-04-09 13:45:23,460 | INFO | Turn 6 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:23,460 | INFO | Turn 6 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=272/480,SP=81/90,M=365/400) E(HP=393/480,SP=90/90,M=465/500)
+2026-04-09 13:45:23,460 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-09 13:45:23,477 | INFO | Turn 6 | enemy action prepared | label=Correction Protocol | dmg=50 | cannot_be_dodged=False
+2026-04-09 13:45:23,810 | INFO | Turn 6 | dodge failed against Correction Protocol
+2026-04-09 13:45:23,810 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=222/480,SP=84/90,M=390/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:23,810 | INFO | Turn 6 complete | P(HP=222/480,SP=84/90,M=390/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:24,320 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:24,320 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=222/480,SP=84/90,M=390/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:24,320 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-09 13:45:24,337 | INFO | Turn 7 | enemy action prepared | label=basic attack | dmg=42 | cannot_be_dodged=False
+2026-04-09 13:45:24,604 | INFO | Turn 7 | dodge success against basic attack
+2026-04-09 13:45:24,604 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=222/480,SP=69/90,M=400/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:24,604 | INFO | Turn 7 complete | P(HP=222/480,SP=69/90,M=400/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:25,002 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:25,002 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=222/480,SP=69/90,M=400/400) E(HP=361/480,SP=90/90,M=445/500)
+2026-04-09 13:45:25,002 | INFO | Turn 8 | handoff to enemy_attack
+2026-04-09 13:45:25,019 | INFO | Turn 8 | enemy action prepared | label=basic attack | dmg=37 | cannot_be_dodged=False
+2026-04-09 13:45:25,253 | INFO | Turn 8 | dodge failed against basic attack
+2026-04-09 13:45:25,253 | INFO | Turn 8 | cycle resolved, returning to player_action | P(HP=185/480,SP=72/90,M=400/400) E(HP=329/480,SP=90/90,M=445/500)
+2026-04-09 13:45:25,253 | INFO | Turn 8 complete | P(HP=185/480,SP=72/90,M=400/400) E(HP=329/480,SP=90/90,M=445/500)
+2026-04-09 13:45:25,620 | INFO | Turn 9 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:25,620 | INFO | Turn 9 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=185/480,SP=72/90,M=400/400) E(HP=329/480,SP=90/90,M=445/500)
+2026-04-09 13:45:25,620 | INFO | Turn 9 | handoff to enemy_attack
+2026-04-09 13:45:25,636 | INFO | Turn 9 | enemy action prepared | label=Gaze of Admin | dmg=45 | cannot_be_dodged=False
+2026-04-09 13:45:25,851 | INFO | Turn 9 | dodge failed against Gaze of Admin
+2026-04-09 13:45:25,851 | INFO | Turn 9 | cycle resolved, returning to player_action | P(HP=140/480,SP=75/90,M=400/400) E(HP=300/480,SP=90/90,M=430/500)
+2026-04-09 13:45:25,851 | INFO | Turn 9 complete | P(HP=140/480,SP=75/90,M=400/400) E(HP=300/480,SP=90/90,M=430/500)
+2026-04-09 13:45:26,170 | INFO | Turn 10 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:26,170 | INFO | Turn 10 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=140/480,SP=75/90,M=400/400) E(HP=300/480,SP=90/90,M=430/500)
+2026-04-09 13:45:26,170 | INFO | Turn 10 | handoff to enemy_attack
+2026-04-09 13:45:26,187 | INFO | Turn 10 | enemy action prepared | label=Core Matrix Token | dmg=80 | cannot_be_dodged=False
+2026-04-09 13:45:26,385 | INFO | Turn 10 | dodge failed against Core Matrix Token
+2026-04-09 13:45:26,385 | INFO | Turn 10 | cycle resolved, returning to player_action | P(HP=60/480,SP=78/90,M=400/400) E(HP=269/480,SP=90/90,M=380/500)
+2026-04-09 13:45:26,385 | INFO | Turn 10 complete | P(HP=60/480,SP=78/90,M=400/400) E(HP=269/480,SP=90/90,M=380/500)
+2026-04-09 13:45:27,217 | INFO | Turn 11 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:27,217 | INFO | Turn 11 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=60/480,SP=78/90,M=400/400) E(HP=269/480,SP=90/90,M=380/500)
+2026-04-09 13:45:27,217 | INFO | Turn 11 | handoff to enemy_attack
+2026-04-09 13:45:27,233 | INFO | Turn 11 | enemy action prepared | label=Territory Creation | dmg=46 | cannot_be_dodged=False
+2026-04-09 13:45:27,419 | INFO | Turn 11 | dodge failed against Territory Creation
+2026-04-09 13:45:27,419 | INFO | Turn 11 | cycle resolved, returning to player_action | P(HP=14/480,SP=81/90,M=400/400) E(HP=236/480,SP=90/90,M=340/500)
+2026-04-09 13:45:27,419 | INFO | Turn 11 complete | P(HP=14/480,SP=81/90,M=400/400) E(HP=236/480,SP=90/90,M=340/500)
+2026-04-09 13:45:27,936 | INFO | Turn 12 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:45:27,936 | INFO | Turn 12 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=14/480,SP=81/90,M=400/400) E(HP=236/480,SP=90/90,M=340/500)
+2026-04-09 13:45:27,936 | INFO | Turn 12 | handoff to enemy_attack
+2026-04-09 13:45:27,953 | INFO | Turn 12 | enemy action prepared | label=basic attack | dmg=41 | cannot_be_dodged=False
+2026-04-09 13:45:28,486 | INFO | Turn 12 | dodge success against basic attack
+2026-04-09 13:45:28,486 | INFO | Turn 12 | cycle resolved, returning to player_action | P(HP=14/480,SP=66/90,M=400/400) E(HP=203/480,SP=90/90,M=340/500)
+2026-04-09 13:45:28,487 | INFO | Turn 12 complete | P(HP=14/480,SP=66/90,M=400/400) E(HP=203/480,SP=90/90,M=340/500)
+2026-04-09 13:45:36,065 | INFO | Turn 13 | player_action payload={'action': 'NOBLE PHANTASM', 'mode': 'base'}
+2026-04-09 13:45:36,065 | INFO | Turn 13 | process_player_action | action=NOBLE PHANTASM | payload={'action': 'NOBLE PHANTASM', 'mode': 'base'} | bonus_action=False | P(HP=14/480,SP=66/90,M=400/400) E(HP=203/480,SP=90/90,M=340/500)
+2026-04-09 13:45:36,065 | INFO | Turn 13 | NP committed | mode=base | mana_cost=50 | mana_now=350
+2026-04-09 13:45:36,065 | INFO | Turn 13 | handoff to enemy_attack
+2026-04-09 13:45:36,082 | INFO | Turn 13 | enemy action prepared | label=basic attack | dmg=37 | cannot_be_dodged=False
+2026-04-09 13:45:38,340 | INFO | Turn 13 | dodge failed against basic attack
+2026-04-09 13:45:38,340 | INFO | CombatResult built | winner=enemy | turns=12 | flags=['below_half_hp', 'used_np'] | P(HP=0/480,SP=66/90,M=350/400) E(HP=131/480,SP=90/90,M=340/500)
+2026-04-09 13:45:38,340 | INFO | Turn 13 | player defeated during enemy resolution
+2026-04-09 13:45:38,341 | INFO | Combat end | phase=dodge_phase | winner=enemy | turns=12 | flags=['below_half_hp', 'used_np'] | P(HP=0/480,SP=66/90,M=350/400) E(HP=131/480,SP=90/90,M=340/500)
+2026-04-09 13:45:52,248 | INFO | Combat start | title=SKIRMISH - LABYRINTH BREACH | player=Stella | enemy=Iron Remnant | context={'route': 'Assassin', 'spirit_hunt': True, 'ache_active': False, 'phase': 'scene6_optional', 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'core_matrix_active': False, 'reality_field_owner': None, 'reality_marble_suppressed': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-09 13:46:07,965 | INFO | Turn 1 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:07,965 | INFO | Turn 1 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=90/90,M=400/400) E(HP=720/720,SP=40/40,M=50/50)
+2026-04-09 13:46:07,965 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-09 13:46:07,982 | INFO | Turn 1 | enemy action prepared | label=basic attack | dmg=55 | cannot_be_dodged=False
+2026-04-09 13:46:07,998 | INFO | Turn 1 | dodge failed against basic attack
+2026-04-09 13:46:07,998 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=425/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:07,998 | INFO | Turn 1 complete | P(HP=425/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:10,677 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:10,677 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=425/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:10,677 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-09 13:46:10,694 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=60 | cannot_be_dodged=False
+2026-04-09 13:46:11,873 | INFO | Turn 2 | dodge failed against basic attack
+2026-04-09 13:46:11,873 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=365/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:11,873 | INFO | Turn 2 complete | P(HP=365/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:12,325 | INFO | Turn 3 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:12,325 | INFO | Turn 3 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=365/480,SP=90/90,M=400/400) E(HP=681/720,SP=40/40,M=50/50)
+2026-04-09 13:46:12,325 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-09 13:46:12,342 | INFO | Turn 3 | enemy action prepared | label=basic attack | dmg=56 | cannot_be_dodged=False
+2026-04-09 13:46:12,591 | INFO | Turn 3 | dodge success against basic attack
+2026-04-09 13:46:12,591 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=365/480,SP=75/90,M=400/400) E(HP=616/720,SP=40/40,M=50/50)
+2026-04-09 13:46:12,591 | INFO | Turn 3 complete | P(HP=365/480,SP=75/90,M=400/400) E(HP=616/720,SP=40/40,M=50/50)
+2026-04-09 13:46:13,523 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:13,523 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=365/480,SP=75/90,M=400/400) E(HP=616/720,SP=40/40,M=50/50)
+2026-04-09 13:46:13,523 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-09 13:46:13,539 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=64 | cannot_be_dodged=False
+2026-04-09 13:46:13,822 | INFO | Turn 4 | dodge failed against basic attack
+2026-04-09 13:46:13,822 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=301/480,SP=78/90,M=400/400) E(HP=575/720,SP=40/40,M=50/50)
+2026-04-09 13:46:13,822 | INFO | Turn 4 complete | P(HP=301/480,SP=78/90,M=400/400) E(HP=575/720,SP=40/40,M=50/50)
+2026-04-09 13:46:14,236 | INFO | Turn 5 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:14,236 | INFO | Turn 5 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=301/480,SP=78/90,M=400/400) E(HP=575/720,SP=40/40,M=50/50)
+2026-04-09 13:46:14,236 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-09 13:46:14,252 | INFO | Turn 5 | enemy action prepared | label=basic attack | dmg=57 | cannot_be_dodged=False
+2026-04-09 13:46:14,435 | INFO | Turn 5 | dodge failed against basic attack
+2026-04-09 13:46:14,435 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=244/480,SP=81/90,M=400/400) E(HP=536/720,SP=40/40,M=50/50)
+2026-04-09 13:46:14,435 | INFO | Turn 5 complete | P(HP=244/480,SP=81/90,M=400/400) E(HP=536/720,SP=40/40,M=50/50)
+2026-04-09 13:46:14,850 | INFO | Turn 6 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:14,850 | INFO | Turn 6 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=244/480,SP=81/90,M=400/400) E(HP=536/720,SP=40/40,M=50/50)
+2026-04-09 13:46:14,850 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-09 13:46:14,867 | INFO | Turn 6 | enemy action prepared | label=basic attack | dmg=60 | cannot_be_dodged=False
+2026-04-09 13:46:15,032 | INFO | Turn 6 | dodge failed against basic attack
+2026-04-09 13:46:15,032 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=184/480,SP=84/90,M=400/400) E(HP=498/720,SP=40/40,M=50/50)
+2026-04-09 13:46:15,032 | INFO | Turn 6 complete | P(HP=184/480,SP=84/90,M=400/400) E(HP=498/720,SP=40/40,M=50/50)
+2026-04-09 13:46:15,448 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:15,448 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=184/480,SP=84/90,M=400/400) E(HP=498/720,SP=40/40,M=50/50)
+2026-04-09 13:46:15,449 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-09 13:46:15,464 | INFO | Turn 7 | enemy action prepared | label=basic attack | dmg=63 | cannot_be_dodged=False
+2026-04-09 13:46:15,631 | INFO | Turn 7 | dodge failed against basic attack
+2026-04-09 13:46:15,631 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=121/480,SP=87/90,M=400/400) E(HP=459/720,SP=40/40,M=50/50)
+2026-04-09 13:46:15,631 | INFO | Turn 7 complete | P(HP=121/480,SP=87/90,M=400/400) E(HP=459/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,079 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:16,079 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=121/480,SP=87/90,M=400/400) E(HP=459/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,079 | INFO | Turn 8 | handoff to enemy_attack
+2026-04-09 13:46:16,095 | INFO | Turn 8 | enemy action prepared | label=basic attack | dmg=54 | cannot_be_dodged=False
+2026-04-09 13:46:16,246 | INFO | Turn 8 | dodge failed against basic attack
+2026-04-09 13:46:16,246 | INFO | Turn 8 | cycle resolved, returning to player_action | P(HP=67/480,SP=90/90,M=400/400) E(HP=421/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,246 | INFO | Turn 8 complete | P(HP=67/480,SP=90/90,M=400/400) E(HP=421/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,760 | INFO | Turn 9 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:16,761 | INFO | Turn 9 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=67/480,SP=90/90,M=400/400) E(HP=421/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,761 | INFO | Turn 9 | handoff to enemy_attack
+2026-04-09 13:46:16,776 | INFO | Turn 9 | enemy action prepared | label=basic attack | dmg=56 | cannot_be_dodged=False
+2026-04-09 13:46:16,925 | INFO | Turn 9 | dodge failed against basic attack
+2026-04-09 13:46:16,925 | INFO | Turn 9 | cycle resolved, returning to player_action | P(HP=11/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:16,925 | INFO | Turn 9 complete | P(HP=11/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:21,910 | INFO | Turn 10 | player_action payload={'action': 'ITEM', 'item_id': 'hp_uncommon'}
+2026-04-09 13:46:21,910 | INFO | Turn 10 | process_player_action | action=ITEM | payload={'action': 'ITEM', 'item_id': 'hp_uncommon'} | bonus_action=False | P(HP=11/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:21,910 | INFO | Turn 10 | handoff to enemy_attack
+2026-04-09 13:46:21,927 | INFO | Turn 10 | enemy action prepared | label=basic attack | dmg=62 | cannot_be_dodged=False
+2026-04-09 13:46:22,557 | INFO | Turn 10 | dodge failed against basic attack
+2026-04-09 13:46:22,557 | INFO | Turn 10 | cycle resolved, returning to player_action | P(HP=199/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:22,557 | INFO | Turn 10 complete | P(HP=199/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:25,869 | INFO | Turn 11 | player_action payload={'action': 'NOBLE PHANTASM', 'mode': 'base'}
+2026-04-09 13:46:25,870 | INFO | Turn 11 | process_player_action | action=NOBLE PHANTASM | payload={'action': 'NOBLE PHANTASM', 'mode': 'base'} | bonus_action=False | P(HP=199/480,SP=90/90,M=400/400) E(HP=378/720,SP=40/40,M=50/50)
+2026-04-09 13:46:25,870 | INFO | Turn 11 | NP committed | mode=base | mana_cost=50 | mana_now=350
+2026-04-09 13:46:25,870 | INFO | Turn 11 | handoff to enemy_attack
+2026-04-09 13:46:25,886 | INFO | Turn 11 | enemy action prepared | label=basic attack | dmg=55 | cannot_be_dodged=False
+2026-04-09 13:46:26,616 | INFO | Turn 11 | dodge failed against basic attack
+2026-04-09 13:46:26,616 | INFO | Turn 11 | cycle resolved, returning to player_action | P(HP=144/480,SP=90/90,M=365/400) E(HP=285/720,SP=40/40,M=50/50)
+2026-04-09 13:46:26,616 | INFO | Turn 11 complete | P(HP=144/480,SP=90/90,M=365/400) E(HP=285/720,SP=40/40,M=50/50)
+2026-04-09 13:46:28,657 | INFO | Turn 12 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:28,657 | INFO | Turn 12 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=144/480,SP=90/90,M=365/400) E(HP=285/720,SP=40/40,M=50/50)
+2026-04-09 13:46:28,657 | INFO | Turn 12 | handoff to enemy_attack
+2026-04-09 13:46:28,672 | INFO | Turn 12 | enemy action prepared | label=basic attack | dmg=84 | cannot_be_dodged=False
+2026-04-09 13:46:31,242 | INFO | Turn 12 | dodge failed against basic attack
+2026-04-09 13:46:31,242 | INFO | Turn 12 | cycle resolved, returning to player_action | P(HP=60/480,SP=90/90,M=390/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:31,242 | INFO | Turn 12 complete | P(HP=60/480,SP=90/90,M=390/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:34,039 | INFO | Turn 13 | player_action payload={'action': 'ACT', 'skill_id': 'data_lake_act'}
+2026-04-09 13:46:34,039 | INFO | Turn 13 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'data_lake_act'} | bonus_action=False | P(HP=60/480,SP=90/90,M=390/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:34,039 | INFO | Turn 13 | skill committed | skill=data_lake_act | mana_cost=20 | mana_now=370
+2026-04-09 13:46:34,039 | INFO | Turn 13 | handoff to enemy_attack
+2026-04-09 13:46:34,055 | INFO | Turn 13 | enemy action prepared | label=basic attack | dmg=63 | cannot_be_dodged=False
+2026-04-09 13:46:36,245 | INFO | Turn 13 | dodge success against basic attack
+2026-04-09 13:46:36,245 | INFO | Turn 13 | cycle resolved, returning to player_action | P(HP=60/480,SP=75/90,M=385/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:36,245 | INFO | Turn 13 complete | P(HP=60/480,SP=75/90,M=385/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:41,094 | INFO | Turn 14 | player_action payload={'action': 'ITEM', 'item_id': 'hp_common'}
+2026-04-09 13:46:41,094 | INFO | Turn 14 | process_player_action | action=ITEM | payload={'action': 'ITEM', 'item_id': 'hp_common'} | bonus_action=False | P(HP=60/480,SP=75/90,M=385/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:41,094 | INFO | Turn 14 | handoff to enemy_attack
+2026-04-09 13:46:41,111 | INFO | Turn 14 | enemy action prepared | label=basic attack | dmg=57 | cannot_be_dodged=False
+2026-04-09 13:46:41,638 | INFO | Turn 14 | dodge failed against basic attack
+2026-04-09 13:46:41,639 | INFO | Turn 14 | cycle resolved, returning to player_action | P(HP=103/480,SP=78/90,M=400/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:41,639 | INFO | Turn 14 complete | P(HP=103/480,SP=78/90,M=400/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:42,809 | INFO | Turn 15 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:42,810 | INFO | Turn 15 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=103/480,SP=78/90,M=400/400) E(HP=243/720,SP=40/40,M=50/50)
+2026-04-09 13:46:42,810 | INFO | Turn 15 | handoff to enemy_attack
+2026-04-09 13:46:42,826 | INFO | Turn 15 | enemy action prepared | label=basic attack | dmg=57 | cannot_be_dodged=False
+2026-04-09 13:46:43,435 | INFO | Turn 15 | dodge failed against basic attack
+2026-04-09 13:46:43,435 | INFO | Turn 15 | cycle resolved, returning to player_action | P(HP=46/480,SP=81/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:43,435 | INFO | Turn 15 complete | P(HP=46/480,SP=81/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:51,050 | INFO | Turn 16 | player_action payload={'action': 'DODGE'}
+2026-04-09 13:46:51,050 | INFO | Turn 16 | process_player_action | action=DODGE | payload={'action': 'DODGE'} | bonus_action=False | P(HP=46/480,SP=81/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:51,050 | INFO | Turn 16 | handoff to enemy_attack
+2026-04-09 13:46:51,067 | INFO | Turn 16 | enemy action prepared | label=basic attack | dmg=58 | cannot_be_dodged=False
+2026-04-09 13:46:51,084 | INFO | Turn 16 | dodge success against basic attack
+2026-04-09 13:46:51,084 | INFO | Turn 16 | cycle resolved, returning to player_action | P(HP=46/480,SP=66/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:51,084 | INFO | Turn 16 complete | P(HP=46/480,SP=66/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:57,957 | INFO | Turn 17 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:46:57,957 | INFO | Turn 17 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=46/480,SP=66/90,M=400/400) E(HP=203/720,SP=40/40,M=50/50)
+2026-04-09 13:46:57,957 | INFO | Turn 17 | handoff to enemy_attack
+2026-04-09 13:46:57,974 | INFO | Turn 17 | enemy action prepared | label=basic attack | dmg=54 | cannot_be_dodged=False
+2026-04-09 13:47:01,757 | INFO | Turn 17 | dodge failed against basic attack
+2026-04-09 13:47:01,757 | INFO | CombatResult built | winner=enemy | turns=16 | flags=['below_half_hp', 'used_np'] | P(HP=0/480,SP=66/90,M=400/400) E(HP=161/720,SP=40/40,M=50/50)
+2026-04-09 13:47:01,757 | INFO | Turn 17 | player defeated during enemy resolution
+2026-04-09 13:47:01,757 | INFO | Combat end | phase=dodge_phase | winner=enemy | turns=16 | flags=['below_half_hp', 'used_np'] | P(HP=0/480,SP=66/90,M=400/400) E(HP=161/720,SP=40/40,M=50/50)
+2026-04-09 13:47:23,885 | INFO | Combat start | title=CUTSCENE CLASH - BURNING SUN DESCENT | player=Stella | enemy=Bhaskar | context={'route': 'Assassin', 'spirit_hunt': False, 'ache_active': False, 'assassin_berserker_cutscene': True, 'phase': 'scene7_cutscene', 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'core_matrix_active': False, 'reality_field_owner': None, 'reality_marble_suppressed': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-09 13:47:32,212 | INFO | Turn 1 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:47:32,212 | INFO | Turn 1 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=90/90,M=400/400) E(HP=1320/1320,SP=110/110,M=200/200)
+2026-04-09 13:47:32,212 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-09 13:47:32,229 | INFO | Turn 1 | enemy action prepared | label=Rage Against Unjust | dmg=142 | cannot_be_dodged=False
+2026-04-09 13:47:32,246 | INFO | Turn 1 | dodge failed against Rage Against Unjust
+2026-04-09 13:47:32,246 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=338/480,SP=90/90,M=400/400) E(HP=1278/1320,SP=110/110,M=200/200)
+2026-04-09 13:47:32,246 | INFO | Turn 1 complete | P(HP=338/480,SP=90/90,M=400/400) E(HP=1278/1320,SP=110/110,M=200/200)
+2026-04-09 13:47:34,025 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:47:34,025 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=338/480,SP=90/90,M=400/400) E(HP=1278/1320,SP=110/110,M=200/200)
+2026-04-09 13:47:34,025 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-09 13:47:34,041 | INFO | Turn 2 | enemy action prepared | label=Cardinal Algorithm | dmg=144 | cannot_be_dodged=False
+2026-04-09 13:47:34,694 | INFO | Turn 2 | dodge failed against Cardinal Algorithm
+2026-04-09 13:47:34,694 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=194/480,SP=90/90,M=400/400) E(HP=1240/1320,SP=110/110,M=185/200)
+2026-04-09 13:47:34,694 | INFO | Turn 2 complete | P(HP=194/480,SP=90/90,M=400/400) E(HP=1240/1320,SP=110/110,M=185/200)
+2026-04-09 13:47:35,223 | INFO | Turn 3 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:47:35,223 | INFO | Turn 3 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=194/480,SP=90/90,M=400/400) E(HP=1240/1320,SP=110/110,M=185/200)
+2026-04-09 13:47:35,223 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-09 13:47:35,240 | INFO | Turn 3 | enemy action prepared | label=Divine Spear Fragment | dmg=248 | cannot_be_dodged=False
+2026-04-09 13:47:35,608 | INFO | Turn 3 | dodge failed against Divine Spear Fragment
+2026-04-09 13:47:35,608 | INFO | CombatResult built | winner=enemy | turns=2 | flags=['below_half_hp'] | P(HP=0/480,SP=90/90,M=400/400) E(HP=1183/1320,SP=110/110,M=115/200)
+2026-04-09 13:47:35,608 | INFO | Turn 3 | player defeated during enemy resolution
+2026-04-09 13:47:35,608 | INFO | Combat end | phase=dodge_phase | winner=enemy | turns=2 | flags=['below_half_hp'] | P(HP=0/480,SP=90/90,M=400/400) E(HP=1183/1320,SP=110/110,M=115/200)
+2026-04-09 13:47:59,728 | INFO | Combat start | title=FINAL HUNT - THE UNKNOWN SIGNAL | player=Stella | enemy=Bound Horseman | context={'route': 'Assassin', 'spirit_hunt': True, 'ache_active': False, 'assassin_scene9_final_hook': True, 'phase': 'scene9_final_hook', 'player_np': 0, 'enemy_np': 0, 'player_cooldowns': {}, 'enemy_cooldowns': {}, 'player_skill_uses': {}, 'enemy_skill_uses': {}, 'inventory': ['hp_common', 'sp_common', 'mana_common', 'hp_uncommon'], 'result_flags': set(), 'effect_turns': {}, 'effect_values': {}, 'total_dodge_attempts': 0, 'low_hp_triggered': False, 'low_sp_triggered': False, 'used_np_this_battle': False, 'auto_dodge_intent': False, 'player_blocking': False, 'pending_enemy_action': None, 'turn_skill_cooldown_log': [], 'turn_action_label': None, 'dominance_stack': 0.0, 'dominance_bonus_turn_pending': False, 'dominance_proc_count': 0, 'quick_action_committed': False, 'turn_start_hook_fired': False, 'core_matrix_active': False, 'reality_field_owner': None, 'reality_marble_suppressed': False, 'turn_flags': {'used_skill': False, 'used_np': False, 'rested': False, 'attempted_dodge': False, 'dodge_success': False, 'blocked': False}}
+2026-04-09 13:48:12,922 | INFO | Turn 1 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:12,922 | INFO | Turn 1 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=90/90,M=400/400) E(HP=600/600,SP=40/40,M=50/50)
+2026-04-09 13:48:12,922 | INFO | Turn 1 | handoff to enemy_attack
+2026-04-09 13:48:12,938 | INFO | Turn 1 | enemy action prepared | label=basic attack | dmg=50 | cannot_be_dodged=False
+2026-04-09 13:48:12,955 | INFO | Turn 1 | dodge success against basic attack
+2026-04-09 13:48:12,955 | INFO | Turn 1 | cycle resolved, returning to player_action | P(HP=480/480,SP=75/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:12,955 | INFO | Turn 1 complete | P(HP=480/480,SP=75/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:13,878 | INFO | Turn 2 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:13,878 | INFO | Turn 2 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=75/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:13,878 | INFO | Turn 2 | handoff to enemy_attack
+2026-04-09 13:48:13,895 | INFO | Turn 2 | enemy action prepared | label=basic attack | dmg=54 | cannot_be_dodged=False
+2026-04-09 13:48:14,263 | INFO | Turn 2 | dodge success against basic attack
+2026-04-09 13:48:14,263 | INFO | Turn 2 | cycle resolved, returning to player_action | P(HP=480/480,SP=60/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:14,263 | INFO | Turn 2 complete | P(HP=480/480,SP=60/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:14,672 | INFO | Turn 3 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:14,672 | INFO | Turn 3 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=480/480,SP=60/90,M=400/400) E(HP=563/600,SP=40/40,M=50/50)
+2026-04-09 13:48:14,672 | INFO | Turn 3 | handoff to enemy_attack
+2026-04-09 13:48:14,688 | INFO | Turn 3 | enemy action prepared | label=basic attack | dmg=46 | cannot_be_dodged=False
+2026-04-09 13:48:15,448 | INFO | Turn 3 | dodge failed against basic attack
+2026-04-09 13:48:15,449 | INFO | Turn 3 | cycle resolved, returning to player_action | P(HP=434/480,SP=63/90,M=400/400) E(HP=523/600,SP=40/40,M=50/50)
+2026-04-09 13:48:15,449 | INFO | Turn 3 complete | P(HP=434/480,SP=63/90,M=400/400) E(HP=523/600,SP=40/40,M=50/50)
+2026-04-09 13:48:15,858 | INFO | Turn 4 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:15,858 | INFO | Turn 4 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=434/480,SP=63/90,M=400/400) E(HP=523/600,SP=40/40,M=50/50)
+2026-04-09 13:48:15,858 | INFO | Turn 4 | handoff to enemy_attack
+2026-04-09 13:48:15,875 | INFO | Turn 4 | enemy action prepared | label=basic attack | dmg=48 | cannot_be_dodged=False
+2026-04-09 13:48:16,240 | INFO | Turn 4 | dodge success against basic attack
+2026-04-09 13:48:16,240 | INFO | Turn 4 | cycle resolved, returning to player_action | P(HP=434/480,SP=48/90,M=400/400) E(HP=486/600,SP=40/40,M=50/50)
+2026-04-09 13:48:16,240 | INFO | Turn 4 complete | P(HP=434/480,SP=48/90,M=400/400) E(HP=486/600,SP=40/40,M=50/50)
+2026-04-09 13:48:16,638 | INFO | Turn 5 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:16,638 | INFO | Turn 5 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=434/480,SP=48/90,M=400/400) E(HP=486/600,SP=40/40,M=50/50)
+2026-04-09 13:48:16,638 | INFO | Turn 5 | handoff to enemy_attack
+2026-04-09 13:48:16,653 | INFO | Turn 5 | enemy action prepared | label=basic attack | dmg=73 | cannot_be_dodged=False
+2026-04-09 13:48:16,985 | INFO | Turn 5 | dodge failed against basic attack
+2026-04-09 13:48:16,985 | INFO | Turn 5 | cycle resolved, returning to player_action | P(HP=361/480,SP=51/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:16,985 | INFO | Turn 5 complete | P(HP=361/480,SP=51/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:20,067 | INFO | Turn 6 | player_action payload={'action': 'ACT', 'skill_id': 'academic_perfection'}
+2026-04-09 13:48:20,067 | INFO | Turn 6 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'academic_perfection'} | bonus_action=False | P(HP=361/480,SP=51/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:20,067 | INFO | Turn 6 | skill committed | skill=academic_perfection | mana_cost=10 | mana_now=390
+2026-04-09 13:48:20,067 | INFO | Turn 6 | handoff to enemy_attack
+2026-04-09 13:48:20,084 | INFO | Turn 6 | enemy action prepared | label=basic attack | dmg=53 | cannot_be_dodged=False
+2026-04-09 13:48:21,598 | INFO | Turn 6 | dodge failed against basic attack
+2026-04-09 13:48:21,598 | INFO | Turn 6 | cycle resolved, returning to player_action | P(HP=308/480,SP=54/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:21,599 | INFO | Turn 6 complete | P(HP=308/480,SP=54/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:23,316 | INFO | Turn 7 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:23,316 | INFO | Turn 7 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=308/480,SP=54/90,M=400/400) E(HP=449/600,SP=40/40,M=50/50)
+2026-04-09 13:48:23,316 | INFO | Turn 7 | handoff to enemy_attack
+2026-04-09 13:48:23,333 | INFO | Turn 7 | enemy action prepared | label=basic attack | dmg=54 | cannot_be_dodged=False
+2026-04-09 13:48:23,831 | INFO | Turn 7 | dodge success against basic attack
+2026-04-09 13:48:23,831 | INFO | Turn 7 | cycle resolved, returning to player_action | P(HP=308/480,SP=39/90,M=400/400) E(HP=383/600,SP=40/40,M=50/50)
+2026-04-09 13:48:23,831 | INFO | Turn 7 complete | P(HP=308/480,SP=39/90,M=400/400) E(HP=383/600,SP=40/40,M=50/50)
+2026-04-09 13:48:24,386 | INFO | Turn 8 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:24,386 | INFO | Turn 8 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=308/480,SP=39/90,M=400/400) E(HP=383/600,SP=40/40,M=50/50)
+2026-04-09 13:48:24,386 | INFO | Turn 8 | handoff to enemy_attack
+2026-04-09 13:48:24,403 | INFO | Turn 8 | enemy action prepared | label=basic attack | dmg=52 | cannot_be_dodged=False
+2026-04-09 13:48:25,080 | INFO | Turn 8 | dodge failed against basic attack
+2026-04-09 13:48:25,080 | INFO | Turn 8 | cycle resolved, returning to player_action | P(HP=256/480,SP=42/90,M=400/400) E(HP=340/600,SP=40/40,M=50/50)
+2026-04-09 13:48:25,080 | INFO | Turn 8 complete | P(HP=256/480,SP=42/90,M=400/400) E(HP=340/600,SP=40/40,M=50/50)
+2026-04-09 13:48:25,813 | INFO | Turn 9 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:25,813 | INFO | Turn 9 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=256/480,SP=42/90,M=400/400) E(HP=340/600,SP=40/40,M=50/50)
+2026-04-09 13:48:25,813 | INFO | Turn 9 | handoff to enemy_attack
+2026-04-09 13:48:25,830 | INFO | Turn 9 | enemy action prepared | label=basic attack | dmg=69 | cannot_be_dodged=False
+2026-04-09 13:48:26,293 | INFO | Turn 9 | dodge failed against basic attack
+2026-04-09 13:48:26,293 | INFO | Turn 9 | cycle resolved, returning to player_action | P(HP=187/480,SP=45/90,M=400/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:26,293 | INFO | Turn 9 complete | P(HP=187/480,SP=45/90,M=400/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:32,816 | INFO | Turn 10 | player_action payload={'action': 'ACT', 'skill_id': 'stellae_scriptum'}
+2026-04-09 13:48:32,816 | INFO | Turn 10 | process_player_action | action=ACT | payload={'action': 'ACT', 'skill_id': 'stellae_scriptum'} | bonus_action=False | P(HP=187/480,SP=45/90,M=400/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:32,816 | INFO | Turn 10 | skill committed | skill=stellae_scriptum | mana_cost=50 | mana_now=350
+2026-04-09 13:48:32,816 | INFO | Turn 10 | handoff to enemy_attack
+2026-04-09 13:48:32,833 | INFO | Turn 10 | enemy action prepared | label=basic attack | dmg=42 | cannot_be_dodged=False
+2026-04-09 13:48:34,841 | INFO | Turn 10 | dodge success against basic attack
+2026-04-09 13:48:34,841 | INFO | Turn 10 | cycle resolved, returning to player_action | P(HP=187/480,SP=30/90,M=365/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:34,841 | INFO | Turn 10 complete | P(HP=187/480,SP=30/90,M=365/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:37,434 | INFO | Turn 11 | player_action payload={'action': 'ITEM', 'item_id': 'hp_uncommon'}
+2026-04-09 13:48:37,434 | INFO | Turn 11 | process_player_action | action=ITEM | payload={'action': 'ITEM', 'item_id': 'hp_uncommon'} | bonus_action=False | P(HP=187/480,SP=30/90,M=365/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:37,434 | INFO | Turn 11 | handoff to enemy_attack
+2026-04-09 13:48:37,452 | INFO | Turn 11 | enemy action prepared | label=basic attack | dmg=59 | cannot_be_dodged=False
+2026-04-09 13:48:38,210 | INFO | Turn 11 | dodge failed against basic attack
+2026-04-09 13:48:38,210 | INFO | Turn 11 | cycle resolved, returning to player_action | P(HP=378/480,SP=33/90,M=390/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:38,210 | INFO | Turn 11 complete | P(HP=378/480,SP=33/90,M=390/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:38,892 | INFO | Turn 12 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:38,892 | INFO | Turn 12 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=378/480,SP=33/90,M=390/400) E(HP=297/600,SP=40/40,M=50/50)
+2026-04-09 13:48:38,892 | INFO | Turn 12 | handoff to enemy_attack
+2026-04-09 13:48:38,908 | INFO | Turn 12 | enemy action prepared | label=basic attack | dmg=40 | cannot_be_dodged=False
+2026-04-09 13:48:39,570 | INFO | Turn 12 | dodge failed against basic attack
+2026-04-09 13:48:39,570 | INFO | Turn 12 | cycle resolved, returning to player_action | P(HP=338/480,SP=36/90,M=400/400) E(HP=249/600,SP=40/40,M=50/50)
+2026-04-09 13:48:39,570 | INFO | Turn 12 complete | P(HP=338/480,SP=36/90,M=400/400) E(HP=249/600,SP=40/40,M=50/50)
+2026-04-09 13:48:39,955 | INFO | Turn 13 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:39,955 | INFO | Turn 13 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=338/480,SP=36/90,M=400/400) E(HP=249/600,SP=40/40,M=50/50)
+2026-04-09 13:48:39,955 | INFO | Turn 13 | handoff to enemy_attack
+2026-04-09 13:48:39,972 | INFO | Turn 13 | enemy action prepared | label=basic attack | dmg=41 | cannot_be_dodged=False
+2026-04-09 13:48:40,203 | INFO | Turn 13 | dodge failed against basic attack
+2026-04-09 13:48:40,203 | INFO | Turn 13 | cycle resolved, returning to player_action | P(HP=297/480,SP=39/90,M=400/400) E(HP=219/600,SP=40/40,M=50/50)
+2026-04-09 13:48:40,203 | INFO | Turn 13 complete | P(HP=297/480,SP=39/90,M=400/400) E(HP=219/600,SP=40/40,M=50/50)
+2026-04-09 13:48:40,601 | INFO | Turn 14 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:40,601 | INFO | Turn 14 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=297/480,SP=39/90,M=400/400) E(HP=219/600,SP=40/40,M=50/50)
+2026-04-09 13:48:40,601 | INFO | Turn 14 | handoff to enemy_attack
+2026-04-09 13:48:40,618 | INFO | Turn 14 | enemy action prepared | label=basic attack | dmg=40 | cannot_be_dodged=False
+2026-04-09 13:48:40,833 | INFO | Turn 14 | dodge failed against basic attack
+2026-04-09 13:48:40,833 | INFO | Turn 14 | cycle resolved, returning to player_action | P(HP=257/480,SP=42/90,M=400/400) E(HP=184/600,SP=40/40,M=50/50)
+2026-04-09 13:48:40,833 | INFO | Turn 14 complete | P(HP=257/480,SP=42/90,M=400/400) E(HP=184/600,SP=40/40,M=50/50)
+2026-04-09 13:48:41,230 | INFO | Turn 15 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:41,230 | INFO | Turn 15 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=257/480,SP=42/90,M=400/400) E(HP=184/600,SP=40/40,M=50/50)
+2026-04-09 13:48:41,230 | INFO | Turn 15 | handoff to enemy_attack
+2026-04-09 13:48:41,247 | INFO | Turn 15 | enemy action prepared | label=basic attack | dmg=40 | cannot_be_dodged=False
+2026-04-09 13:48:41,441 | INFO | Turn 15 | dodge failed against basic attack
+2026-04-09 13:48:41,441 | INFO | Turn 15 | cycle resolved, returning to player_action | P(HP=217/480,SP=45/90,M=400/400) E(HP=151/600,SP=40/40,M=50/50)
+2026-04-09 13:48:41,441 | INFO | Turn 15 complete | P(HP=217/480,SP=45/90,M=400/400) E(HP=151/600,SP=40/40,M=50/50)
+2026-04-09 13:48:41,902 | INFO | Turn 16 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:41,902 | INFO | Turn 16 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=217/480,SP=45/90,M=400/400) E(HP=151/600,SP=40/40,M=50/50)
+2026-04-09 13:48:41,902 | INFO | Turn 16 | handoff to enemy_attack
+2026-04-09 13:48:41,918 | INFO | Turn 16 | enemy action prepared | label=basic attack | dmg=41 | cannot_be_dodged=False
+2026-04-09 13:48:42,477 | INFO | Turn 16 | dodge failed against basic attack
+2026-04-09 13:48:42,477 | INFO | Turn 16 | cycle resolved, returning to player_action | P(HP=176/480,SP=48/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:42,477 | INFO | Turn 16 complete | P(HP=176/480,SP=48/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:44,998 | INFO | Turn 17 | player_action payload={'action': 'ITEM', 'item_id': 'hp_common'}
+2026-04-09 13:48:44,998 | INFO | Turn 17 | process_player_action | action=ITEM | payload={'action': 'ITEM', 'item_id': 'hp_common'} | bonus_action=False | P(HP=176/480,SP=48/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:44,998 | INFO | Turn 17 | handoff to enemy_attack
+2026-04-09 13:48:45,014 | INFO | Turn 17 | enemy action prepared | label=basic attack | dmg=36 | cannot_be_dodged=False
+2026-04-09 13:48:46,057 | INFO | Turn 17 | dodge failed against basic attack
+2026-04-09 13:48:46,057 | INFO | Turn 17 | cycle resolved, returning to player_action | P(HP=240/480,SP=51/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:46,057 | INFO | Turn 17 complete | P(HP=240/480,SP=51/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:47,868 | INFO | Turn 18 | player_action payload={'action': 'NOBLE PHANTASM', 'mode': 'base'}
+2026-04-09 13:48:47,868 | INFO | Turn 18 | process_player_action | action=NOBLE PHANTASM | payload={'action': 'NOBLE PHANTASM', 'mode': 'base'} | bonus_action=False | P(HP=240/480,SP=51/90,M=400/400) E(HP=120/600,SP=40/40,M=50/50)
+2026-04-09 13:48:47,868 | INFO | Turn 18 | NP committed | mode=base | mana_cost=50 | mana_now=350
+2026-04-09 13:48:47,868 | INFO | Turn 18 | handoff to enemy_attack
+2026-04-09 13:48:47,884 | INFO | Turn 18 | enemy action prepared | label=basic attack | dmg=41 | cannot_be_dodged=False
+2026-04-09 13:48:48,565 | INFO | Turn 18 | dodge failed against basic attack
+2026-04-09 13:48:48,565 | INFO | Turn 18 | cycle resolved, returning to player_action | P(HP=199/480,SP=54/90,M=365/400) E(HP=45/600,SP=40/40,M=50/50)
+2026-04-09 13:48:48,565 | INFO | Turn 18 complete | P(HP=199/480,SP=54/90,M=365/400) E(HP=45/600,SP=40/40,M=50/50)
+2026-04-09 13:48:50,437 | INFO | Turn 19 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:50,437 | INFO | Turn 19 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=199/480,SP=54/90,M=365/400) E(HP=45/600,SP=40/40,M=50/50)
+2026-04-09 13:48:50,437 | INFO | Turn 19 | handoff to enemy_attack
+2026-04-09 13:48:50,454 | INFO | Turn 19 | enemy action prepared | label=basic attack | dmg=39 | cannot_be_dodged=False
+2026-04-09 13:48:51,038 | INFO | Turn 19 | dodge success against basic attack
+2026-04-09 13:48:51,038 | INFO | Turn 19 | cycle resolved, returning to player_action | P(HP=199/480,SP=39/90,M=390/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:51,039 | INFO | Turn 19 complete | P(HP=199/480,SP=39/90,M=390/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:51,656 | INFO | Turn 20 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:51,656 | INFO | Turn 20 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=199/480,SP=39/90,M=390/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:51,656 | INFO | Turn 20 | handoff to enemy_attack
+2026-04-09 13:48:51,672 | INFO | Turn 20 | enemy action prepared | label=basic attack | dmg=39 | cannot_be_dodged=False
+2026-04-09 13:48:52,119 | INFO | Turn 20 | dodge failed against basic attack
+2026-04-09 13:48:52,119 | INFO | Turn 20 | cycle resolved, returning to player_action | P(HP=160/480,SP=42/90,M=400/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:52,119 | INFO | Turn 20 complete | P(HP=160/480,SP=42/90,M=400/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:52,689 | INFO | Turn 21 | player_action payload={'action': 'FIGHT'}
+2026-04-09 13:48:52,689 | INFO | Turn 21 | process_player_action | action=FIGHT | payload={'action': 'FIGHT'} | bonus_action=False | P(HP=160/480,SP=42/90,M=400/400) E(HP=11/600,SP=40/40,M=50/50)
+2026-04-09 13:48:52,689 | INFO | Turn 21 | enemy defeated before enemy phase | P(HP=160/480,SP=42/90,M=400/400) E(HP=0/600,SP=40/40,M=50/50)
+2026-04-09 13:48:52,689 | INFO | CombatResult built | winner=player | turns=20 | flags=['below_half_hp', 'spirit_captured', 'used_np'] | P(HP=160/480,SP=42/90,M=400/400) E(HP=0/600,SP=40/40,M=50/50)
+2026-04-09 13:48:52,689 | INFO | Combat end | phase=player_action | winner=player | turns=20 | flags=['below_half_hp', 'spirit_captured', 'used_np'] | P(HP=160/480,SP=42/90,M=400/400) E(HP=0/600,SP=40/40,M=50/50)
+2026-04-09 13:49:07,001 | INFO | Game closed

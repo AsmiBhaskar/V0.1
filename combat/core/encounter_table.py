@@ -71,6 +71,41 @@ ENCOUNTERS = {
             "phase": "opening",
         },
     },
+    "assassin_scene6_minor_spirits": {
+        "player_fn": make_stella,
+        "enemy_fn": None,
+        "title": "SKIRMISH - LABYRINTH BREACH",
+        "context": {
+            "route": "Assassin",
+            "spirit_hunt": True,
+            "ache_active": False,
+            "phase": "scene6_optional",
+        },
+    },
+    "assassin_vs_berserker_cutscene": {
+        "player_fn": make_stella,
+        "enemy_fn": lambda: make_bhaskar(is_enemy=True),
+        "title": "CUTSCENE CLASH - BURNING SUN DESCENT",
+        "context": {
+            "route": "Assassin",
+            "spirit_hunt": False,
+            "ache_active": False,
+            "assassin_berserker_cutscene": True,
+            "phase": "scene7_cutscene",
+        },
+    },
+    "assassin_scene9_final_mystery": {
+        "player_fn": make_stella,
+        "enemy_fn": None,
+        "title": "FINAL HUNT - THE UNKNOWN SIGNAL",
+        "context": {
+            "route": "Assassin",
+            "spirit_hunt": True,
+            "ache_active": False,
+            "assassin_scene9_final_hook": True,
+            "phase": "scene9_final_hook",
+        },
+    },
     "rider_spirit_hunt": {
         "player_fn": make_atrox,
         "enemy_fn": None,
