@@ -159,6 +159,15 @@ def _build_enemy(encounter: dict, context: dict):
 def _apply_context_modifiers(state):
     context = state.context_flags
 
+    if context.get("assassin_scripted_loss"):
+        state.context_flags["core_matrix_active"] = True
+        state.context_flags["reality_field_owner"] = "enemy"
+        state.player.base_dodge = max(0.05, state.player.base_dodge - 0.20)
+        state.enemy.base_dodge = min(0.90, state.enemy.base_dodge + 0.15)
+        state.enemy.base_attack = int(round(state.enemy.base_attack * 1.25))
+        state.log_event("Core Matrix saturates the field. Stella's movement reads as predictable.")
+        state.log_event("Kiki's pressure spikes - this battle is overwhelmingly one-sided.")
+
     if context.get("ache_active"):
         ache = int(state.player.unique_vars.get("ache_level", 0))
         state.context_flags["ache_start"] = ache

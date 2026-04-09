@@ -18,7 +18,7 @@ def render_combat_frame(screen, state, title: str):
     screen.fill(COMBAT_BG)
 
     draw_enemy_panel(screen, state, title)
-    draw_combat_log(screen, state)
+    draw_combat_log(screen, state, x=0, y=200, w=848, h=260)
     draw_combat_tracker(screen, state)
 
     pygame.draw.rect(screen, COMBAT_GOLD, (0, 460, 1280, 2))

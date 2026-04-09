@@ -59,6 +59,18 @@ ENCOUNTERS = {
         "title": "ENCOUNTER - THE SILENT ADMINISTRATOR",
         "context": {"route": "Assassin", "spirit_hunt": False, "ache_active": False},
     },
+    "assassin_vs_caster_opening": {
+        "player_fn": make_stella,
+        "enemy_fn": lambda: make_kiki(is_enemy=True),
+        "title": "ENCOUNTER - THE SILENT ADMINISTRATOR",
+        "context": {
+            "route": "Assassin",
+            "spirit_hunt": False,
+            "ache_active": False,
+            "assassin_scripted_loss": True,
+            "phase": "opening",
+        },
+    },
     "rider_spirit_hunt": {
         "player_fn": make_atrox,
         "enemy_fn": None,
