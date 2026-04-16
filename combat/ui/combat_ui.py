@@ -74,6 +74,36 @@ def _wrap_text(font, text: str, max_width: int, max_lines: int = 2) -> list[str]
     return lines
 
 
+def _data_lake_bonuses(active_turns: int) -> tuple[int, int, int]:
+    active_turns = max(0, int(active_turns))
+    if active_turns <= 0:
+        return 0, 0, 0
+    if active_turns <= 3:
+        return 15, 15, 10
+
+    extended = active_turns - 3
+    return 15 + (extended * 2), 15 + (extended * 2), 10 + (extended * 2)
+
+
+def _data_lake_status_display(state):
+    uv = getattr(state.player, "unique_vars", {})
+    if "data_lake_active" not in uv and "data_lake_cooldown" not in uv:
+        return None
+
+    is_active = bool(uv.get("data_lake_active", False))
+    cooldown = int(uv.get("data_lake_cooldown", 0))
+
+    if is_active:
+        active_turns = int(uv.get("data_lake_turns", 0))
+        dodge_bonus, attack_bonus, crit_bonus = _data_lake_bonuses(active_turns)
+        return f"DL: T{active_turns} | D{dodge_bonus}% A{attack_bonus}% C{crit_bonus}%", COMBAT_WHITE
+
+    if cooldown > 0:
+        return f"DL: CD {cooldown}", COMBAT_DIM
+
+    return "DL: Ready", COMBAT_DIM
+
+
 def draw_resource_bar(surface, label, current, maximum, color, x, y, w=260, h=18):
     font = _font(18)
     pygame.draw.rect(surface, BAR_BG_COLOR, (x, y, w, h))
@@ -93,6 +123,13 @@ def draw_player_status(surface, state):
 
     header_font = _font(22, bold=True)
     surface.blit(header_font.render(state.player.name, True, COMBAT_GOLD), (16, y + 8))
+
+    data_lake_status = _data_lake_status_display(state)
+    if data_lake_status:
+        status_text, status_color = data_lake_status
+        status_font = _font(16, bold=True)
+        status_text = _fit_text(status_font, status_text, w - 348)
+        surface.blit(status_font.render(status_text, True, status_color), (340, y + 12))
 
     hp_color = HP_BAR_COLOR
     sp_color = SP_BAR_COLOR

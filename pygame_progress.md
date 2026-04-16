@@ -8,6 +8,26 @@
 - First full combat vertical slice is live in Lancer route.
 
 ### Recent Fixes (Post Phase 1)
+- Session update (2026-04-16):
+   - Stella Data Lake redesign implemented as a hybrid active/passive state machine:
+      - Removed legacy passive auto-complete (`profile_complete` / fixed dodge override) and removed old instant-profile effect path.
+      - Data Lake no longer uses generic skill cooldown plumbing; custom `data_lake_cooldown` now starts only on manual deactivation.
+      - Manual deactivation sets cooldown to 6 turns; cooldown ticks at end of each turn and emits a ready log when complete.
+   - Activation and scaling contract locked to turn-counter model:
+      - Activation immediately sets `data_lake_turns = 1` (Phase 1 applies on activation turn).
+      - Phase 1 (turns 1-3): +15% dodge, +15% attack, +10% crit.
+      - Turn 4+: +2% per turn to dodge, attack, and crit with no cap (intentional high-risk/high-reward baseline).
+   - ACT menu behavior updated for Data Lake control flow:
+      - Dynamic one-time `Update Profile` option appears when turn 3 is reached.
+      - Dynamic `Deactivate Data Lake` option appears while Data Lake is active.
+      - `Update Profile` is a quick action (no mana, no turn end, no cooldown interaction).
+   - Combat math and UI integration updates:
+      - Data Lake attack bonus now feeds shared player damage multiplier (applies to normal attacks and NP damage path).
+      - Data Lake crit bonus now applies to both normal attacks and NP crit chance.
+      - Added compact player status line in combat HUD:
+         - `DL: T{turns} | D{dodge}% A{attack}% C{crit}%` when active.
+         - `DL: CD {cooldown}` on cooldown.
+         - `DL: Ready` when inactive and available.
 - Session update (2026-04-07):
    - Kitik combat kit rework completed and validated in combat module:
       - Song of Sorrow low-HP trigger edge case fixed.
@@ -199,6 +219,8 @@
    - Additional route integrations beyond Lancer.
 
 ### Next To-Do (Caster and Berserker)
+- General polish follow-up:
+   - Stella Data Lake and Assassin hook flow are working as intended for now; keep current behavior and revisit for balance/UX tweaks after broader manual testing.
 - Caster:
    - Integrate and verify a mandatory combat gate in Caster route flow (Kiki vs Stella) with retry-safe save behavior.
    - Validate Core Matrix behavior against enemy field effects and NP interactions in both base and true-name contexts.

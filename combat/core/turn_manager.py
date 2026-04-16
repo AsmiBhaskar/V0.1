@@ -261,6 +261,7 @@ def process_enemy_turn(state):
     _tick_cooldowns(state.context_flags["enemy_cooldowns"])
     _tick_effects(state)
     _check_threshold_hooks(state)
+    _update_stella_data_lake_state(state)
 
     reality_result = update_reality_marble(state)
     if reality_result:
@@ -296,7 +297,9 @@ def _perform_player_attack(state, source_label: str, damage_mult: float):
     sure_hit = bool(next_attack_mods["sure_hit"]) or absolute_aim_active
     force_crit = bool(next_attack_mods["force_crit"])
     unblockable = bool(next_attack_mods["unblockable"])
+    _, _, data_lake_crit_bonus = _stella_data_lake_bonuses(state)
     crit_bonus = (GRAND_VERDICT_CRIT_BONUS / 100.0) if _is_reality_marble_buff_active(state) else 0.0
+    crit_bonus += data_lake_crit_bonus / 100.0
     crit_chance = 1.0 if force_crit else min(1.0, CRIT_CHANCE_BASE + crit_bonus)
     enemy_dodge_disabled = _is_reality_marble_debuff_active(state)
 
@@ -337,6 +340,12 @@ def _execute_player_skill(state, skill_id):
         state.log_event("Choose a skill from the ACT submenu.")
         return False
 
+    if skill_id == "stella_update_profile":
+        return _handle_stella_update_profile_action(state)
+
+    if skill_id == "stella_data_lake_deactivate":
+        return _handle_stella_data_lake_deactivate_action(state)
+
     skill = _find_skill(state.player.actives, skill_id)
     if skill is None:
         state.log_event("Skill not found.")
@@ -349,8 +358,20 @@ def _execute_player_skill(state, skill_id):
     cooldowns = state.context_flags["player_cooldowns"]
     uses = state.context_flags["player_skill_uses"]
 
+    if state.player.name == "Stella" and skill.get("id") == "data_lake_act":
+        return _handle_stella_data_lake_activate_action(state, skill, uses)
+
     if not _is_skill_available(state.player, skill, cooldowns, uses):
-        state.log_event(f"{skill['name']} is unavailable.")
+        if state.player.name == "Stella" and skill.get("id") == "data_lake_act":
+            data_lake_cooldown = int(state.player.unique_vars.get("data_lake_cooldown", 0))
+            if data_lake_cooldown > 0:
+                state.log_event(f"Data Lake on cooldown ({data_lake_cooldown} turns remaining)")
+            elif bool(state.player.unique_vars.get("data_lake_active", False)):
+                state.log_event("Data Lake is already active.")
+            else:
+                state.log_event(f"{skill['name']} is unavailable.")
+        else:
+            state.log_event(f"{skill['name']} is unavailable.")
         return False
 
     mana_cost = _skill_mana_cost(skill, uses)
@@ -398,6 +419,96 @@ def _execute_player_skill(state, skill_id):
             damage_mult=skill_damage_mult,
         )
 
+    return True
+
+
+def _handle_stella_update_profile_action(state):
+    if state.player.name != "Stella":
+        state.log_event("Update Profile is unavailable.")
+        return False
+
+    uv = state.player.unique_vars
+    if not bool(uv.get("data_lake_active", False)):
+        state.log_event("Data Lake is not active.")
+        return False
+
+    if not bool(uv.get("update_profile_available", False)):
+        state.log_event("Update Profile is not available.")
+        return False
+
+    uv["update_profile_available"] = False
+    state.context_flags["quick_action_committed"] = True
+    if not state.context_flags.get("turn_action_label"):
+        state.context_flags["turn_action_label"] = "Update Profile"
+    state.log_event("Data Lake: Continuing observation. Bonuses will increase each turn.")
+    return True
+
+
+def _handle_stella_data_lake_deactivate_action(state):
+    if state.player.name != "Stella":
+        state.log_event("Deactivate Data Lake is unavailable.")
+        return False
+
+    uv = state.player.unique_vars
+    if not bool(uv.get("data_lake_active", False)):
+        state.log_event("Data Lake is already inactive.")
+        return False
+
+    uv["data_lake_active"] = False
+    uv["data_lake_turns"] = 0
+    uv["update_profile_available"] = False
+    uv["data_lake_cooldown"] = 6
+
+    state.context_flags["turn_action_label"] = "Deactivate Data Lake"
+    state.context_flags["turn_flags"]["used_skill"] = True
+    state.context_flags["turn_flags"]["rested"] = False
+
+    fire_hook(HOOK_ON_SKILL_USE, state, state.player.name, {"skill_id": "stella_data_lake_deactivate"})
+    state.log_event("Data Lake deactivated. Information archived. Cooldown: 6 turns.")
+    return True
+
+
+def _handle_stella_data_lake_activate_action(state, skill, uses):
+    uv = state.player.unique_vars
+    if bool(uv.get("data_lake_active", False)):
+        state.log_event("Data Lake is already active.")
+        return False
+
+    data_lake_cooldown = int(uv.get("data_lake_cooldown", 0))
+    if data_lake_cooldown > 0:
+        state.log_event(f"Data Lake on cooldown ({data_lake_cooldown} turns remaining)")
+        return False
+
+    mana_cost = _skill_mana_cost(skill, uses)
+    if state.player.mana < mana_cost:
+        state.log_event("Not enough mana.")
+        LOGGER.info(
+            "Turn %d | skill blocked for mana | skill=%s | need=%d | have=%d",
+            state.turn + 1,
+            skill.get("id"),
+            int(mana_cost),
+            int(state.player.mana),
+        )
+        return False
+
+    state.player.mana -= mana_cost
+    state.context_flags["turn_action_label"] = skill["name"]
+    state.context_flags["turn_flags"]["used_skill"] = True
+    state.context_flags["turn_flags"]["rested"] = False
+
+    uv["data_lake_active"] = True
+    uv["data_lake_turns"] = 1
+    uv["update_profile_available"] = False
+
+    fire_hook(HOOK_ON_SKILL_USE, state, state.player.name, {"skill_id": skill.get("id")})
+    state.log_event(f"{state.player.name} uses {skill['name']}.")
+    state.log_event("Data Lake activated. Analyzing enemy patterns...")
+    LOGGER.info(
+        "Turn %d | Data Lake activated | mana_cost=%d | mana_now=%d",
+        state.turn + 1,
+        int(mana_cost),
+        int(state.player.mana),
+    )
     return True
 
 
@@ -521,11 +632,13 @@ def _execute_player_np(state, mode: str):
         )
 
     force_crit = bool(next_attack_mods["force_crit"])
+    _, _, data_lake_crit_bonus = _stella_data_lake_bonuses(state)
+    np_crit_chance = 1.0 if force_crit else min(1.0, data_lake_crit_bonus / 100.0)
     damage_kwargs = {
         "attack": state.player.base_attack,
         "defense_factor": 1.0 if true_name or next_attack_mods["unblockable"] else _enemy_defense_factor(state),
         "damage_multiplier": mult * _player_damage_multiplier(state),
-        "crit_chance": 1.0 if force_crit else 0.0,
+        "crit_chance": np_crit_chance,
     }
 
     if force_crit and next_attack_mods["crit_multiplier"] is not None:
@@ -723,9 +836,6 @@ def _apply_skill_effect(state, skill):
         )
     elif effect == "guaranteed_crit_next":
         state.context_flags["player_next_hit_crit"] = True
-    elif effect == "instant_profile":
-        state.player.unique_vars["profile_complete"] = True
-        _set_effect(state, "player_dodge_up_20", 2)
     elif effect == "permanent_enemy_stat_down":
         _set_effect(state, "enemy_stat_down_20", 99)
     elif effect == "rage_mode":
@@ -958,6 +1068,47 @@ def _check_threshold_hooks(state):
         state.context_flags["low_sp_triggered"] = True
 
 
+def _update_stella_data_lake_state(state):
+    if state.player.name != "Stella":
+        return
+
+    uv = state.player.unique_vars
+
+    if bool(uv.get("data_lake_active", False)):
+        current_turns = max(0, int(uv.get("data_lake_turns", 0)))
+        uv["data_lake_turns"] = current_turns + 1
+
+        if int(uv["data_lake_turns"]) == 3:
+            uv["update_profile_available"] = True
+            state.log_event("Data Lake: Profile updated. 'Update Profile' option available.")
+
+    cooldown = int(uv.get("data_lake_cooldown", 0))
+    if cooldown > 0:
+        cooldown -= 1
+        uv["data_lake_cooldown"] = cooldown
+        if cooldown == 0:
+            state.log_event("Data Lake cooldown complete. Ready for activation.")
+
+
+def _stella_data_lake_bonuses(state):
+    if state.player.name != "Stella":
+        return 0, 0, 0
+
+    uv = state.player.unique_vars
+    if not bool(uv.get("data_lake_active", False)):
+        return 0, 0, 0
+
+    active_turns = max(0, int(uv.get("data_lake_turns", 0)))
+    if active_turns <= 0:
+        return 0, 0, 0
+
+    if active_turns <= 3:
+        return 15, 15, 10
+
+    extended = active_turns - 3
+    return 15 + (extended * 2), 15 + (extended * 2), 10 + (extended * 2)
+
+
 def _enemy_defense_factor(state):
     factor = 1.0
 
@@ -978,6 +1129,9 @@ def _player_damage_multiplier(state):
     mult = 1.0
     mult += float(state.player.unique_vars.get("song_bonus", 0.0))
     mult += float(state.player.unique_vars.get("rage_damage_bonus", 0.0))
+
+    _, data_lake_damage_bonus, _ = _stella_data_lake_bonuses(state)
+    mult += data_lake_damage_bonus / 100.0
 
     if _is_reality_marble_buff_active(state):
         mult += GRAND_VERDICT_DAMAGE_BONUS / 100.0
@@ -1010,6 +1164,9 @@ def _enemy_damage_multiplier(state):
 
 def _player_dodge_bonus(state):
     bonus = 0.0
+    data_lake_dodge_bonus, _, _ = _stella_data_lake_bonuses(state)
+    bonus += data_lake_dodge_bonus / 100.0
+
     if _has_effect(state, "territory_creation"):
         bonus += 0.10
     if _has_effect(state, "player_dodge_up_10"):
@@ -1056,6 +1213,15 @@ def _is_skill_available(owner, skill, cooldowns, uses):
     if not skill_id:
         return False
 
+    if owner.name == "Stella" and skill_id == "data_lake_act":
+        if bool(owner.unique_vars.get("data_lake_active", False)):
+            return False
+
+        if int(owner.unique_vars.get("data_lake_cooldown", 0)) > 0:
+            return False
+
+        return owner.mana >= _skill_mana_cost(skill, uses)
+
     if owner.name == "Nasir" and skill_id == "adaptive_activate" and owner.unique_vars.get("adaptive_locked", False):
         return False
 
@@ -1086,6 +1252,9 @@ def _register_skill_use(skill, cooldowns, uses):
     skill_id = skill.get("id")
     uses[skill_id] = int(uses.get(skill_id, 0)) + 1
 
+    if skill_id == "data_lake_act":
+        return
+
     cooldown = skill.get("cooldown")
     if isinstance(cooldown, int) and cooldown > 0:
         cooldowns[skill_id] = cooldown
@@ -1106,7 +1275,7 @@ def _find_skill(skills, skill_id):
 
 
 def _is_quick_action_skill(skill):
-    return skill.get("effect") == "improvised_arrow"
+    return skill.get("effect") == "improvised_arrow" or skill.get("id") == "stella_update_profile"
 
 
 def _is_reality_marble_buff_active(state) -> bool:
@@ -1139,7 +1308,7 @@ def _is_evasion_skill(skill) -> bool:
         "reveal_and_dodge_boost",
         "damage_down_dodge_up",
         "pattern_analysis",
-        "instant_profile",
+        "data_lake_activate",
         "iron_path_mode",
     }
     if effect in evasion_effects:
@@ -1168,6 +1337,13 @@ def _skill_tracker_status(state, skill, cooldowns, uses):
 
     if state.player.name == "Nasir" and skill_id == "adaptive_activate" and state.player.unique_vars.get("adaptive_locked", False):
         status = "LOCK"
+    elif state.player.name == "Stella" and skill_id == "data_lake_act":
+        uv = state.player.unique_vars
+        if bool(uv.get("data_lake_active", False)):
+            status = f"T{max(0, int(uv.get('data_lake_turns', 0)))}"
+        else:
+            cd = int(uv.get("data_lake_cooldown", 0))
+            status = f"CD{cd}" if cd > 0 else "RDY"
     else:
         limit = skill.get("uses")
         used = int(uses.get(skill_id, 0))

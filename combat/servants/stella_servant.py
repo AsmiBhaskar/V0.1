@@ -1,4 +1,4 @@
-from combat.systems.passive_triggers import HOOK_ON_HIT, HOOK_ON_TURN_START, register_hook
+from combat.systems.passive_triggers import HOOK_ON_HIT, register_hook
 from combat.entities.servant_base import ServantBase
 
 _HOOKS_REGISTERED = False
@@ -16,8 +16,10 @@ def make_stella(is_enemy: bool = False) -> ServantBase:
         luck=100,
         base_dodge=0.50,
         unique_vars={
-            "profile_complete": False,
-            "profile_turns": 0,
+            "data_lake_active": False,
+            "data_lake_turns": 0,
+            "data_lake_cooldown": 0,
+            "update_profile_available": False,
             "first_attack_auto_dodge_used": False,
         },
         passives={
@@ -46,8 +48,8 @@ def make_stella(is_enemy: bool = False) -> ServantBase:
                 "id": "data_lake_act",
                 "name": "Data Lake",
                 "mana_cost": 20,
-                "cooldown": 3,
-                "effect": "instant_profile",
+                "cooldown": 0,
+                "effect": "data_lake_activate",
             },
             {
                 "id": "stellae_scriptum",
@@ -76,18 +78,9 @@ def _register_stella_hooks():
     if _HOOKS_REGISTERED:
         return
 
-    def on_turn_start(state, ctx):
-        uv = state.player.unique_vars
-        uv["profile_turns"] = uv.get("profile_turns", 0) + 1
-        if not uv.get("profile_complete", False) and uv["profile_turns"] >= 2:
-            uv["profile_complete"] = True
-            state.player.base_dodge = 0.65
-            state.log_event("Data Lake complete - Stella maps every opening.")
-
     def on_hit(state, ctx):
         state.context_flags["enemy_next_attack_revealed"] = True
 
-    register_hook(HOOK_ON_TURN_START, "Stella", on_turn_start)
     register_hook(HOOK_ON_HIT, "Stella", on_hit)
     _HOOKS_REGISTERED = True
 

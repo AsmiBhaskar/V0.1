@@ -273,13 +273,49 @@ def _activate_or_open_submenu(action: str, state):
     if action == ACTION_ACT:
         options = []
         uses = state.context_flags.get("player_skill_uses", {})
+
+        is_stella = state.player.name == "Stella"
+        uv = state.player.unique_vars
+        data_lake_active = bool(uv.get("data_lake_active", False))
+        data_lake_cooldown = int(uv.get("data_lake_cooldown", 0))
+        update_profile_available = bool(uv.get("update_profile_available", False))
+
+        if is_stella and data_lake_active and update_profile_available:
+            options.append(
+                {
+                    "label": "Update Profile  |  Confirm",
+                    "payload": {"action": ACTION_ACT, "skill_id": "stella_update_profile"},
+                }
+            )
+
         for skill in state.player.actives:
-            mana_cost = get_skill_mana_cost(skill, uses)
-            label = f"{skill['name']}  |  Mana {mana_cost}"
+            skill_id = skill.get("id")
+
+            if is_stella and skill_id == "data_lake_act":
+                if data_lake_active:
+                    continue
+
+                mana_cost = get_skill_mana_cost(skill, uses)
+                if data_lake_cooldown > 0:
+                    label = f"{skill['name']}  |  CD {data_lake_cooldown}"
+                else:
+                    label = f"{skill['name']}  |  Mana {mana_cost}"
+            else:
+                mana_cost = get_skill_mana_cost(skill, uses)
+                label = f"{skill['name']}  |  Mana {mana_cost}"
+
             options.append(
                 {
                     "label": label,
-                    "payload": {"action": ACTION_ACT, "skill_id": skill.get("id")},
+                    "payload": {"action": ACTION_ACT, "skill_id": skill_id},
+                }
+            )
+
+        if is_stella and data_lake_active:
+            options.append(
+                {
+                    "label": "Deactivate Data Lake",
+                    "payload": {"action": ACTION_ACT, "skill_id": "stella_data_lake_deactivate"},
                 }
             )
 
