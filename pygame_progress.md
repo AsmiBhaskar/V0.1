@@ -9,6 +9,24 @@
 
 ### Recent Fixes (Post Phase 1)
 - Session update (2026-04-16):
+   - Stella Cautious Step was reworked from passive behavior into an active predictive dodge skill (player-side complete):
+      - Removed the old first-turn passive auto-dodge path and legacy `first_attack_auto_dodge_used` flow.
+      - Added ACT skill `Cautious Step` as a quick action (Mana 5, Cooldown 3).
+      - Added prediction state variables: `cautious_step_active` and `cautious_step_prediction`.
+   - Prediction and dodge resolution model implemented:
+      - Data Lake active: exact prediction.
+      - Data Lake inactive: turn-based prediction variance bands (turns 1-3: +/-50%, 4-6: +/-30%, 7-9: +/-15%, turn 10+: exact).
+      - Prediction is compared against actual incoming damage after reductions.
+      - If prediction succeeds: guaranteed evade.
+      - If prediction fails: fallback to normal dodge calculation.
+      - If incoming attack is guaranteed-hit/sure-hit: Cautious Step prediction is bypassed and normal dodge path is used.
+   - Combat UX updates:
+      - Added prediction combat logs for activation/success/failure/guaranteed-hit fallback.
+      - Added player HUD status indicator while active: `Predicting ({value})`.
+   - Validation completed:
+      - diagnostics show no errors in updated files.
+      - compileall passed for `combat/core/turn_manager.py`, `combat/servants/stella_servant.py`, and `combat/ui/combat_ui.py`.
+- Session update (2026-04-16):
    - Stella Data Lake redesign implemented as a hybrid active/passive state machine:
       - Removed legacy passive auto-complete (`profile_complete` / fixed dodge override) and removed old instant-profile effect path.
       - Data Lake no longer uses generic skill cooldown plumbing; custom `data_lake_cooldown` now starts only on manual deactivation.
@@ -221,6 +239,7 @@
 ### Next To-Do (Caster and Berserker)
 - General polish follow-up:
    - Stella Data Lake and Assassin hook flow are working as intended for now; keep current behavior and revisit for balance/UX tweaks after broader manual testing.
+   - Enemy-servant parity for Cautious Step is intentionally deferred; mirror predictive-dodge behavior during the enemy-servant logic pass.
 - Caster:
    - Integrate and verify a mandatory combat gate in Caster route flow (Kiki vs Stella) with retry-safe save behavior.
    - Validate Core Matrix behavior against enemy field effects and NP interactions in both base and true-name contexts.

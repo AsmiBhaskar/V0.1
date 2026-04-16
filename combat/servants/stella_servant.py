@@ -20,11 +20,11 @@ def make_stella(is_enemy: bool = False) -> ServantBase:
             "data_lake_turns": 0,
             "data_lake_cooldown": 0,
             "update_profile_available": False,
-            "first_attack_auto_dodge_used": False,
+            "cautious_step_active": False,
+            "cautious_step_prediction": 0.0,
         },
         passives={
             "data_lake": True,
-            "cautious_step": True,
             "whisper_network": True,
             "outcast_affinity": True,
         },
@@ -43,6 +43,14 @@ def make_stella(is_enemy: bool = False) -> ServantBase:
                 "mana_cost": 10,
                 "cooldown": 2,
                 "effect": "guaranteed_crit_next",
+            },
+            {
+                "id": "cautious_step",
+                "name": "Cautious Step",
+                "mana_cost": 5,
+                "cooldown": 3,
+                "effect": "cautious_step_predict",
+                "description": "Predict enemy damage. If prediction >= actual damage: auto-dodge. If lower: normal dodge. Fails against forced hit/sure hit.",
             },
             {
                 "id": "data_lake_act",

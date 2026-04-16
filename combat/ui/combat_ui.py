@@ -104,6 +104,15 @@ def _data_lake_status_display(state):
     return "DL: Ready", COMBAT_DIM
 
 
+def _cautious_step_status_display(state):
+    uv = getattr(state.player, "unique_vars", {})
+    if not bool(uv.get("cautious_step_active", False)):
+        return None
+
+    prediction = int(round(float(uv.get("cautious_step_prediction", 0.0))))
+    return f"Predicting ({prediction})", COMBAT_GOLD
+
+
 def draw_resource_bar(surface, label, current, maximum, color, x, y, w=260, h=18):
     font = _font(18)
     pygame.draw.rect(surface, BAR_BG_COLOR, (x, y, w, h))
@@ -125,11 +134,20 @@ def draw_player_status(surface, state):
     surface.blit(header_font.render(state.player.name, True, COMBAT_GOLD), (16, y + 8))
 
     data_lake_status = _data_lake_status_display(state)
+    status_y = y + 12
     if data_lake_status:
         status_text, status_color = data_lake_status
         status_font = _font(16, bold=True)
         status_text = _fit_text(status_font, status_text, w - 348)
-        surface.blit(status_font.render(status_text, True, status_color), (340, y + 12))
+        surface.blit(status_font.render(status_text, True, status_color), (340, status_y))
+        status_y += 18
+
+    cautious_status = _cautious_step_status_display(state)
+    if cautious_status:
+        cautious_text, cautious_color = cautious_status
+        cautious_font = _font(14, bold=True)
+        cautious_text = _fit_text(cautious_font, cautious_text, w - 348)
+        surface.blit(cautious_font.render(cautious_text, True, cautious_color), (340, status_y))
 
     hp_color = HP_BAR_COLOR
     sp_color = SP_BAR_COLOR

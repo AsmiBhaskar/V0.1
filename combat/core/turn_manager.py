@@ -169,22 +169,17 @@ def process_enemy_turn(state):
 
         if state.context_flags.pop("auto_dodge_intent", False):
             state.context_flags["dodge_choice"] = True
-
-        if (
-            state.player.name == "Stella"
-            and state.player.passives.get("cautious_step")
-            and not state.player.unique_vars.get("first_attack_auto_dodge_used", False)
-            and state.turn == 0
-        ):
-            state.player.unique_vars["first_attack_auto_dodge_used"] = True
-            state.context_flags["dodge_choice"] = True
-            state.log_event("Cautious Step triggers an automatic dodge attempt.")
         return None
 
     if state.phase != "dodge_phase":
         return None
 
-    if "dodge_choice" not in state.context_flags and not state.context_flags.get("player_blocking", False):
+    cautious_step_active = _is_stella_cautious_step_active(state)
+    if (
+        "dodge_choice" not in state.context_flags
+        and not state.context_flags.get("player_blocking", False)
+        and not cautious_step_active
+    ):
         return None
 
     pending = state.context_flags.pop("pending_enemy_action", None)
@@ -196,25 +191,29 @@ def process_enemy_turn(state):
         return None
 
     turn_flags = state.context_flags["turn_flags"]
-    turn_flags["attempted_dodge"] = has_dodge_choice and dodge_choice
+    manual_dodge = has_dodge_choice and dodge_choice
+    turn_flags["attempted_dodge"] = manual_dodge or cautious_step_active
 
-    if has_dodge_choice and dodge_choice:
+    if manual_dodge or cautious_step_active:
         state.context_flags["total_dodge_attempts"] += 1
-        if pending.get("cannot_be_dodged", False):
-            success = False
-            state.log_event(f"{state.enemy.name}'s strike cannot be dodged.")
-        else:
-            success, _ = _resolve_dodge_attempt(state)
+        success = _resolve_player_dodge_with_cautious_step(
+            state,
+            pending,
+            cautious_step_active=cautious_step_active,
+        )
         if success:
             turn_flags["dodge_success"] = True
             state.consecutive_dodges += 1
             fire_hook(HOOK_ON_DODGE_SUC, state, state.player.name, {"turn": state.turn})
-            state.log_event(f"Dodge success - {pending['label']} misses cleanly.")
+            if not cautious_step_active and state.player.name != "Stella":
+                state.log_event(f"Dodge success - {pending['label']} misses cleanly.")
             LOGGER.info("Turn %d | dodge success against %s", state.turn + 1, pending.get("label"))
         else:
             state.consecutive_dodges = 0
             fire_hook(HOOK_ON_DODGE_FAIL, state, state.player.name, {"turn": state.turn})
-            _enemy_hits_player(state, pending["damage"], pending["label"])
+            final_damage = _enemy_hits_player(state, pending["damage"], pending["label"])
+            if state.player.name == "Stella":
+                state.log_event(f"Stella takes {final_damage} damage!")
             LOGGER.info("Turn %d | dodge failed against %s", state.turn + 1, pending.get("label"))
 
     elif state.context_flags.pop("player_blocking", False):
@@ -245,7 +244,11 @@ def process_enemy_turn(state):
 
     else:
         state.consecutive_dodges = 0
-        _enemy_hits_player(state, pending["damage"], pending["label"])
+        final_damage = _enemy_hits_player(state, pending["damage"], pending["label"])
+        if state.player.name == "Stella":
+            state.log_event(f"Stella takes {final_damage} damage!")
+
+    _clear_stella_cautious_step_state(state)
 
     result = _resolve_player_death(state)
     if result:
@@ -806,6 +809,8 @@ def _apply_skill_effect(state, skill):
         state.context_flags["player_next_hit_sure"] = True
     elif effect == "improvised_arrow":
         return
+    elif effect == "cautious_step_predict":
+        _activate_stella_cautious_step(state)
     elif effect == "mystic_eyes_sniper":
         state.context_flags["player_next_mystic_eyes"] = True
         state.context_flags["player_next_hit_sure"] = True
@@ -882,11 +887,13 @@ def _prepare_enemy_action(state):
             "damage": damage,
             "announce": f"{enemy.name} invokes {enemy.np_item.get('name', 'Noble Phantasm')}!",
             "cannot_be_dodged": cannot_be_dodged,
+            "sure_hit": cannot_be_dodged,
         }
 
     available_skills = [
         skill
         for skill in enemy.actives
+        if skill.get("effect") != "cautious_step_predict"
         if (not evasion_locked or not _is_evasion_skill(skill))
         and _is_skill_available(enemy, skill, enemy_cooldowns, enemy_uses)
     ]
@@ -909,6 +916,7 @@ def _prepare_enemy_action(state):
             "damage": damage,
             "announce": f"{enemy.name} prepares {skill['name']}.",
             "cannot_be_dodged": cannot_be_dodged,
+            "sure_hit": cannot_be_dodged,
         }
 
     damage, is_crit = calculate_damage(
@@ -923,7 +931,91 @@ def _prepare_enemy_action(state):
         "damage": damage,
         "announce": f"{enemy.name} lunges with a basic attack{crit_text}.",
         "cannot_be_dodged": cannot_be_dodged,
+        "sure_hit": cannot_be_dodged,
     }
+
+
+def _incoming_damage_after_resistance(state, incoming_damage: int) -> int:
+    resistance = max(0.0, float(state.player.unique_vars.get("damage_resistance_bonus", 0.0)))
+    return max(1, int(round(float(incoming_damage) * (1.0 - resistance))))
+
+
+def _stella_cautious_step_variance_for_turn(turn_number: int) -> float:
+    if turn_number <= 3:
+        return 0.50
+    if turn_number <= 6:
+        return 0.30
+    if turn_number <= 9:
+        return 0.15
+    return 0.0
+
+
+def _stella_prediction_for_cautious_step(state) -> float:
+    base_damage = max(1.0, float(state.enemy.base_attack) * _enemy_damage_multiplier(state))
+    if bool(state.player.unique_vars.get("data_lake_active", False)):
+        return base_damage
+
+    turn_number = max(1, int(state.turn) + 1)
+    variance = _stella_cautious_step_variance_for_turn(turn_number)
+    if variance <= 0:
+        return base_damage
+
+    return base_damage * random.uniform(1.0 - variance, 1.0 + variance)
+
+
+def _activate_stella_cautious_step(state):
+    if state.player.name != "Stella":
+        return
+
+    prediction = _stella_prediction_for_cautious_step(state)
+    state.player.unique_vars["cautious_step_active"] = True
+    state.player.unique_vars["cautious_step_prediction"] = float(prediction)
+    state.log_event(f"Stella predicts: {int(round(prediction))} damage")
+
+
+def _is_stella_cautious_step_active(state) -> bool:
+    return state.player.name == "Stella" and bool(state.player.unique_vars.get("cautious_step_active", False))
+
+
+def _clear_stella_cautious_step_state(state):
+    if state.player.name != "Stella":
+        return
+
+    state.player.unique_vars["cautious_step_active"] = False
+    state.player.unique_vars["cautious_step_prediction"] = 0.0
+
+
+def _resolve_player_normal_dodge(state, pending: dict, forced_hit: bool) -> bool:
+    if forced_hit:
+        if state.player.name != "Stella":
+            state.log_event(f"{state.enemy.name}'s strike cannot be dodged.")
+        return False
+
+    success, _ = _resolve_dodge_attempt(state)
+    if success and state.player.name == "Stella":
+        state.log_event("Stella dodges the attack!")
+    return success
+
+
+def _resolve_player_dodge_with_cautious_step(state, pending: dict, cautious_step_active: bool) -> bool:
+    forced_hit = bool(pending.get("cannot_be_dodged", False) or pending.get("sure_hit", False))
+
+    if cautious_step_active:
+        prediction = float(state.player.unique_vars.get("cautious_step_prediction", 0.0))
+
+        if forced_hit:
+            state.log_event("Cautious Step cannot predict guaranteed hits! Stella attempts to dodge normally.")
+            return _resolve_player_normal_dodge(state, pending, forced_hit=True)
+
+        actual_damage = _incoming_damage_after_resistance(state, int(pending.get("damage", 0)))
+        if prediction >= float(actual_damage):
+            state.log_event("Cautious Step: Prediction successful! Stella evades the attack.")
+            return True
+
+        state.log_event("Cautious Step: Prediction failed! Stella attempts to dodge normally.")
+        return _resolve_player_normal_dodge(state, pending, forced_hit=False)
+
+    return _resolve_player_normal_dodge(state, pending, forced_hit=forced_hit)
 
 
 def _resolve_dodge_attempt(state):
@@ -971,8 +1063,7 @@ def _player_hits_enemy(state, damage: int, source_label: str, is_crit: bool):
 
 
 def _enemy_hits_player(state, damage: int, source_label: str):
-    resistance = max(0.0, float(state.player.unique_vars.get("damage_resistance_bonus", 0.0)))
-    damage = max(1, int(round(damage * (1.0 - resistance))))
+    damage = _incoming_damage_after_resistance(state, damage)
 
     state.player.hp = max(0, state.player.hp - damage)
     state.log_event(f"{state.enemy.name}'s {source_label} deals {damage} damage.")
@@ -980,6 +1071,7 @@ def _enemy_hits_player(state, damage: int, source_label: str):
     state.context_flags["enemy_np"] = min(NP_MAX, state.context_flags["enemy_np"] + NP_GAIN_ON_HIT)
     state.context_flags["player_np"] = min(NP_MAX, state.context_flags["player_np"] + NP_GAIN_ON_HIT_RECV)
     fire_hook(HOOK_ON_HIT_RECV, state, state.player.name, {"damage": damage})
+    return damage
 
 
 def _resolve_player_death(state):
@@ -1275,7 +1367,10 @@ def _find_skill(skills, skill_id):
 
 
 def _is_quick_action_skill(skill):
-    return skill.get("effect") == "improvised_arrow" or skill.get("id") == "stella_update_profile"
+    return (
+        skill.get("effect") == "improvised_arrow"
+        or skill.get("id") in {"stella_update_profile", "cautious_step"}
+    )
 
 
 def _is_reality_marble_buff_active(state) -> bool:
@@ -1309,6 +1404,7 @@ def _is_evasion_skill(skill) -> bool:
         "damage_down_dodge_up",
         "pattern_analysis",
         "data_lake_activate",
+        "cautious_step_predict",
         "iron_path_mode",
     }
     if effect in evasion_effects:
